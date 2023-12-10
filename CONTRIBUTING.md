@@ -2,7 +2,7 @@
 
 ## Restricted branches
 - `development` - all the implemented features which are done and deployed
-- `master` - stable version deployed
+- `main` - stable version deployed
 
 ## Workflow
 
@@ -30,5 +30,6 @@ We follow the rules below:
 
 ## Pull Request guidelines
 
+- The name of the pull request should contain the code and the name of the corresponding ticket
 - From `feature_branch` to `development`: add two developers and PM as reviewers, 3 approves needed for merging
 - From `development` to `master`: this is managed by the PM
