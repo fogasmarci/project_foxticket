@@ -1,4 +1,4 @@
-# Spring Tribes Project repository
+# Spring Fox Ticket Project repository
 
 ## Initial dependencies
 
@@ -36,7 +36,6 @@
 - After global exception handler is present, create and throw custom exceptions in error scenarios
 - Use the object wrapper for primitive types, e.g. `Long` instead of `long`
 - Use `this` keyword only to avoid variable name conflicts
-- Do not use any HTTP specific class/logic inside your service layer
 - Use the [code formatting](https://blog.jetbrains.com/idea/2020/06/code-formatting/) feature in Intellij (CTRL+ALT+L / ⌥⌘L)
 - Have at least 90% test coverage regarding services (unit test) and controllers (integration tests)
 - Use [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
@@ -54,15 +53,11 @@
 
 Project details:
 
-- [Project.md](project.md)
+- examples is docs folder
 
 Jira board:
 
-- https://greenfoxacademy.atlassian.net/jira/software/projects/OSCT/boards/214
-
-Endpoint tracker:
-
-- https://docs.google.com/spreadsheets/d/14rjj8mLEjQBFdVQQ43t_AJT2bQgHVCVc3FI9GYKcYMw/edit?usp=sharing
+- https://greenfoxacademy.atlassian.net/jira/software/projects/ATBFB/boards/251
 
 Contribution:
 
@@ -84,14 +79,14 @@ See [CONTRIBUTING](CONTRIBUTING.md)
 
 ### Start New Feature/Bugfix
 
-In order to minimize merge conflicts later always open a new feature branch from the most recent state of the `development` branch on GitHub.
+In order to minimize merge conflicts later always open a new feature branch from the most recent state of the `master` branch on GitHub.
 
 - `git pull`
 - `git checkout -b <branch_name> origin/development`
 
 ### Update Feature Branch
 
-While you're working on your own feature/bugfix other developers make changes on `development` and it's required to update your branch to keep consistency of the codebase. You can do this in 2 ways.
+While you're working on your own feature/bugfix other developers make changes on `master` and it's required to update your branch to keep the consistency of the codebase. You can do this in 2 ways.
 
 [`git merge` vs `git rebase`](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
 
@@ -99,15 +94,15 @@ While you're working on your own feature/bugfix other developers make changes on
 
 [`git rebase`](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)
 
-Rebase rewrites commit history; therefore, do not use rebase on the `master` and `development` branches.
-On the other hand feel free to use rebase on your own branches.
+Rebase rewrites commit history; therefore, do not use rebase on the `master` branch.
+On the other hand, feel free to use rebase on your own branches.
 
-Use `git rebase development` while on your branch.
+Use `git rebase master` while on your branch.
 
 #### Merge
 
 [`git merge`](https://www.atlassian.com/git/tutorials/using-branches/git-merge)
 
-This creates a new commit (so called merge commit) containing changes from both your branch and the development branch.
+This creates a new commit (so-called merge commit) containing changes from both your branch and the development branch.
 
-Use `git merge development` while on your branch.
+Use `git merge master` while on your branch.
