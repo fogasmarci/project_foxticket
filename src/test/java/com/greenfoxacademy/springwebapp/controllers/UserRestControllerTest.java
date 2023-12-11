@@ -24,10 +24,10 @@ public class UserRestControllerTest {
 
     @Test
     public void manageRegistrationRequests_WithBadInput_ReturnsCorrectErrorMessage() throws Exception {
-        RegistrationRequestDTO requestDTO = new RegistrationRequestDTO(null,null,null);
+        RegistrationRequestDTO requestDTO = new RegistrationRequestDTO(null, null, null);
         mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().is(400))
                 .andExpect(
                         jsonPath("$.error").value("Name, email and password are required."));

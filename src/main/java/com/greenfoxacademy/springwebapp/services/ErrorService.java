@@ -5,5 +5,6 @@ import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 
 public interface ErrorService {
     ErrorMessageDTO createErrorMessage(String errorMessage);
+
     ErrorMessageDTO createRegistrationErrorMessage(RegistrationRequestDTO requestDTO);
 }
