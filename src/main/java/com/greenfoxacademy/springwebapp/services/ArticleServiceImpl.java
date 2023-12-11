@@ -1,12 +1,9 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
-import com.greenfoxacademy.springwebapp.models.Article;
 import com.greenfoxacademy.springwebapp.repositories.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -18,9 +15,14 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleListDTO listAllArticles() {
+    public ArticleListDTO listArticles(String keyword) {
         ArticleListDTO articleListDTO = new ArticleListDTO();
-        articleListDTO.setArticles(articleRepository.findAll());
+        if (keyword == null) {
+            articleListDTO.setArticles(articleRepository.findAll());
+            return articleListDTO;
+        }
+
+        articleListDTO.setArticles(articleRepository.findArticlesByKeyword(keyword));
         return articleListDTO;
     }
 }
