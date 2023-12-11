@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-    @Override
-    List<Article> findAll();
+  @Override
+  List<Article> findAll();
 
-    @Query(nativeQuery = true, value = "SELECT * FROM news WHERE title LIKE CONCAT('%',:keyword,'%') OR content LIKE CONCAT('%',:keyword,'%')")
-    List<Article> findArticlesByKeyword(String keyword);
+  @Query(nativeQuery = true, value = "SELECT * FROM news WHERE title LIKE CONCAT('%',:keyword,'%') OR content LIKE CONCAT('%',:keyword,'%')")
+  List<Article> findArticlesByKeyword(String keyword);
 }

@@ -25,32 +25,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ArticleControllerTest {
 
-    @Autowired
-    MockMvc mvc;
-    @MockBean
-    ArticleService articleService;
+  @Autowired
+  MockMvc mvc;
+  @MockBean
+  ArticleService articleService;
 
-    @Test
-    void listArticles_WithNoParam_ListsAllArticles() throws Exception {
-        List<Article> articles = new ArrayList<>();
-        Article article1 = new Article("News about tickets", "Ipsum Lorum");
-        article1.setPublishDate(LocalDate.of(2023, 12, 11));
-        Article article2 = new Article("Test Title", "Test Content");
-        article2.setPublishDate(LocalDate.of(2023, 12, 11));
-        articles.add(article1);
-        articles.add(article2);
+  @Test
+  void listArticles_WithNoParam_ListsAllArticles() throws Exception {
+    List<Article> articles = new ArrayList<>();
+    Article article1 = new Article("News about tickets", "Ipsum Lorum");
+    article1.setPublishDate(LocalDate.of(2023, 12, 11));
+    Article article2 = new Article("Test Title", "Test Content");
+    article2.setPublishDate(LocalDate.of(2023, 12, 11));
+    articles.add(article1);
+    articles.add(article2);
 
-        ArticleListDTO articleListDTO = new ArticleListDTO();
-        articleListDTO.setArticles(articles);
+    ArticleListDTO articleListDTO = new ArticleListDTO();
+    articleListDTO.setArticles(articles);
 
-        Mockito.when(articleService.listArticles(null)).thenReturn(articleListDTO);
+    Mockito.when(articleService.listArticles(null)).thenReturn(articleListDTO);
 
-        mvc.perform(get("/api/news"))
-                .andExpect(status().is(200))
-                .andExpect(jsonPath("$.articles", isA(ArrayList.class)))
-                .andExpect(jsonPath("$.articles").value(hasSize(2)))
-                .andExpect(jsonPath("$.articles[0].title").value("News about tickets"));
-    }
+    mvc.perform(get("/api/news"))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.articles", isA(ArrayList.class)))
+        .andExpect(jsonPath("$.articles").value(hasSize(2)))
+        .andExpect(jsonPath("$.articles[0].title").value("News about tickets"));
+  }
 }
 
 

@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class HelloController {
 
-    private HelloService helloService;
+  private HelloService helloService;
 
-    @Autowired
-    public HelloController(HelloService helloService) {
-        this.helloService = helloService;
-    }
+  @Autowired
+  public HelloController(HelloService helloService) {
+    this.helloService = helloService;
+  }
 
-    @GetMapping("/hello")
-    public String helloWorld() {
-        return helloService.getHelloWorld();
-    }
+  @GetMapping("/hello")
+  public String helloWorld() {
+    return helloService.getHelloWorld();
+  }
 }

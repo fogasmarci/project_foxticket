@@ -9,24 +9,24 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class BasicSpringProjectApplication implements CommandLineRunner {
-    private ArticleRepository articleRepository;
+  private ArticleRepository articleRepository;
 
-    @Autowired
-    public BasicSpringProjectApplication(ArticleRepository articleRepository) {
-        this.articleRepository = articleRepository;
-    }
+  @Autowired
+  public BasicSpringProjectApplication(ArticleRepository articleRepository) {
+    this.articleRepository = articleRepository;
+  }
 
-    public static void main(String[] args) {
-        SpringApplication.run(BasicSpringProjectApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(BasicSpringProjectApplication.class, args);
+  }
 
-    @Override
-    public void run(String... args) throws Exception {
-        Article article1 = new Article("News about tickets", "Ipsum Lorum");
-        Article article2 = new Article("Road block", "akarmi, anything, fdgjkfdkjfdkjfdkjfdkjfdkjfdkj");
+  @Override
+  public void run(String... args) throws Exception {
+    Article article1 = new Article("News about tickets", "Ipsum Lorum");
+    Article article2 = new Article("Road block", "akarmi, anything, fdgjkfdkjfdkjfdkjfdkjfdkjfdkj");
 
-        articleRepository.save(article1);
-        articleRepository.save(article2);
-    }
+    articleRepository.save(article1);
+    articleRepository.save(article2);
+  }
 }
 

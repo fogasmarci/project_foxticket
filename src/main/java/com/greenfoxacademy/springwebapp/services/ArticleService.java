@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ArticleService {
 
-    ArticleListDTO listArticles(String keyword);
+  ArticleListDTO listArticles(String keyword);
 }
