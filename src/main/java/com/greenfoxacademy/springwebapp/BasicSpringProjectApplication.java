@@ -29,3 +29,4 @@ public class BasicSpringProjectApplication implements CommandLineRunner {
         articleRepository.save(article2);
     }
 }
+

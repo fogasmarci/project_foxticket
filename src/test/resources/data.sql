@@ -1,0 +1,4 @@
+INSERT INTO ARTICLES (ID, TITLE, CONTENT, PUBLISH_DATE)
+VALUES ('1', 'News about tickets', 'Ipsum Lorum', '2023-12-11');
+INSERT INTO ARTICLES (ID, TITLE, CONTENT, PUBLISH_DATE)
+VALUES ('2', 'Test Title', 'Test Content', '2023-12-11');
