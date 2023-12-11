@@ -13,7 +13,6 @@ public class Article {
     private Long id;
     private String title;
     private String content;
-    /*@Column(name = "publish_date")*/
     private LocalDate publishDate;
 
     public Article() {
