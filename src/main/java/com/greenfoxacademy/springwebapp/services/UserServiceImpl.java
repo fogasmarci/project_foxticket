@@ -9,27 +9,28 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+  @Autowired
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
-    @Override
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
-    }
+  @Override
+  public User getUserByEmail(String email) {
+    return userRepository.findByEmail(email).orElse(null);
+  }
 
-    @Override
-    public User createUser(String name, String email, String password) {
-        return userRepository.save(new User(name, email, passwordEncoder.encode(password)));
-    }
+  @Override
+  public User createUser(String name, String email, String password) {
+    return userRepository.save(new User(name, email, passwordEncoder.encode(password)));
+  }
 
-    @Override
-    public boolean isRegistrationRequestValid(RegistrationRequestDTO requestDTO) {
-        return requestDTO.getName() != null && requestDTO.getPassword() != null && requestDTO.getPassword().length() > 7 && userRepository.findByEmail(requestDTO.getEmail()).isEmpty();
-    }
+  @Override
+  public boolean isRegistrationRequestValid(RegistrationRequestDTO requestDTO) {
+    User user = userRepository.findByEmail(requestDTO.getEmail()).orElse(null);
+    return requestDTO.getName() != null && requestDTO.getPassword() != null && requestDTO.getPassword().length() > 7 && user == null;
+  }
 }
