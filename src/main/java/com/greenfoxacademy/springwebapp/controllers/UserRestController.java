@@ -1,5 +1,7 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
+import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.ErrorService;
@@ -28,5 +30,13 @@ public class UserRestController {
     }
     User newUser = userService.createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
     return ResponseEntity.status(200).body(userService.createRegistrationDTO(newUser));
+  }
+
+  @PostMapping(path = "/users/login")
+  public ResponseEntity<?> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
+    if (!userService.isRegistrationRequestValid(loginUserDTO)) {
+      return ResponseEntity.status(400).body(errorService.createRegistrationErrorMessage(loginUserDTO));
+    }
+    return ResponseEntity.status(200).build();
   }
 }
