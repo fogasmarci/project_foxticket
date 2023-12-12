@@ -82,6 +82,6 @@ Retrofit
 
 - React: https://www.youtube.com/watch?v=w7ejDZ8SWv8
 - CORS:
-    - https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    - https://stackoverflow.com/questions/49049312/cors-error-when-connecting-local-react-frontend-to-local-spring-boot-middleware
-    - https://www.youtube.com/watch?v=PcZGwcgbzE4
+  - https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+  - https://stackoverflow.com/questions/49049312/cors-error-when-connecting-local-react-frontend-to-local-spring-boot-middleware
+  - https://www.youtube.com/watch?v=PcZGwcgbzE4

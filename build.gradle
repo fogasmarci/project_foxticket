@@ -1,15 +1,18 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.7.7'
-    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
     id 'checkstyle'
     id 'jacoco'
 }
 
-
 group = 'com.greenfoxacademy'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+
+java {
+    sourceCompatibility = '17'
+}
+
 
 repositories {
     mavenCentral()
