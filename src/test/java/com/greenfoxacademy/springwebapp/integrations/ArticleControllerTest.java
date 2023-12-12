@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.controllers;
+package com.greenfoxacademy.springwebapp.integrations;
 
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
 import com.greenfoxacademy.springwebapp.models.Article;
@@ -50,6 +50,26 @@ public class ArticleControllerTest {
         .andExpect(jsonPath("$.articles", isA(ArrayList.class)))
         .andExpect(jsonPath("$.articles").value(hasSize(2)))
         .andExpect(jsonPath("$.articles[0].title").value("News about tickets"));
+  }
+
+  @Test
+  void listArticles_WithParam_ListsSearchedArticles() throws Exception {
+    List<Article> articles = new ArrayList<>();
+
+    Article article = new Article("test title", "Test Content");
+    article.setPublishDate(LocalDate.of(2023, 12, 11));
+    articles.add(article);
+
+    ArticleListDTO articleListDTO = new ArticleListDTO();
+    articleListDTO.setArticles(articles);
+
+    Mockito.when(articleService.listArticles("test title")).thenReturn(articleListDTO);
+
+    mvc.perform(get("/api/news").param("search", "test title"))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.articles", isA(ArrayList.class)))
+        .andExpect(jsonPath("$.articles").value(hasSize(1)))
+        .andExpect(jsonPath("$.articles[0].title").value("test title"));
   }
 }
 

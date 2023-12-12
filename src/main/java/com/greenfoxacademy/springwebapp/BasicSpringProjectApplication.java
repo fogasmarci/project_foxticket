@@ -22,11 +22,11 @@ public class BasicSpringProjectApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    Article article1 = new Article("News about tickets", "Ipsum Lorum");
+   /* Article article1 = new Article("News about tickets", "Ipsum Lorum");
     Article article2 = new Article("Road block", "akarmi, anything, fdgjkfdkjfdkjfdkjfdkjfdkjfdkj");
 
     articleRepository.save(article1);
-    articleRepository.save(article2);
+    articleRepository.save(article2);*/
   }
 }
 
