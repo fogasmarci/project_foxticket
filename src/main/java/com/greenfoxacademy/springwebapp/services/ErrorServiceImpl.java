@@ -24,13 +24,13 @@ public class ErrorServiceImpl implements ErrorService {
             return new ErrorMessageDTO("Name, email and password are required.");
         }
         if (requestDTO.getPassword() == null) {
-            return new ErrorMessageDTO("Password is required");
+            return new ErrorMessageDTO("Password is required.");
         }
         if (requestDTO.getName() == null) {
-            return new ErrorMessageDTO("Name is required");
+            return new ErrorMessageDTO("Name is required.");
         }
         if (requestDTO.getEmail() == null) {
-            return new ErrorMessageDTO("Email is required");
+            return new ErrorMessageDTO("Email is required.");
         }
         if (requestDTO.getPassword().length() < 8) {
             return new ErrorMessageDTO("Password must be at least 8 characters.");

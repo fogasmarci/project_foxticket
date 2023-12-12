@@ -22,9 +22,10 @@ public class UserRestController {
 
     @PostMapping(path = "/users")
     public ResponseEntity<?> manageRegistrationRequests(@RequestBody RegistrationRequestDTO requestDTO) {
-        if (userService.isRegistrationRequestValid(requestDTO)) {
-            return ResponseEntity.status(200).body(userService.createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword()));
+        if (!userService.isRegistrationRequestValid(requestDTO)) {
+            return ResponseEntity.status(400).body(errorService.createRegistrationErrorMessage(requestDTO));
+
         }
-        return ResponseEntity.status(400).body(errorService.createRegistrationErrorMessage(requestDTO));
+        return ResponseEntity.status(200).body(userService.createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword()));
     }
 }
