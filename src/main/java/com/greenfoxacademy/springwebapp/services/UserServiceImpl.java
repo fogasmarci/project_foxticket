@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
+import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public boolean isRegistrationRequestValid(RegistrationRequestDTO requestDTO) {
-    User user = userRepository.findByEmail(requestDTO.getEmail()).orElse(null);
-    return requestDTO.getName() != null && requestDTO.getPassword() != null && requestDTO.getPassword().length() > 7 && user == null;
+    return requestDTO.getName() != null
+        && requestDTO.getPassword() != null
+        && requestDTO.getPassword().length() >= 8
+        && requestDTO.getEmail() != null
+        && userRepository.findByEmail(requestDTO.getEmail()).isEmpty();
+  }
+
+  @Override
+  public RegistrationResponseDTO createRegistrationDTO(User user) {
+    boolean isAdmin = user.getRoles().contains("ADMIN");
+    return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin);
   }
 }

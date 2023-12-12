@@ -5,5 +5,5 @@ CREATE TABLE `USERS`
     `EMAIL`    varchar(100) DEFAULT NULL,
     `PASSWORD` varchar(100) DEFAULT NULL,
     `ROLES`    varchar(100) DEFAULT NULL,
-    PRIMARY KEY (`EMAIL`)
+    PRIMARY KEY (`ID`)
 );

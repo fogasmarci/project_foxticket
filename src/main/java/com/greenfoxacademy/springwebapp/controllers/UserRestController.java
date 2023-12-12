@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
+import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.ErrorService;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class UserRestController {
     if (!userService.isRegistrationRequestValid(requestDTO)) {
       return ResponseEntity.status(400).body(errorService.createRegistrationErrorMessage(requestDTO));
     }
-    return ResponseEntity.status(200).body(userService.createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword()));
+    User newUser = userService.createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
+    return ResponseEntity.status(200).body(userService.createRegistrationDTO(newUser));
   }
 }
