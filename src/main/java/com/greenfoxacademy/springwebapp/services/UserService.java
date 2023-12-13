@@ -9,7 +9,7 @@ public interface UserService {
 
   User createUser(String name, String email, String password);
 
-  boolean isRegistrationRequestValid(RegistrationRequestDTO requestDTO);
-
   RegistrationResponseDTO createRegistrationDTO(User user);
+
+  User registrateUser(RegistrationRequestDTO requestDTO);
 }

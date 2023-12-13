@@ -1,4 +1,3 @@
-
 INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
 VALUES ('TestUser', 'user@user.user', '12345678', 'ROLE_USER');
 

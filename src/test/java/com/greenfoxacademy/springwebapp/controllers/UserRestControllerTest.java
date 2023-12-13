@@ -28,7 +28,7 @@ public class UserRestControllerTest {
 
   @Test
   public void manageRegistrationRequests_WithAlreadyTakenEmail_ReturnsCorrectErrorMessage() throws Exception {
-    RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("User1", "user@user.user", "password");
+    RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("User1", "admin@admin.admin", "password");
     mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
@@ -66,7 +66,7 @@ public class UserRestControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
         .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Name, email and password are required."));
+        .andExpect(jsonPath("$.error").value("All fields are required."));
   }
 
   @Test
