@@ -34,12 +34,12 @@ public class ArticleServiceTest {
     articles.add(article1);
     articles.add(article2);
 
-   Mockito.when(articleRepository.findAll()).thenReturn(articles);
+    Mockito.when(articleRepository.findAll()).thenReturn(articles);
 
-   ArticleListDTO articleListDTO = new ArticleListDTO();
-   articleListDTO.setArticles(articles);
+    ArticleListDTO articleListDTO = new ArticleListDTO();
+    articleListDTO.setArticles(articles);
 
-   assertEquals(articleListDTO.getArticles(), articleService.listArticles(null).getArticles());
+    assertEquals(articleListDTO.getArticles(), articleService.listArticles(null).getArticles());
   }
 
   @Test

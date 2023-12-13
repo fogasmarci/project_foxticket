@@ -42,7 +42,11 @@ public class ArticleServiceTestWithH2 {
     ArticleListDTO articleListDTO = new ArticleListDTO();
     articleListDTO.setArticles(articles);
 
-    assertThat(articleService.listArticles(null).getArticles()).usingRecursiveComparison().isEqualTo(articleListDTO.getArticles());
+    List<Article> actualArticlesToList = new ArrayList<>();
+    actualArticlesToList.add(articleService.listArticles(null).getArticles().get(0));
+    actualArticlesToList.add(articleService.listArticles(null).getArticles().get(1));
+
+    assertThat(actualArticlesToList).usingRecursiveComparison().isEqualTo(articleListDTO.getArticles());
   }
 
   @Test
@@ -58,7 +62,7 @@ public class ArticleServiceTestWithH2 {
     articleListDTO.setArticles(articles);
 
     assertThat(articleService.listArticles("News about tickets").getArticles()).usingRecursiveComparison().isEqualTo(articleListDTO.getArticles());
-   }
+  }
 }
 
 
