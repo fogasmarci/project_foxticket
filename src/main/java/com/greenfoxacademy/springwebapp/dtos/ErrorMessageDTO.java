@@ -1,4 +1,13 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-public record ErrorMessageDTO(String error) {
+public class ErrorMessageDTO {
+  private String error;
+
+  public ErrorMessageDTO(String error) {
+    this.error = error;
+  }
+
+  public String getError() {
+    return error;
+  }
 }

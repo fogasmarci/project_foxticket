@@ -20,33 +20,33 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JpaUserDetailsService myUserDetailsService;
+  private final JpaUserDetailsService myUserDetailsService;
 
-    @Autowired
-    public SecurityConfig(JpaUserDetailsService myUserDetailsService) {
-        this.myUserDetailsService = myUserDetailsService;
-    }
+  @Autowired
+  public SecurityConfig(JpaUserDetailsService myUserDetailsService) {
+    this.myUserDetailsService = myUserDetailsService;
+  }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-        http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated())
-                .userDetailsService(myUserDetailsService);
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable);
+    http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+    http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/register").permitAll()
+            .requestMatchers("/api/**").permitAll()
+            .anyRequest().authenticated())
+        .userDetailsService(myUserDetailsService);
 
-        return http.build();
-    }
+    return http.build();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
+  }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 }
