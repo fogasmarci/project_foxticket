@@ -1,8 +1,8 @@
 CREATE TABLE `news`
 (
-    `ID`          int NOT NULL AUTO_INCREMENT,
-    `TITLE`       varchar(100) DEFAULT NULL,
-    `CONTENT`     varchar(100) DEFAULT NULL,
-    `publishDate` date         DEFAULT NULL,
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `TITLE` VARCHAR(100) DEFAULT NULL,
+    `CONTENT` VARCHAR(100) DEFAULT NULL,
+    `PUBLISHDATE` DATE DEFAULT NULL,
     PRIMARY KEY (`ID`)
 );
