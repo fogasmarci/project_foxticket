@@ -5,8 +5,8 @@ import com.greenfoxacademy.springwebapp.models.Article;
 import com.greenfoxacademy.springwebapp.services.ArticleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class ArticleServiceTestWithH2 {
 
   ArticleService articleService;
@@ -26,7 +26,7 @@ public class ArticleServiceTestWithH2 {
   }
 
   @Test
-  void listArticles_WithNullParam_ReturnsArticleListDtoWithAllArticles() throws Exception {
+  void listArticles_WithNullParam_ReturnsArticleListDtoWithAllArticles() {
     Article article1 = new Article("News about tickets", "Ipsum Lorum");
     article1.setPublishDate(LocalDate.of(2023, 12, 11));
     article1.setId(1L);
@@ -50,7 +50,7 @@ public class ArticleServiceTestWithH2 {
   }
 
   @Test
-  void listArticles_WithStringParam_ReturnsArticleListDtoWithFilteredArticles() throws Exception {
+  void listArticles_WithStringParam_ReturnsArticleListDtoWithFilteredArticles() {
     Article article1 = new Article("News about tickets", "Ipsum Lorum");
     article1.setPublishDate(LocalDate.of(2023, 12, 11));
     article1.setId(1L);

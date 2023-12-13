@@ -6,6 +6,7 @@ import com.greenfoxacademy.springwebapp.repositories.ArticleRepository;
 import com.greenfoxacademy.springwebapp.services.ArticleServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ActiveProfiles("test")
 public class ArticleServiceTest {
 
   private ArticleRepository articleRepository;
@@ -24,7 +26,7 @@ public class ArticleServiceTest {
   }
 
   @Test
-  void listArticles_WithNullParam_ReturnsArticleListDtoWithAllArticles() throws Exception {
+  void listArticles_WithNullParam_ReturnsArticleListDtoWithAllArticles() {
     Article article1 = new Article("News about tickets", "Ipsum Lorum");
     article1.setPublishDate(LocalDate.of(2023, 12, 11));
     Article article2 = new Article("Test Title", "Test Content");
@@ -43,7 +45,7 @@ public class ArticleServiceTest {
   }
 
   @Test
-  void listArticles_WithStringParam_ReturnsArticleListDtoWithFilteredArticles() throws Exception {
+  void listArticles_WithStringParam_ReturnsArticleListDtoWithFilteredArticles() {
     List<Article> articles = new ArrayList<>();
     Article article1 = new Article("News about tickets", "Ipsum Lorum");
     article1.setPublishDate(LocalDate.of(2023, 12, 11));
