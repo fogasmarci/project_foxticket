@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp;
 
-import com.greenfoxacademy.springwebapp.models.Article;
 import com.greenfoxacademy.springwebapp.repositories.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,11 +21,11 @@ public class BasicSpringProjectApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    Article article1 = new Article("barmi", "Ipsum Lorum");
-    Article article2 = new Article("Road block", "akarmi, anything, fdgjkfdkjfdkjfdkjfdkjfdkjfdkj");
-
-    articleRepository.save(article1);
-    articleRepository.save(article2);
+  //    Article article1 = new Article("barmi", "Ipsum Lorum");
+  //    Article article2 = new Article("Road block", "akarmi, anything, fdgjkfdkjfdkjfdkjfdkjfdkjfdkj");
+  //
+  //    articleRepository.save(article1);
+  //    articleRepository.save(article2);
   }
 }
 
