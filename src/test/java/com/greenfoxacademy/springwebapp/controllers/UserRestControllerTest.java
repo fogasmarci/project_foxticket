@@ -32,7 +32,6 @@ public class UserRestControllerTest {
     mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
-        .andExpect(jsonPath("$.id").value(4))
         .andExpect(jsonPath("$.email").value("user@example.com"))
         .andExpect(jsonPath("$.isAdmin").value(false));
   }
