@@ -2,7 +2,6 @@ package com.greenfoxacademy.springwebapp.models;
 
 import jakarta.persistence.*;
 
-import java.text.DateFormat;
 import java.time.LocalDate;
 
 @Entity
