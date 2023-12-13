@@ -30,12 +30,12 @@ checkstyleTest {
     source = 'src/test/java'
 }
 
-jacocoTestReport {
+/*jacocoTestReport {
     reports {
-        xml.enabled false
-        html.enabled true
+        xml.required
+        html.required
         html.destination file("${buildDir}/jacoco")    }
-}
+}*/
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
