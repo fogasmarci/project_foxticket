@@ -58,19 +58,3 @@ public class ArticleServiceTest {
     assertEquals(articleListDTO.getArticles(), articleService.listArticles("News about tickets").getArticles());
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

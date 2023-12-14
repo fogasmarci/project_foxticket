@@ -26,17 +26,3 @@ public class ArticleServiceImpl implements ArticleService {
     return articleListDTO;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

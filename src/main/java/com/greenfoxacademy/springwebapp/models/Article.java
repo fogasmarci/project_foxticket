@@ -56,15 +56,3 @@ public class Article {
     this.publishDate = publishDate;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

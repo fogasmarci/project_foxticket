@@ -64,19 +64,3 @@ public class ArticleServiceTestWithH2 {
     assertThat(articleService.listArticles("News about tickets").getArticles().get(0)).usingRecursiveComparison().isEqualTo(articleListDTO.getArticles().get(0));
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

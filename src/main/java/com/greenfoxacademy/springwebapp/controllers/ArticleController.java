@@ -23,18 +23,3 @@ public class ArticleController {
     return ResponseEntity.status(200).body(articleService.listArticles(search));
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -74,15 +74,3 @@ public class ArticleControllerUnitTest {
         .andExpect(jsonPath("$.articles[0].title").value("test title"));
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
