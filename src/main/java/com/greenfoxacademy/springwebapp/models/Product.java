@@ -15,7 +15,8 @@ public class Product {
   @ManyToOne
   private ProductType type;
 
-  public Product() {}
+  public Product() {
+  }
 
   public Product(String name, int price, int duration, String description) {
     this();

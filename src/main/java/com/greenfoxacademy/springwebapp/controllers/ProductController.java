@@ -3,7 +3,9 @@ package com.greenfoxacademy.springwebapp.controllers;
 import com.greenfoxacademy.springwebapp.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductController {
@@ -16,6 +18,6 @@ public class ProductController {
 
   @RequestMapping(path = "/api/products", method = RequestMethod.GET)
   public ResponseEntity<?> getProductDetails() {
-      return ResponseEntity.status(200).body(productService.listProductDetails());
+    return ResponseEntity.status(200).body(productService.listProductDetails());
   }
 }

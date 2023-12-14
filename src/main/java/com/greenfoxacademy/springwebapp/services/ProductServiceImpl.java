@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
     this.productRepository = productRepository;
   }
 
-  public List<Product> findAllProducts(){
+  public List<Product> findAllProducts() {
     return productRepository.findAll();
   }
 

@@ -8,7 +8,8 @@ public class ProductDTO {
   private String description;
   private String type;
 
-  public ProductDTO() {}
+  public ProductDTO() {
+  }
 
   public ProductDTO(Long id, String name, int price, int duration, String description, String type) {
     this();
@@ -60,7 +61,7 @@ public class ProductDTO {
     return type;
   }
 
-  public void String(String type) {
+  public void setType(String type) {
     this.type = type;
   }
 }
