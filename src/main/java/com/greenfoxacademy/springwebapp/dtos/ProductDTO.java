@@ -65,4 +65,3 @@ public class ProductDTO {
     this.type = type;
   }
 }
-

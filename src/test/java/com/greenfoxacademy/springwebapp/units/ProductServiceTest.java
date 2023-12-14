@@ -15,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @ActiveProfiles("test")
 public class ProductServiceTest {
   private ProductRepository productRepository;
@@ -50,12 +49,3 @@ public class ProductServiceTest {
     assertThat(productService.listProductDetails()).usingRecursiveComparison().isEqualTo(productListDTO);
   }
 }
-
-
-
-
-
-
-
-
-

@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -36,16 +35,3 @@ public class ProductControllerTest {
         .andExpect(jsonPath("$.products[1].description").value("teszt2"));
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
