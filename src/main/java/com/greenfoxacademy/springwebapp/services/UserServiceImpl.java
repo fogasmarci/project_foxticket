@@ -61,6 +61,6 @@ public class UserServiceImpl implements UserService {
     if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
       throw new EmailAlreadyTakenException();
     }
-    return userRepository.save(new User(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword()));
+    return createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
   }
 }
