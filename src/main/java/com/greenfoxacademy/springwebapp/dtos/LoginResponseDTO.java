@@ -4,8 +4,8 @@ public class LoginResponseDTO {
   private String status;
   private String token;
 
-  public LoginResponseDTO(String status, String token) {
-    this.status = status;
+  public LoginResponseDTO(String token) {
+    status = "ok";
     this.token = token;
   }
 

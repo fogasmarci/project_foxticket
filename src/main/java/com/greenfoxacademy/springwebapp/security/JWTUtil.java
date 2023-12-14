@@ -1,11 +1,13 @@
 package com.greenfoxacademy.springwebapp.security;
 
+import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.userdetails.UserDetails;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +15,7 @@ import java.util.function.Function;
 
 @Service
 public class JWTUtil {
-  private String SECRET_KEY = "secret";
+  private Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -29,25 +31,33 @@ public class JWTUtil {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+    return Jwts.parserBuilder()
+        .setSigningKey(SECRET_KEY)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
   }
 
   private Boolean isTokenExpired(String token) {
     return extractExpiration(token).before(new Date());
   }
 
-  public String generateToken(UserDetails userDetails) {
+  public String generateToken(SecurityUser userDetails) {
     Map<String, Object> claims = new HashMap<>();
+    claims.put("userId", userDetails.getId());
+    claims.put("isAdmin", userDetails.getIsAdmin());
+    claims.put("isVerified", userDetails.getIsVerified());
+
     return createToken(claims, userDetails.getUsername());
   }
 
   private String createToken(Map<String, Object> claims, String subject) {
     return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-        .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+        .signWith(SECRET_KEY, SignatureAlgorithm.HS256).compact();
   }
 
-  public Boolean validateToken(String token, UserDetails userDetails) {
+  public Boolean validateToken(String token, SecurityUser userDetails) {
     final String username = extractUsername(token);
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
