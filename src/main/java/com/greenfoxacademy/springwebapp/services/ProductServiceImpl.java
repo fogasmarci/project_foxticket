@@ -19,10 +19,6 @@ public class ProductServiceImpl implements ProductService {
     this.productRepository = productRepository;
   }
 
-  public List<Product> findAllProducts() {
-    return productRepository.findAll();
-  }
-
   @Override
   public ProductListDTO listProductDetails() {
     List<Product> productsList = new ArrayList<>(productRepository.findAll());
