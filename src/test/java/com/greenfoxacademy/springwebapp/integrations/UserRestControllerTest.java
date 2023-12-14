@@ -1,10 +1,8 @@
-package com.greenfoxacademy.springwebapp.controllers;
+package com.greenfoxacademy.springwebapp.integrations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
-import com.greenfoxacademy.springwebapp.services.UserService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,10 +34,7 @@ public class UserRestControllerTest {
 
   @Test
   public void manageRegistrationRequests_WithNoEmail_ReturnsCorrectErrorMessage() throws Exception {
-    UserService userServiceMock = Mockito.mock(UserService.class);
     RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("User1", null, "password");
-    given(userServiceMock.createUser("User1", null, "password"))
-        .willThrow(new IllegalArgumentException("Email is required."));
     mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))

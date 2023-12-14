@@ -11,5 +11,5 @@ public interface UserService {
 
   RegistrationResponseDTO createRegistrationDTO(User user);
 
-  User registrateUser(RegistrationRequestDTO requestDTO);
+  User registerUser(RegistrationRequestDTO requestDTO);
 }

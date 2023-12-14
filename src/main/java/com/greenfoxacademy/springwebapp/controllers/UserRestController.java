@@ -21,9 +21,9 @@ public class UserRestController {
   }
 
   @PostMapping(path = "/users")
-  public ResponseEntity<?> registrateUser(@RequestBody RegistrationRequestDTO requestDTO) {
+  public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDTO requestDTO) {
     try {
-      return ResponseEntity.status(200).body(userService.createRegistrationDTO(userService.registrateUser(requestDTO)));
+      return ResponseEntity.status(200).body(userService.createRegistrationDTO(userService.registerUser(requestDTO)));
     } catch (MissingFieldsException | RegistrationException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }

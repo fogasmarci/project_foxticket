@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User registrateUser(RegistrationRequestDTO requestDTO) {
+  public User registerUser(RegistrationRequestDTO requestDTO) {
     if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
       throw new AllFieldsMissingException();
     }
