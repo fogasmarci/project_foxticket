@@ -3,7 +3,8 @@ package com.greenfoxacademy.springwebapp.controllers;
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
-import com.greenfoxacademy.springwebapp.models.User;
+import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
 import com.greenfoxacademy.springwebapp.services.ErrorService;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -25,18 +26,10 @@ public class UserRestController {
 
   @PostMapping(path = "/users")
   public ResponseEntity<?> manageRegistrationRequests(@RequestBody RegistrationRequestDTO requestDTO) {
-    if (!userService.isRegistrationRequestValid(requestDTO)) {
-      return ResponseEntity.status(400).body(errorService.createRegistrationErrorMessage(requestDTO));
+    try {
+      return ResponseEntity.status(200).body(userService.createRegistrationDTO(userService.registrateUser(requestDTO)));
+    } catch (MissingFieldsException | RegistrationException e) {
+      return ResponseEntity.badRequest().body(errorService.createErrorMessage(e.getMessage()));
     }
-    User newUser = userService.createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
-    return ResponseEntity.status(200).body(userService.createRegistrationDTO(newUser));
-  }
-
-  @PostMapping(path = "/users/login")
-  public ResponseEntity<?> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
-    if (!userService.isRegistrationRequestValid(loginUserDTO)) {
-      return ResponseEntity.status(400).body(errorService.createRegistrationErrorMessage(loginUserDTO));
-    }
-    return ResponseEntity.status(200).build();
   }
 }

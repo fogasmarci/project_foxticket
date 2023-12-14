@@ -1,0 +1,5 @@
+INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
+VALUES ('TestUser', 'user@user.user', '12345678', 'ROLE_USER');
+
+INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
+VALUES ('TestAdmin', 'admin@admin.admin', 'adminadmin', 'ROLE_USER,ROLE_ADMIN');
