@@ -1,8 +1,5 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-import com.greenfoxacademy.springwebapp.models.ProductType;
-import jakarta.persistence.ManyToOne;
-
 public class ProductDTO {
   private Long id;
   private String name;
@@ -13,12 +10,14 @@ public class ProductDTO {
 
   public ProductDTO() {}
 
-  public ProductDTO(String name, int price, int duration, String description, String type) {
+  public ProductDTO(Long id, String name, int price, int duration, String description, String type) {
     this();
+    this.id = id;
     this.name = name;
     this.price = price;
     this.duration = duration;
     this.description = description;
+    this.type = type;
   }
 
   public Long getId() {

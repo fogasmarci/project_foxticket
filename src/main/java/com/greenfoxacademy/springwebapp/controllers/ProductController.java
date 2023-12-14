@@ -15,7 +15,7 @@ public class ProductController {
   }
 
   @RequestMapping(path = "/api/products", method = RequestMethod.GET)
-  public ResponseEntity<?> getInformationAboutProducts() {
-      return ResponseEntity.status(200).body();
+  public ResponseEntity<?> getProductDetails() {
+      return ResponseEntity.status(200).body(productService.listProductDetails());
   }
 }
