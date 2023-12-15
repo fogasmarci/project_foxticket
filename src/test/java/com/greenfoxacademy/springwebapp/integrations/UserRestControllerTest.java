@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.integrations;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;

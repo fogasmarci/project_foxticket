@@ -35,6 +35,7 @@ public class SecurityConfig {
     http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
     http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/register").permitAll()
+            .requestMatchers("/api/news").permitAll()
             .requestMatchers("/api/users/**").permitAll()
             .anyRequest().authenticated())
         .userDetailsService(myUserDetailsService)
