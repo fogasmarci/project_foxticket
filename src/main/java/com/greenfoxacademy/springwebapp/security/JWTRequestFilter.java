@@ -24,9 +24,9 @@ import java.io.IOException;
 
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
-  private JpaUserDetailsService userDetailService;
-  private JWTUtil jwtUtil;
   private final ObjectMapper objectMapper;
+  private final JpaUserDetailsService userDetailService;
+  private final JWTUtil jwtUtil;
 
   @Autowired
   public JWTRequestFilter(JpaUserDetailsService userDetailService, JWTUtil jwtUtil, ObjectMapper objectMapper) {
@@ -55,7 +55,11 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         }
       }
       chain.doFilter(request, response);
-    } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | IllegalArgumentException | SignatureException e) {
+    } catch (ExpiredJwtException
+             | UnsupportedJwtException
+             | MalformedJwtException
+             | IllegalArgumentException
+             | SignatureException e) {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
       response.getWriter().write(objectMapper.writeValueAsString(new MessageDTO("Invalid token")));
     }

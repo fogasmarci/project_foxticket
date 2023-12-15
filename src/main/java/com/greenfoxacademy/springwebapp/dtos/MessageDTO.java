@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class MessageDTO {
-  private String message;
+  private final String message;
 
   public MessageDTO(String message) {
     this.message = message;

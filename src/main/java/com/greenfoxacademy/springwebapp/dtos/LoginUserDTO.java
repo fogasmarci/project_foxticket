@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class LoginUserDTO {
-  private String email;
-  private String password;
+  private final String email;
+  private final String password;
 
   public LoginUserDTO(String email, String password) {
     this.email = email;

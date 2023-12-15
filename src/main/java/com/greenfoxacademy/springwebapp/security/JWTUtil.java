@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 @Service
 public class JWTUtil {
-  private Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+  private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
   public String extractEmail(String token) {
     return extractClaim(token, claims -> claims.get("sub", String.class));

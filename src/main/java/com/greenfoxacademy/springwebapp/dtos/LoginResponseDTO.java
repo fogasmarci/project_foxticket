@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class LoginResponseDTO {
-  private String status;
-  private String token;
+  private final String status;
+  private final String token;
 
   public LoginResponseDTO(String token) {
     status = "ok";
