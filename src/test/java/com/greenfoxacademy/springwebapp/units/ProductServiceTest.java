@@ -5,6 +5,7 @@ import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
+import com.greenfoxacademy.springwebapp.repositories.ProductTypeRepository;
 import com.greenfoxacademy.springwebapp.services.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,11 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 public class ProductServiceTest {
   private ProductRepository productRepository;
+  private ProductTypeRepository productTypeRepository;
   private ProductServiceImpl productService;
 
   public ProductServiceTest() {
     productRepository = Mockito.mock(ProductRepository.class);
-    productService = new ProductServiceImpl(productRepository);
+
+    productService = new ProductServiceImpl(productRepository, productTypeRepository);
   }
 
   @Test
