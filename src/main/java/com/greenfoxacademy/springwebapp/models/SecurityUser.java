@@ -9,9 +9,13 @@ import java.util.Collection;
 
 public class SecurityUser implements UserDetails {
   private final User user;
+  private final boolean isAdmin;
+  private final boolean isVerified;
 
   public SecurityUser(User user) {
     this.user = user;
+    isAdmin = false;
+    isVerified = false;
   }
 
   @Override
@@ -51,5 +55,21 @@ public class SecurityUser implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  public String getEmail() {
+    return user.getEmail();
+  }
+
+  public long getId() {
+    return user.getId();
+  }
+
+  public boolean getIsAdmin() {
+    return isAdmin;
+  }
+
+  public boolean getIsVerified() {
+    return isVerified;
   }
 }
