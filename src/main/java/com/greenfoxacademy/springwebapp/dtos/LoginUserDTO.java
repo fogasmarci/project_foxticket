@@ -1,18 +1,12 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-public class RegistrationRequestDTO {
-  private final String name;
+public class LoginUserDTO {
   private final String email;
   private final String password;
 
-  public RegistrationRequestDTO(String name, String email, String password) {
-    this.name = name;
+  public LoginUserDTO(String email, String password) {
     this.email = email;
     this.password = password;
-  }
-
-  public String getName() {
-    return name;
   }
 
   public String getEmail() {

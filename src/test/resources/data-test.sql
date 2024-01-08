@@ -55,7 +55,8 @@ CREATE TABLE USERS
 );
 
 INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
-VALUES ('TestUser', 'user@user.user', '12345678', 'ROLE_USER');
+VALUES ('TestUser', 'user@user.user', '$2a$10$n.AMx5SrMrlOnJSmsTrgU.rvT4GFKsBFFaGJ8W3JjB8JNcroGx5ga', 'ROLE_USER');
 
 INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
-VALUES ('TestAdmin', 'admin@admin.admin', 'adminadmin', 'ROLE_USER,ROLE_ADMIN');
+VALUES ('TestAdmin', 'admin@admin.admin', '$2a$10$VS4h6XF1O69GxtXdCHrd6exTKGBlPW3EnRRNrVMuvZkKIp6PqkTRS',
+        'ROLE_USER,ROLE_ADMIN');
