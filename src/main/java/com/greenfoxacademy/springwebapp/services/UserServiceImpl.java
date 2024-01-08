@@ -11,9 +11,14 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.PasswordRequiredExcept
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordException;
+import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
+import com.greenfoxacademy.springwebapp.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +26,17 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
+  private final JWTUtil jwtUtil;
+  private final JpaUserDetailsService userDetailsService;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTUtil jwtUtil, JpaUserDetailsService userDetailsService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.authenticationManager = authenticationManager;
+    this.jwtUtil = jwtUtil;
+    this.userDetailsService = userDetailsService;
   }
 
   @Override
@@ -83,5 +94,18 @@ public class UserServiceImpl implements UserService {
       throw new IncorrectCredentialsException();
     }
     return new LoginResponseDTO(jwt);
+  }
+
+  @Override
+  public String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception {
+    try {
+      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
+    } catch (BadCredentialsException e) {
+      return "Incorrect username or password";
+    }
+
+    final SecurityUser userDetails = userDetailsService.loadUserByUsername(loginUserDTO.getEmail());
+
+    return jwtUtil.generateToken(userDetails);
   }
 }

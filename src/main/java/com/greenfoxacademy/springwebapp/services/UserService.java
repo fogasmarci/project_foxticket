@@ -16,4 +16,6 @@ public interface UserService {
   User registerUser(RegistrationRequestDTO requestDTO);
 
   LoginResponseDTO loginUser(LoginUserDTO loginUserDTO, String jwt);
+
+  String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception;
 }
