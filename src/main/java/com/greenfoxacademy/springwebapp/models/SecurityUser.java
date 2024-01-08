@@ -57,6 +57,10 @@ public class SecurityUser implements UserDetails {
     return true;
   }
 
+  public String getEmail() {
+    return user.getEmail();
+  }
+
   public long getId() {
     return user.getId();
   }

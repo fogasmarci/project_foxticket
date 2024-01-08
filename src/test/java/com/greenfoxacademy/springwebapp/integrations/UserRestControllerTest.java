@@ -86,6 +86,67 @@ public class UserRestControllerTest {
   }
 
   @Test
+  public void loginUser_WithNoPassword_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("example@example.com", null);
+    mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Password is required."));
+  }
+
+  @Test
+  public void loginUser_WithNoEmail_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO(null, "password");
+    mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Email is required."));
+  }
+
+  @Test
+  public void loginUser_WithNoInput_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO(null, null);
+    mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("All fields are required."));
+  }
+
+  @Test
+  public void loginUser_WithIncorrectPassword_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "123456789");
+    mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Email or password is incorrect."));
+  }
+
+  @Test
+  public void loginUser_WithIncorrectEmail_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.userrr", "12345678");
+    mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Email or password is incorrect."));
+  }
+
+  @Test
+  public void loginUser_WithGoodInput_ReturnsJwtToken() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.status").value("ok"))
+        .andExpect(jsonPath("$.token").exists());
+  }
+  
+  @Test
   public void manageRegistrationRequests_WithShortPassword_ReturnsCorrectErrorMessage() throws Exception {
     RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("User1", "user@user.user", "1234");
     mockMvc.perform(post("/api/users")

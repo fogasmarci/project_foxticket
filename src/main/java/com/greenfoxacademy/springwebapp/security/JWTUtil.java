@@ -48,7 +48,7 @@ public class JWTUtil {
     claims.put("isAdmin", userDetails.getIsAdmin());
     claims.put("isVerified", userDetails.getIsVerified());
 
-    return createToken(claims, userDetails.getUsername());
+    return createToken(claims, userDetails.getEmail());
   }
 
   private String createToken(Map<String, Object> claims, String subject) {
@@ -58,7 +58,19 @@ public class JWTUtil {
   }
 
   public Boolean validateToken(String token, SecurityUser userDetails) {
-    final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    final String email = extractEmail(token);
+    final boolean isEmailMatch = email.equals(userDetails.getEmail());
+    final boolean isTokenValid = !isTokenExpired(token);
+
+    Claims claims = extractAllClaims(token);
+    final Integer userId = (Integer) claims.get("userId");
+    final boolean isAdmin = (boolean) claims.get("isAdmin");
+    final boolean isVerified = (boolean) claims.get("isVerified");
+
+    return isEmailMatch
+        && isTokenValid
+        && userId == (userDetails.getId())
+        && isAdmin == userDetails.getIsAdmin()
+        && isVerified == userDetails.getIsVerified();
   }
 }

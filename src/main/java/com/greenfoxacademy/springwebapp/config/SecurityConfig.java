@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.config;
 
+import com.greenfoxacademy.springwebapp.security.JWTRequestFilter;
 import com.greenfoxacademy.springwebapp.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,16 +14,19 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
   private final JpaUserDetailsService myUserDetailsService;
+  private final JWTRequestFilter jwtRequestFilter;
 
   @Autowired
-  public SecurityConfig(JpaUserDetailsService myUserDetailsService) {
+  public SecurityConfig(JpaUserDetailsService myUserDetailsService, JWTRequestFilter jwtRequestFilter) {
     this.myUserDetailsService = myUserDetailsService;
+    this.jwtRequestFilter = jwtRequestFilter;
   }
 
   @Bean
@@ -34,8 +38,8 @@ public class SecurityConfig {
             .requestMatchers("/api/users/**").permitAll()
             .requestMatchers("/api/**").permitAll()
             .anyRequest().authenticated())
-        .userDetailsService(myUserDetailsService);
-
+        .userDetailsService(myUserDetailsService)
+        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
