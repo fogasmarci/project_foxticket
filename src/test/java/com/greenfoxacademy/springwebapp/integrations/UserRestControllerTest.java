@@ -86,6 +86,16 @@ public class UserRestControllerTest {
   }
 
   @Test
+  public void manageRegistrationRequests_WithShortPassword_ReturnsCorrectErrorMessage() throws Exception {
+    RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("User1", "user@user.user", "1234");
+    mockMvc.perform(post("/api/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Password must be at least 8 characters."));
+  }
+
+  @Test
   public void loginUser_WithNoPassword_ReturnsCorrectErrorMessage() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("example@example.com", null);
     mockMvc.perform(post("/api/users/login")
@@ -144,14 +154,5 @@ public class UserRestControllerTest {
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.status").value("ok"))
         .andExpect(jsonPath("$.token").exists());
-  
-  @Test
-  public void manageRegistrationRequests_WithShortPassword_ReturnsCorrectErrorMessage() throws Exception {
-    RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("User1", "user@user.user", "1234");
-    mockMvc.perform(post("/api/users")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(requestDTO)))
-        .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Password must be at least 8 characters."));
   }
 }
