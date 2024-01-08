@@ -1,11 +1,14 @@
 package com.greenfoxacademy.springwebapp.services;
 
+import com.greenfoxacademy.springwebapp.dtos.LoginResponseDTO;
+import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.AllFieldsMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.EmailRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.NameRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.PasswordRequiredException;
+import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordException;
 import com.greenfoxacademy.springwebapp.models.User;
@@ -62,5 +65,23 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyTakenException();
     }
     return createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
+  }
+
+  @Override
+  public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO, String jwt) {
+    if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
+      throw new AllFieldsMissingException();
+    }
+    if (loginUserDTO.getPassword() == null) {
+      throw new PasswordRequiredException();
+    }
+    if (loginUserDTO.getEmail() == null) {
+      throw new EmailRequiredException();
+    }
+    User user = userRepository.findByEmail(loginUserDTO.getEmail()).orElse(null);
+    if (user == null || !passwordEncoder.matches(loginUserDTO.getPassword(), user.getPassword())) {
+      throw new IncorrectCredentialsException();
+    }
+    return new LoginResponseDTO(jwt);
   }
 }

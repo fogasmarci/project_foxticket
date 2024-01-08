@@ -1,9 +1,9 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class RegistrationResponseDTO {
-  private long id;
-  private String email;
-  private boolean isAdmin;
+  private final long id;
+  private final String email;
+  private final boolean isAdmin;
 
   public RegistrationResponseDTO(long id, String email, boolean isAdmin) {
     this.id = id;

@@ -2,7 +2,6 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ public class JpaUserDetailsService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+  public SecurityUser loadUserByUsername(String email) throws UsernameNotFoundException {
     return userRepository
         .findByEmail(email)
         .map(SecurityUser::new)
