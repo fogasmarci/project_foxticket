@@ -15,10 +15,10 @@ import java.util.function.Function;
 
 @Service
 public class JWTUtil {
-  private Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+  private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-  public String extractUsername(String token) {
-    return extractClaim(token, Claims::getSubject);
+  public String extractEmail(String token) {
+    return extractClaim(token, claims -> claims.get("sub", String.class));
   }
 
   public Date extractExpiration(String token) {
@@ -31,11 +31,12 @@ public class JWTUtil {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parserBuilder()
+    Claims claims = Jwts.parserBuilder()
         .setSigningKey(SECRET_KEY)
         .build()
         .parseClaimsJws(token)
         .getBody();
+    return claims;
   }
 
   private Boolean isTokenExpired(String token) {
