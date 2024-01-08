@@ -6,3 +6,34 @@ INSERT INTO PRODUCTS (NAME, PRICE, DURATION, DESCRIPTION, TYPE_ID)
 VALUES ('teszt jegy 1', 480, 90, 'teszt1', 1),
        ('teszt bérlet 1', 4000, 9000, 'teszt2', 2),
        ('teszt bérlet 2', 9500, 9000, 'teszt3', 2);
+
+DROP TABLE IF EXISTS news;
+CREATE TABLE news
+(
+    ID          INT NOT NULL AUTO_INCREMENT,
+    TITLE       VARCHAR(100) DEFAULT NULL,
+    CONTENT     VARCHAR(100) DEFAULT NULL,
+    PUBLISHDATE DATE         DEFAULT NULL,
+    PRIMARY KEY (ID)
+);
+
+INSERT INTO news (TITLE, CONTENT, PUBLISHDATE)
+VALUES ('News about tickets', 'Ipsum Lorum', '2023-12-11');
+INSERT INTO news (TITLE, CONTENT, PUBLISHDATE)
+VALUES ('Test Title', 'Test Content', '2023-12-11');
+
+DROP TABLE IF EXISTS USERS;
+CREATE TABLE USERS
+(
+    ID       int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    NAME     varchar(100) DEFAULT NULL,
+    PASSWORD varchar(100) DEFAULT NULL,
+    EMAIL    varchar(100) DEFAULT NULL UNIQUE,
+    ROLES    varchar(100) DEFAULT NULL
+);
+
+INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
+VALUES ('TestUser', 'user@user.user', '12345678', 'ROLE_USER');
+
+INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES)
+VALUES ('TestAdmin', 'admin@admin.admin', 'adminadmin', 'ROLE_USER,ROLE_ADMIN');

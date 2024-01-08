@@ -6,10 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Disabled
 @SpringBootTest
+@Disabled
 class BasicSpringProjectApplicationTests {
 
   @Test
   void contextLoads() {
   }
-
 }
