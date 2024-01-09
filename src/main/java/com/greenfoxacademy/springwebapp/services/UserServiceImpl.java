@@ -1,16 +1,24 @@
 package com.greenfoxacademy.springwebapp.services;
 
+import com.greenfoxacademy.springwebapp.dtos.LoginResponseDTO;
+import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.AllFieldsMissingException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.EmailRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.NameRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.PasswordRequiredException;
+import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordException;
+import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
+import com.greenfoxacademy.springwebapp.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +26,17 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
+  private final JWTUtil jwtUtil;
+  private final JpaUserDetailsService userDetailsService;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTUtil jwtUtil, JpaUserDetailsService userDetailsService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.authenticationManager = authenticationManager;
+    this.jwtUtil = jwtUtil;
+    this.userDetailsService = userDetailsService;
   }
 
   @Override
@@ -62,5 +76,36 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyTakenException();
     }
     return createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
+  }
+
+  @Override
+  public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO, String jwt) {
+    if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
+      throw new AllFieldsMissingException();
+    }
+    if (loginUserDTO.getPassword() == null) {
+      throw new PasswordRequiredException();
+    }
+    if (loginUserDTO.getEmail() == null) {
+      throw new EmailRequiredException();
+    }
+    User user = userRepository.findByEmail(loginUserDTO.getEmail()).orElse(null);
+    if (user == null || !passwordEncoder.matches(loginUserDTO.getPassword(), user.getPassword())) {
+      throw new IncorrectCredentialsException();
+    }
+    return new LoginResponseDTO(jwt);
+  }
+
+  @Override
+  public String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception {
+    try {
+      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
+    } catch (BadCredentialsException e) {
+      return "Incorrect username or password";
+    }
+
+    final SecurityUser userDetails = userDetailsService.loadUserByUsername(loginUserDTO.getEmail());
+
+    return jwtUtil.generateToken(userDetails);
   }
 }
