@@ -5,9 +5,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +17,12 @@ import java.util.function.Function;
 
 @Service
 public class JWTUtil {
-  private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+  private final Key SECRET_KEY;
+
+  public JWTUtil(@Value("${jwt-secret}") String encodedSecretKey) {
+    SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(encodedSecretKey));
+  }
 
   public String extractEmail(String token) {
     return extractClaim(token, claims -> claims.get("sub", String.class));
