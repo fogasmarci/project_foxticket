@@ -18,7 +18,7 @@ public class JpaUserDetailsService implements UserDetailsService {
   public SecurityUser loadUserByUsername(String email) throws UsernameNotFoundException {
     return userRepository
         .findByEmail(email)
-        .map(SecurityUser::new) // create a new instance of SecurityUser using the constructor of the SecurityUser class
+        .map(SecurityUser::new)
         .orElseThrow(() -> new UsernameNotFoundException("Email not found: " + email));
   }
 }

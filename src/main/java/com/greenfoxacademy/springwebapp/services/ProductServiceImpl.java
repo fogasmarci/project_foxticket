@@ -56,6 +56,8 @@ public class ProductServiceImpl implements ProductService {
   }
 
   public Product createProduct(ProductDTOWithoutID productDTOWithoutID) {
+    ProductType productType = findProductTypeById(productDTOWithoutID.getTypeId());
+
     if (productDTOWithoutID.getName().isEmpty()) {
       throw new MissingFieldsException("Name is missing");
     }
@@ -76,12 +78,11 @@ public class ProductServiceImpl implements ProductService {
       throw new ProductNameAlreadyTakenException();
     }
 
-    if (findProductTypeById(productDTOWithoutID.getTypeId()) == null) {
+    if (productType == null) {
       throw new InvalidProductTypeException();
     }
 
     Product productToSave = new Product(productDTOWithoutID.getName(), productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
-    ProductType productType = findProductTypeById(productDTOWithoutID.getTypeId());
     productToSave.setType(productType);
     productRepository.save(productToSave);
 
