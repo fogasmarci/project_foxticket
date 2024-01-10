@@ -6,11 +6,8 @@ import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.login.LoginException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
-import com.greenfoxacademy.springwebapp.security.JWTUtil;
-import com.greenfoxacademy.springwebapp.services.JpaUserDetailsService;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,15 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api")
 public class UserRestController {
   private final UserService userService;
-  private final JpaUserDetailsService userDetailsService;
-  private final JWTUtil jwtUtil;
-  private final AuthenticationManager authenticationManager;
 
-  public UserRestController(UserService userService, JpaUserDetailsService userDetailsService, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
+  public UserRestController(UserService userService) {
     this.userService = userService;
-    this.userDetailsService = userDetailsService;
-    this.jwtUtil = jwtUtil;
-    this.authenticationManager = authenticationManager;
   }
 
   @PostMapping(path = "/users")

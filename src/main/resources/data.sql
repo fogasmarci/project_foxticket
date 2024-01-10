@@ -13,4 +13,5 @@ INSERT INTO news (TITLE, CONTENT, PUBLISH_DATE)
 VALUES ('Road block', 'akarmi, anything, fdgjkfdkjfdkjfdkjfdkjfdkjfdkj', '2023-12-13');
 
 INSERT INTO `USERS` (`NAME`, `EMAIL`, `PASSWORD`, `ROLES`)
-VALUES ('Admin', 'admin@admin.com', '$2a$10$x44csP50u/GqqeNtLW/44OLrzGq0taFv7nIb86aUw2gvrEJqiR8By', 'ROLE_USER,ROLE_ADMIN');
+VALUES ('Admin', 'admin@admin.com', '$2a$10$x44csP50u/GqqeNtLW/44OLrzGq0taFv7nIb86aUw2gvrEJqiR8By',
+        'ROLE_USER,ROLE_ADMIN');
