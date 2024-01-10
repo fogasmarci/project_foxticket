@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -26,7 +25,7 @@ public class CartServiceImpl implements CartService {
 
   @Override
   @Transactional
-  public void addProductToCart(Cart cart, Long productId) throws ProductException {
+  public void addProductToCart(Cart cart, Long productId) {
     if (productId == null) {
       throw new ProductIdMissingException();
     }
