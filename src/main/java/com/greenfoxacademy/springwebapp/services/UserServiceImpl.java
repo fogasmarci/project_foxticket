@@ -14,7 +14,7 @@ import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordExc
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
-import com.greenfoxacademy.springwebapp.security.JWTUtil;
+import com.greenfoxacademy.springwebapp.security.JwtBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,15 +27,15 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
-  private final JWTUtil jwtUtil;
+  private final JwtBuilder jwtBuilder;
   private final JpaUserDetailsService userDetailsService;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JWTUtil jwtUtil, JpaUserDetailsService userDetailsService) {
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtBuilder jwtBuilder, JpaUserDetailsService userDetailsService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
-    this.jwtUtil = jwtUtil;
+    this.jwtBuilder = jwtBuilder;
     this.userDetailsService = userDetailsService;
   }
 
@@ -106,6 +106,6 @@ public class UserServiceImpl implements UserService {
 
     final SecurityUser userDetails = userDetailsService.loadUserByUsername(loginUserDTO.getEmail());
 
-    return jwtUtil.generateToken(userDetails);
+    return jwtBuilder.generateToken(userDetails);
   }
 }

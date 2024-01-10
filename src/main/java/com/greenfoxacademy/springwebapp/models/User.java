@@ -21,6 +21,12 @@ public class User {
     roles = "ROLE_USER";
   }
 
+  public User(Long userId, String email) {
+    this();
+    this.id = userId;
+    this.email = email;
+  }
+
   public User(String name, String email, String password) {
     this();
     this.name = name;

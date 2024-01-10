@@ -29,6 +29,12 @@ public class JwtTokenTests {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
+    public void callingAPI_Without_Token_Should_Fail() throws Exception {
+        mockMvc.perform(get("/__test"))
+                .andExpect(status().is(403));
+    }
+
+    @Test
     public void callingAPI_With_Invalid_Token_Should_Fail() throws Exception {
         String jwtToken = "not valid token";
         mockMvc.perform(get("/__test")
