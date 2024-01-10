@@ -32,6 +32,7 @@ public class CartController {
     SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
     User user = securityUser.getUser();
     Cart cart = cartService.findCartByUser(user);
+
     try {
       Long productId = productIdDTO.getProductId();
       cartService.addProductToCart(cart, productId);
