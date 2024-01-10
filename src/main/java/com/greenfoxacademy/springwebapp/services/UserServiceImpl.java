@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception {
+  public String createLoginResponse(LoginUserDTO loginUserDTO) {
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
