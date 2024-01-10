@@ -5,6 +5,7 @@ import com.greenfoxacademy.springwebapp.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,9 +35,10 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable);
     http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
     http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/register").permitAll()
+              .requestMatchers("/register").permitAll()
+            .requestMatchers(HttpMethod.POST,"/api/products").hasRole("ADMIN")
             .requestMatchers("/api/users/**").permitAll()
-            .requestMatchers("/api/**").permitAll()
+            /*.requestMatchers("/api/**").permitAll()*/
             .anyRequest().authenticated())
         .userDetailsService(myUserDetailsService)
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
