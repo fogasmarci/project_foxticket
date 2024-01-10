@@ -3,7 +3,8 @@ package com.greenfoxacademy.springwebapp.controllers;
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
-import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
+import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
+import com.greenfoxacademy.springwebapp.exceptions.producttype.ProductTypeException;
 import com.greenfoxacademy.springwebapp.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ProductController {
   public ResponseEntity<?> addNewProduct(@RequestBody ProductDTOWithoutID productDTOWithoutID) {
     try {
       return ResponseEntity.status(200).body(productService.createProductDTO(productService.createProduct(productDTOWithoutID)));
-    } catch (MissingFieldsException | RegistrationException e) {
+    } catch (MissingFieldsException | ProductException | ProductTypeException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }

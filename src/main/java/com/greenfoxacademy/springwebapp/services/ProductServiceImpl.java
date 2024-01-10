@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
       throw new MissingFieldsException("Type ID is missing");
     }
 
-    if (findProductByName(productDTOWithoutID.getName()) == null) {
+    if (!(findProductByName(productDTOWithoutID.getName()) == null)) {
       throw new ProductNameAlreadyTakenException();
     }
 
