@@ -28,9 +28,7 @@ public class CartController {
 
   @RequestMapping(path = "/api/cart", method = RequestMethod.POST)
   public ResponseEntity<?> addProductToCart(@RequestBody ProductIdDTO productIdDTO) {
-    SecurityContext context = SecurityContextHolder.getContext();
-    SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
-    User user = securityUser.getUser();
+    User user = cartService.findLoggedInUser();
     Cart cart = cartService.findCartByUser(user);
 
     try {
