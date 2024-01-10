@@ -22,50 +22,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
-
 public class JwtTokenTests {
-    @Autowired
-    MockMvc mockMvc;
-    ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  MockMvc mockMvc;
+  ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    public void callingAPI_Without_Token_Should_Fail() throws Exception {
-        mockMvc.perform(get("/__test"))
-                .andExpect(status().is(403));
-    }
+  @Test
+  public void callingAuthenticatedEndpoint_WithNoToken_ShouldFail() throws Exception {
+    mockMvc.perform(get("/api/products"))
+        .andExpect(status().is(401));
+  }
 
-    @Test
-    public void callingAPI_With_Invalid_Token_Should_Fail() throws Exception {
-        String jwtToken = "not valid token";
-        mockMvc.perform(get("/__test")
-                        .header("Authorization", "Bearer " + jwtToken)
-                )
-                .andExpect(status().is(401));
-    }
+  @Test
+  public void callingAuthenticatedEndpoint_WithInvalidToken_ShouldFail() throws Exception {
+    String jwtToken = "not valid token";
+    mockMvc.perform(get("/api/products")
+            .header("Authorization", "Bearer " + jwtToken)
+        )
+        .andExpect(status().is(401));
+  }
 
-    @Test
-    public void callingAPI_With_Token_Should_Succeed() throws Exception {
-        String jwtToken = login();
+  @Test
+  public void callingAuthenticatedEndpoint_WithGoodToken_ShouldSucceed() throws Exception {
+    String jwtToken = login();
+    mockMvc.perform(get("/api/products")
+            .header("Authorization", "Bearer " + jwtToken)
+        )
+        .andExpect(status().is(200));
+  }
 
-        mockMvc.perform(get("/__test")
-                        .header("Authorization", "Bearer " + jwtToken)
-                )
-                .andExpect(status().is(200));
-    }
+  private String login() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String responseContent = mockMvc.perform(post("/api/users/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginUserDTO)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.status").value("ok"))
+        .andExpect(jsonPath("$.token").exists())
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
 
-    private String login() throws Exception {
-        LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
-        String responseContent = mockMvc.perform(post("/api/users/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginUserDTO)))
-                .andExpect(status().is(200))
-                .andExpect(jsonPath("$.status").value("ok"))
-                .andExpect(jsonPath("$.token").exists())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        Map<String, String> map = objectMapper.readValue(responseContent, Map.class);
-        return map.get("token");
-    }
+    Map<String, String> map = objectMapper.readValue(responseContent, Map.class);
+    return map.get("token");
+  }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
-import com.greenfoxacademy.springwebapp.services.JpaUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.micrometer.common.util.StringUtils;
@@ -23,14 +22,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JWTRequestFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final ObjectMapper objectMapper;
-  private final JwtBuilder jwtBuilder;
   private final JwtValidatorService jwtValidatorService;
 
   @Autowired
-  public JWTRequestFilter(JpaUserDetailsService userDetailService, JwtBuilder jwtBuilder, ObjectMapper objectMapper, JwtValidatorService jwtValidatorService) {
-    this.jwtBuilder = jwtBuilder;
+  public JwtAuthenticationFilter(ObjectMapper objectMapper, JwtValidatorService jwtValidatorService) {
     this.objectMapper = objectMapper;
     this.jwtValidatorService = jwtValidatorService;
   }
