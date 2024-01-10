@@ -18,4 +18,6 @@ public interface UserService {
   LoginResponseDTO loginUser(LoginUserDTO loginUserDTO, String jwt);
 
   String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception;
+
+  User findLoggedInUser();
 }

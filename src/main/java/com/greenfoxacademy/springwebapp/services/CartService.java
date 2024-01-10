@@ -7,6 +7,4 @@ public interface CartService {
   void addProductToCart(Cart cart, Long productId);
 
   Cart findCartByUser(User user);
-
-  User findLoggedInUser();
 }

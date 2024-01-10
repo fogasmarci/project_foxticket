@@ -7,6 +7,7 @@ import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.CartService;
+import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,15 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CartController {
   private CartService cartService;
+  private UserService userService;
 
   @Autowired
-  public CartController(CartService cartService) {
+  public CartController(CartService cartService, UserService userService) {
     this.cartService = cartService;
+    this.userService = userService;
   }
 
   @RequestMapping(path = "/api/cart", method = RequestMethod.POST)
   public ResponseEntity<?> addProductToCart(@RequestBody ProductIdDTO productIdDTO) {
-    User user = cartService.findLoggedInUser();
+    User user = userService.findLoggedInUser();
     Cart cart = cartService.findCartByUser(user);
 
     try {

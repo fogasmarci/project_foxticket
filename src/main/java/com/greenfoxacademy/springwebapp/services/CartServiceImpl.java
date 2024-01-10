@@ -4,13 +4,10 @@ import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidExcep
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.Product;
-import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -46,12 +43,5 @@ public class CartServiceImpl implements CartService {
   @Override
   public Cart findCartByUser(User user) {
     return cartRepository.findByUser(user);
-  }
-
-  @Override
-  public User findLoggedInUser() {
-    SecurityContext context = SecurityContextHolder.getContext();
-    SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
-    return securityUser.getUser();
   }
 }
