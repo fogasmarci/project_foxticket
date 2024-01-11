@@ -28,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     this.productTypeRepository = productTypeRepository;
   }
 
+  @Override
   public Product findProductByName(String name) {
     return productRepository.findByName(name).orElse(null);
   }
@@ -56,12 +57,14 @@ public class ProductServiceImpl implements ProductService {
     return productListDTO;
   }
 
+  @Override
   public ProductDTO createProductDTO(Product product) {
     return new ProductDTO(product.getId(), product.getName(), product.getPrice(),
         product.getDuration(), product.getDescription(), product.getType().getName());
   }
 
-  public Product createProduct(ProductDTOWithoutID productDTOWithoutID) {
+  @Override
+  public ProductDTO createProduct(ProductDTOWithoutID productDTOWithoutID) {
     if (productDTOWithoutID.getName().isEmpty()) {
       throw new MissingFieldsException("Name is missing");
     }
@@ -87,8 +90,11 @@ public class ProductServiceImpl implements ProductService {
       throw new InvalidProductTypeException();
     }
 
-    Product productToSave = new Product(productDTOWithoutID.getName(), productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
+    Product productToSave = new Product(productDTOWithoutID.getName(),
+        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
     productToSave.setType(productType);
-    return productRepository.save(productToSave);
+    productRepository.save(productToSave);
+
+    return createProductDTO(productToSave);
   }
 }

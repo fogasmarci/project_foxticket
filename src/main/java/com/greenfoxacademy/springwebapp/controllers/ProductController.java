@@ -30,7 +30,7 @@ public class ProductController {
   @RequestMapping(path = "/api/products", method = RequestMethod.POST)
   public ResponseEntity<?> addNewProduct(@RequestBody ProductDTOWithoutID productDTOWithoutID) {
     try {
-      return ResponseEntity.status(200).body(productService.createProductDTO(productService.createProduct(productDTOWithoutID)));
+      return ResponseEntity.status(200).body(productService.createProduct(productDTOWithoutID));
     } catch (MissingFieldsException | ProductException | ProductTypeException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }

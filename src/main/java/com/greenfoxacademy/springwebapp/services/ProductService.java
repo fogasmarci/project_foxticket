@@ -18,7 +18,7 @@ public interface ProductService {
 
   ProductDTO createProductDTO(Product product);
 
-  Product createProduct(ProductDTOWithoutID productDTOWithoutID);
+  ProductDTO createProduct(ProductDTOWithoutID productDTOWithoutID);
 
   Optional<Product> findProductById(Long productId);
 }
