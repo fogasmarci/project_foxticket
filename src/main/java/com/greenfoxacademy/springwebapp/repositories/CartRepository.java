@@ -1,0 +1,15 @@
+package com.greenfoxacademy.springwebapp.repositories;
+
+import com.greenfoxacademy.springwebapp.models.Cart;
+import com.greenfoxacademy.springwebapp.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface CartRepository extends JpaRepository<Cart, Long> {
+  Optional<Cart> findById(Long id);
+
+  Cart findByUser(User user);
+}

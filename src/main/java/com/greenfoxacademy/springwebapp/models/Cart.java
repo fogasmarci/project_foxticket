@@ -6,35 +6,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "product_types")
-public class ProductType {
+@Table(name = "carts")
+public class Cart {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String name;
-
-  @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "type", fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(name = "cart_product",
+      joinColumns = @JoinColumn(name = "cart_id"),
+      inverseJoinColumns = @JoinColumn(name = "product_id"))
   private List<Product> products;
+  @OneToOne(mappedBy = "cart")
+  private User user;
 
-  public ProductType() {
+  public Cart() {
     products = new ArrayList<>();
-  }
-
-  public ProductType(String name) {
-    this();
-    this.name = name;
   }
 
   public Long getId() {
     return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public List<Product> getProducts() {
@@ -43,6 +33,10 @@ public class ProductType {
 
   public void addProduct(Product product) {
     products.add(product);
-    product.setType(this);
+    product.addCart(this);
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 }

@@ -16,9 +16,13 @@ public class User {
   @JsonIgnore
   private String password;
   private String roles;
+  @OneToOne(cascade = CascadeType.ALL)
+  private Cart cart;
 
   public User() {
     roles = "ROLE_USER";
+    cart = new Cart();
+    cart.setUser(this);
   }
 
   public User(Long userId, String email) {
@@ -68,5 +72,9 @@ public class User {
 
   public void setRoles(String roles) {
     this.roles = roles;
+  }
+
+  public Cart getCart() {
+    return cart;
   }
 }
