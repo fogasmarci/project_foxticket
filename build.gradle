@@ -20,7 +20,7 @@ repositories {
 
 //Checkstyle
 checkstyle {
-    toolVersion "8.32"
+    toolVersion "10.3.3"
     configFile file("config/checkstyle/checkstyle.xml")
 }
 checkstyleMain {
