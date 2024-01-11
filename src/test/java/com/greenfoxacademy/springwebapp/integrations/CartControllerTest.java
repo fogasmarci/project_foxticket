@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.integrations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
-import com.greenfoxacademy.springwebapp.security.JWTUtil;
+import com.greenfoxacademy.springwebapp.security.JwtValidatorService;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
@@ -32,12 +32,12 @@ public class CartControllerTest {
   CartService cartService;
   ObjectMapper objectMapper = new ObjectMapper();
   @Autowired
-  JWTUtil jwtUtil;
+  JwtValidatorService jwtValidatorService;
 
   @Test
   void addProductToCart_WithValidProductId_ReturnsCorrectJson() throws Exception {
     String jwt = login();
-    Claims claims = jwtUtil.extractAllClaims(jwt);
+    Claims claims = jwtValidatorService.parseAndValidateJwtToken(jwt);
     Long userId = ((Integer) claims.get("userId")).longValue();
     ProductIdDTO productIdDTO = new ProductIdDTO(2L);
 
