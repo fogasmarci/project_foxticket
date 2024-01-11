@@ -12,7 +12,7 @@ public class ProductType {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "type", fetch = FetchType.EAGER)
+  @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST}, mappedBy = "type", fetch = FetchType.LAZY)
   private List<Product> products;
 
   public ProductType() {
