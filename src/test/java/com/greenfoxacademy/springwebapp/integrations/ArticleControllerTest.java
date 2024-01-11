@@ -158,7 +158,6 @@ public class ArticleControllerTest {
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
         .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
-
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

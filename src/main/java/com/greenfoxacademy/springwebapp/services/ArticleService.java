@@ -9,5 +9,4 @@ public interface ArticleService {
   ArticleListDTO listArticles(String keyword);
 
   Article addArticle(AddArticleDTO addArticleDTO);
-
 }
