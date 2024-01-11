@@ -14,6 +14,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
   @Override
   List<Product> findAll();
 
+  Optional<Product> findByName(String name);
+
   Optional<Product> findById(Long productId);
 
   @Query(nativeQuery = true)

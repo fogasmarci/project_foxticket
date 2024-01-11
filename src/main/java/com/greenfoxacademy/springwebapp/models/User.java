@@ -25,6 +25,12 @@ public class User {
     cart.setUser(this);
   }
 
+  public User(Long userId, String email) {
+    this();
+    this.id = userId;
+    this.email = email;
+  }
+
   public User(String name, String email, String password) {
     this();
     this.name = name;

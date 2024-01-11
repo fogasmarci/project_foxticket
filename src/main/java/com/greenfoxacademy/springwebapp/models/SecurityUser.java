@@ -12,6 +12,12 @@ public class SecurityUser implements UserDetails {
   private final boolean isAdmin;
   private final boolean isVerified;
 
+  public SecurityUser(User user, boolean isAdmin, boolean isVerified) {
+    this.user = user;
+    this.isAdmin = isAdmin;
+    this.isVerified = isVerified;
+  }
+
   public SecurityUser(User user) {
     this.user = user;
     isAdmin = false;
