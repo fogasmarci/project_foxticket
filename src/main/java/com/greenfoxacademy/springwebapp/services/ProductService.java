@@ -6,6 +6,8 @@ import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 
+import java.util.Optional;
+
 public interface ProductService {
 
   Product findProductByName(String name);
@@ -17,4 +19,6 @@ public interface ProductService {
   ProductDTO createProductDTO(Product product);
 
   Product createProduct(ProductDTOWithoutID productDTOWithoutID);
+
+  Optional<Product> findProductById(Long productId);
 }

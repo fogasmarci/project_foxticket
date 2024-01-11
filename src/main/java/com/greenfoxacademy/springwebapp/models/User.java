@@ -16,9 +16,13 @@ public class User {
   @JsonIgnore
   private String password;
   private String roles;
+  @OneToOne(cascade = CascadeType.ALL)
+  private Cart cart;
 
   public User() {
     roles = "ROLE_USER";
+    cart = new Cart();
+    cart.setUser(this);
   }
 
   public User(String name, String email, String password) {
