@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,7 @@ public class Product {
   private List<Cart> carts;
 
   public Product() {
+    carts = new ArrayList<>();
   }
 
   public Product(String name, int price, int duration, String description) {

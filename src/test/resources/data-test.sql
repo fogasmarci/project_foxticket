@@ -83,8 +83,4 @@ VALUES ('TestUser', 'user@user.user', '$2a$10$n.AMx5SrMrlOnJSmsTrgU.rvT4GFKsBFFa
 
 INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES, CART_ID)
 VALUES ('TestAdmin', 'admin@admin.admin', '$2a$10$VS4h6XF1O69GxtXdCHrd6exTKGBlPW3EnRRNrVMuvZkKIp6PqkTRS',
-           <<<< <<< HEAD
-        'ROLE_USER,ROLE_ADMIN');
-=======
-        'ROLE_USER,ROLE_ADMIN', (SELECT ID FROM CARTS LIMIT 1 OFFSET 1) );
->>>>>>> dad0998e2b8a487ea56db488a86a6765daa2ec9c
+        'ROLE_USER,ROLE_ADMIN', (SELECT ID FROM CARTS LIMIT 1 OFFSET 1));
