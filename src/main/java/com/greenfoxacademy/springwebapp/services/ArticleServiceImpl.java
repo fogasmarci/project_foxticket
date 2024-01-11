@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.AddArticleDTO;
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
+import com.greenfoxacademy.springwebapp.exceptions.article.ArticleNotExistsException;
 import com.greenfoxacademy.springwebapp.exceptions.article.ContentRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.article.TitleAlreadyExistsException;
 import com.greenfoxacademy.springwebapp.exceptions.article.TitleRequiredException;
@@ -33,6 +34,25 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   public Article addArticle(AddArticleDTO addArticleDTO) {
+    validateAddArticleDTO(addArticleDTO);
+    return articleRepository.save(new Article(addArticleDTO.getTitle(), addArticleDTO.getContent()));
+  }
+
+  @Override
+  public Article editArticle(AddArticleDTO addArticleDTO, Long articleId) {
+    validateAddArticleDTO(addArticleDTO);
+
+    Article articleToEdit = articleRepository.findById(articleId).orElse(null);
+    if (articleToEdit == null) {
+      throw new ArticleNotExistsException();
+    }
+    articleToEdit.setTitle(addArticleDTO.getTitle());
+    articleToEdit.setContent(addArticleDTO.getContent());
+
+    return articleRepository.save(articleToEdit);
+  }
+
+  private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {
     if (addArticleDTO.getTitle() == null) {
       throw new TitleRequiredException();
     }
@@ -44,7 +64,5 @@ public class ArticleServiceImpl implements ArticleService {
     if (existingArticle != null) {
       throw new TitleAlreadyExistsException();
     }
-
-    return articleRepository.save(new Article(addArticleDTO.getTitle(), addArticleDTO.getContent()));
   }
 }

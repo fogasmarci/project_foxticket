@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,7 +87,7 @@ public class ArticleControllerTest {
   }
 
   @Test
-  void addArticles_NotLoggedIn_ReturnsUnauthorized() throws Exception {
+  void addArticle_NotLoggedIn_ReturnsUnauthorized() throws Exception {
     AddArticleDTO addArticleDTO = new AddArticleDTO("What is the future of travelling", "Something something about future of travel");
 
     mvc.perform(post("/api/news")
@@ -96,7 +97,7 @@ public class ArticleControllerTest {
   }
 
   @Test
-  void addArticles_WithLoggedUser_ReturnsForbidden() throws Exception {
+  void addArticle_WithLoggedUser_ReturnsForbidden() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
     AddArticleDTO addArticleDTO = new AddArticleDTO("What is the future of travelling", "Something something about future of travel");
@@ -108,7 +109,7 @@ public class ArticleControllerTest {
   }
 
   @Test
-  void addArticles_WithLoggedAdminAndNullTitle_ReturnsCorrectError() throws Exception {
+  void addArticle_WithLoggedAdminAndNullTitle_ReturnsCorrectError() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     AddArticleDTO addArticleDTO = new AddArticleDTO(null, "content");
@@ -121,7 +122,7 @@ public class ArticleControllerTest {
   }
 
   @Test
-  void addArticles_WithLoggedAdminAndNullContent_ReturnsCorrectError() throws Exception {
+  void addArticle_WithLoggedAdminAndNullContent_ReturnsCorrectError() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     AddArticleDTO addArticleDTO = new AddArticleDTO("title", null);
@@ -134,7 +135,7 @@ public class ArticleControllerTest {
   }
 
   @Test
-  void addArticles_WithLoggedAdminAndAlreadyTakenTitle_ReturnsCorrectError() throws Exception {
+  void addArticle_WithLoggedAdminAndAlreadyTakenTitle_ReturnsCorrectError() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     AddArticleDTO addArticleDTO = new AddArticleDTO("Test Title", "Test Content");
@@ -147,7 +148,7 @@ public class ArticleControllerTest {
   }
 
   @Test
-  void addArticles_WithLoggedAdminAndCorrectRequest_ReturnsAddedArticle() throws Exception {
+  void addArticle_WithLoggedAdminAndCorrectRequest_ReturnsAddedArticle() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     AddArticleDTO addArticleDTO = new AddArticleDTO("newtitle", "newcontent");
@@ -156,6 +157,85 @@ public class ArticleControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
         .andExpect(status().is(200))
+        .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
+        .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
+  }
+
+  @Test
+  void editArticle_WithLoggedUser_ReturnsForbidden() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    AddArticleDTO addArticleDTO = new AddArticleDTO("Edit title", "Edit Content");
+
+    mvc.perform(put("/api/news/1").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(addArticleDTO)))
+        .andExpect(status().is(403));
+  }
+
+  @Test
+  void editArticle_WithLoggedAdminAndNullTitle_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    AddArticleDTO addArticleDTO = new AddArticleDTO(null, "content");
+
+    mvc.perform(put("/api/news/1").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(addArticleDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Title is required"));
+  }
+
+  @Test
+  void editArticle_WithLoggedAdminAndNullContent_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    AddArticleDTO addArticleDTO = new AddArticleDTO("title", null);
+
+    mvc.perform(put("/api/news/1").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(addArticleDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Content is required"));
+  }
+
+  @Test
+  void editArticle_WithLoggedAdminAndAlreadyTakenTitle_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    AddArticleDTO addArticleDTO = new AddArticleDTO("Test Title", "Edited Content");
+
+    mvc.perform(put("/api/news/1").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(addArticleDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("News title already exists"));
+  }
+
+  @Test
+  void editArticle_WithLoggedAdminAndNotExistingId_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    AddArticleDTO addArticleDTO = new AddArticleDTO("Edited Title", "Edited Content");
+
+    mvc.perform(put("/api/news/999").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(addArticleDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Article not exists by this ID"));
+  }
+
+  @Test
+  void editArticle_WithLoggedAdminAndCorrectRequest_ReturnsAddedArticle() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    AddArticleDTO addArticleDTO = new AddArticleDTO("Edit title", "Edit Content");
+
+    mvc.perform(put("/api/news/1").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(addArticleDTO)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
         .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
   }

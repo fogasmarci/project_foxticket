@@ -9,4 +9,6 @@ public interface ArticleService {
   ArticleListDTO listArticles(String keyword);
 
   Article addArticle(AddArticleDTO addArticleDTO);
+
+  Article editArticle(AddArticleDTO addArticleDTO, Long articleId);
 }
