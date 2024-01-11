@@ -7,7 +7,6 @@ import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
 import com.greenfoxacademy.springwebapp.models.User;
 
 public interface UserService {
-  User getUserByEmail(String email);
 
   User createUser(String name, String email, String password);
 
@@ -15,9 +14,7 @@ public interface UserService {
 
   User registerUser(RegistrationRequestDTO requestDTO);
 
-  LoginResponseDTO loginUser(LoginUserDTO loginUserDTO, String jwt);
-
-  String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception;
+  LoginResponseDTO loginUser(LoginUserDTO loginUserDTO);
 
   User findLoggedInUser();
 }
