@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.services;
 
+import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.models.Product;
@@ -39,4 +40,11 @@ public class ProductServiceImpl implements ProductService {
   public Optional<Product> findProductById(Long productId) {
     return productRepository.findById(productId);
   }
+
+  @Override
+  public List<CartProductDTO> findProductsInUsersCart(Long userId) {
+    return productRepository.findProductsInUsersCart(userId);
+  }
+
+
 }

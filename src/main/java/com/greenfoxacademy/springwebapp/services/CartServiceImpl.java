@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -50,15 +49,10 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public List<Product> findProductsInCart(Cart cart) {
-    return cart.getProducts();
+  public CartListDTO findCartWithProductsByUser(Long userId) {
+    List<CartProductDTO> productsInCart = productService.findProductsInUsersCart(userId);
+    return new CartListDTO(productsInCart);
   }
 
-  @Override
-  public CartListDTO createCartListDTO(List<Product> productsInCart) {
-    List<CartProductDTO> cartProductDTOs = productsInCart.stream()
-        .map(p -> new CartProductDTO(p.getId(), p.getName(), p.getPrice()))
-        .collect(Collectors.toList());
-    return new CartListDTO(cartProductDTOs);
-  }
+
 }
