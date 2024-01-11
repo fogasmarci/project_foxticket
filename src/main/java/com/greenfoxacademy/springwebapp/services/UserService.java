@@ -20,4 +20,6 @@ public interface UserService {
   String createLoginResponse(LoginUserDTO loginUserDTO) throws Exception;
 
   User findLoggedInUser();
+
+  Long findLoggedInUsersId();
 }

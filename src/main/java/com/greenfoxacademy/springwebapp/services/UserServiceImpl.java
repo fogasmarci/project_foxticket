@@ -117,4 +117,13 @@ public class UserServiceImpl implements UserService {
     SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
     return securityUser.getUser();
   }
+
+  @Override
+  public Long findLoggedInUsersId() {
+    SecurityContext context = SecurityContextHolder.getContext();
+    SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
+    return securityUser.getId();
+  }
+
+
 }
