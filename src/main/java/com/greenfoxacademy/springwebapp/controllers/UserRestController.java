@@ -32,9 +32,9 @@ public class UserRestController {
   }
 
   @PostMapping(path = "/users/login")
-  public ResponseEntity<?> loginUser(@RequestBody LoginUserDTO loginUserDTO) throws Exception {
+  public ResponseEntity<?> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
     try {
-      return ResponseEntity.status(200).body(userService.loginUser(loginUserDTO, userService.createLoginResponse(loginUserDTO)));
+      return ResponseEntity.status(200).body(userService.loginUser(loginUserDTO));
     } catch (MissingFieldsException | LoginException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
