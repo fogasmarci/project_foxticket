@@ -65,7 +65,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     final boolean isVerified = (boolean) claims.get("isVerified");
     final String email = claims.getSubject();
 
+
     User user = new User(userId, email);
+
+    if (isAdmin) {
+      user.setRoles("ROLE_USER,ROLE_ADMIN");
+    }
 
     return new SecurityUser(user, isAdmin, isVerified);
   }

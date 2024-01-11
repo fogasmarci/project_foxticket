@@ -18,11 +18,15 @@ public class User {
   private String roles;
   @OneToOne(cascade = CascadeType.ALL)
   private Cart cart;
+  private boolean isAdmin;
+  private boolean isVerified;
 
   public User() {
     roles = "ROLE_USER";
     cart = new Cart();
     cart.setUser(this);
+    isAdmin = false;
+    isVerified = false;
   }
 
   public User(Long userId, String email) {
@@ -76,5 +80,13 @@ public class User {
 
   public Cart getCart() {
     return cart;
+  }
+
+  public boolean getIsAdmin() {
+    return isAdmin;
+  }
+
+  public boolean getIsVerified() {
+    return isVerified;
   }
 }
