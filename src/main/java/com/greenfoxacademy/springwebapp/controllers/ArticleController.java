@@ -40,4 +40,13 @@ public class ArticleController {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
+
+  @DeleteMapping(path = "/api/news/{articleId}")
+  public ResponseEntity<?> deleteArticle(@PathVariable Long articleId) {
+    try {
+      return ResponseEntity.status(200).body(articleService.deleteArticle(articleId));
+    } catch (ArticleException e) {
+      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+    }
+  }
 }

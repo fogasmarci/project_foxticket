@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.integrations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.AddArticleDTO;
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
@@ -238,6 +239,26 @@ public class ArticleControllerTest {
         .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
   }
 
+  @Test
+  void deleteArticle_WithLoggedAdminAndNotExistingId_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/news/999").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Article not exists by this ID"));
+  }
+
+  @Test
+  void deleteArticle_WithLoggedAdminAndValidId_ReturnsMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/news/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.message").value("Article 1 is deleted."));
+  }
+
   private String login(LoginUserDTO loginUserDTO) throws Exception {
     String responseContent = mvc.perform(post("/api/users/login")
             .contentType(MediaType.APPLICATION_JSON)
@@ -249,7 +270,8 @@ public class ArticleControllerTest {
         .getResponse()
         .getContentAsString();
 
-    Map<String, String> map = objectMapper.readValue(responseContent, Map.class);
+    Map<String, String> map = objectMapper.readValue(responseContent, new TypeReference<>() {
+    });
     return map.get("token");
   }
 }
