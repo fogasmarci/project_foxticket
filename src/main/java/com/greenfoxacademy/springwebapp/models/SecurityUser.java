@@ -18,12 +18,6 @@ public class SecurityUser implements UserDetails {
     this.isVerified = isVerified;
   }
 
-  public SecurityUser(User user) {
-    this.user = user;
-    isAdmin = false;
-    isVerified = false;
-  }
-
   @Override
   public String getUsername() {
     return user.getName();

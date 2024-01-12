@@ -67,6 +67,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     User user = new User(userId, email);
 
+    if (isAdmin) {
+      user.addRole("ADMIN");
+    }
+
     return new SecurityUser(user, isAdmin, isVerified);
   }
 

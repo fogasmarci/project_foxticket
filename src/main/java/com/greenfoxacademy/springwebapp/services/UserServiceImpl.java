@@ -42,11 +42,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getUserByEmail(String email) {
-    return userRepository.findByEmail(email).orElse(null);
-  }
-
-  @Override
   public User createUser(String name, String email, String password) {
     return userRepository.save(new User(name, email, passwordEncoder.encode(password)));
   }
@@ -81,7 +76,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO, String jwt) {
+  public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO) {
     if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
       throw new AllFieldsMissingException();
     }
@@ -91,24 +86,16 @@ public class UserServiceImpl implements UserService {
     if (loginUserDTO.getEmail() == null) {
       throw new EmailRequiredException();
     }
-    User user = userRepository.findByEmail(loginUserDTO.getEmail()).orElse(null);
-    if (user == null || !passwordEncoder.matches(loginUserDTO.getPassword(), user.getPassword())) {
-      throw new IncorrectCredentialsException();
-    }
-    return new LoginResponseDTO(jwt);
-  }
-
-  @Override
-  public String createLoginResponse(LoginUserDTO loginUserDTO) {
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
-      return "Incorrect username or password";
+      throw new IncorrectCredentialsException(e);
     }
 
     final SecurityUser userDetails = userDetailsService.loadUserByUsername(loginUserDTO.getEmail());
+    String token = jwtBuilder.generateToken(userDetails);
 
-    return jwtBuilder.generateToken(userDetails);
+    return new LoginResponseDTO(token);
   }
 
   @Override
@@ -116,5 +103,12 @@ public class UserServiceImpl implements UserService {
     SecurityContext context = SecurityContextHolder.getContext();
     SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
     return securityUser.getUser();
+  }
+
+  @Override
+  public Long findLoggedInUsersId() {
+    SecurityContext context = SecurityContextHolder.getContext();
+    SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
+    return securityUser.getId();
   }
 }
