@@ -91,7 +91,8 @@ public class User {
   }
 
   public void addRole(String role) {
-    String currentRole = this.getRoles();
-    this.setRoles(String.format("%s,ROLE_%s",currentRole, role));
+    String currentRoles = this.getRoles();
+    String newRoles = String.format("%s,ROLE_%s", currentRoles, role);
+    this.setRoles(newRoles);
   }
 }
