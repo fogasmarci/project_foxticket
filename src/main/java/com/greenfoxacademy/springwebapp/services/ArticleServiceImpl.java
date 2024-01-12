@@ -36,17 +36,27 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public Article addArticle(AddArticleDTO addArticleDTO) {
     validateAddArticleDTO(addArticleDTO);
-    return articleRepository.save(new Article(addArticleDTO.getTitle(), addArticleDTO.getContent()));
+
+    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
+    if (existingArticle != null) {
+      throw new TitleAlreadyExistsException();
+    }
+
+    return articleRepository.save(mapDTOToArticle(addArticleDTO));
   }
 
   @Override
   public Article editArticle(AddArticleDTO addArticleDTO, Long articleId) {
     validateAddArticleDTO(addArticleDTO);
 
-    Article articleToEdit = articleRepository.findById(articleId).orElse(null);
-    if (articleToEdit == null) {
-      throw new ArticleNotExistsException();
+    Article articleToEdit = articleRepository.findById(articleId)
+        .orElseThrow(ArticleNotExistsException::new);
+
+    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
+    if (existingArticle != null && !existingArticle.getTitle().equals(articleToEdit.getTitle())) {
+      throw new TitleAlreadyExistsException();
     }
+
     articleToEdit.setTitle(addArticleDTO.getTitle());
     articleToEdit.setContent(addArticleDTO.getContent());
 
@@ -55,13 +65,17 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   public MessageDTO deleteArticle(Long articleId) {
-    Article articleToDelete = articleRepository.findById(articleId).orElse(null);
-    if (articleToDelete == null) {
-      throw new ArticleNotExistsException();
-    }
-    articleRepository.delete(articleToDelete);
+    Article articleToDelete = articleRepository.findById(articleId)
+        .orElseThrow(ArticleNotExistsException::new);
 
-    return new MessageDTO(String.format("Article %d is deleted.", articleId));
+    articleRepository.delete(articleToDelete);
+    String okMessage = String.format("Article %d is deleted.", articleId);
+
+    return new MessageDTO(okMessage);
+  }
+
+  public Article mapDTOToArticle(AddArticleDTO addArticleDTO) {
+    return new Article(addArticleDTO.getTitle(), addArticleDTO.getContent());
   }
 
   private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {
@@ -70,11 +84,6 @@ public class ArticleServiceImpl implements ArticleService {
     }
     if (addArticleDTO.getContent() == null) {
       throw new ContentRequiredException();
-    }
-
-    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
-    if (existingArticle != null) {
-      throw new TitleAlreadyExistsException();
     }
   }
 }

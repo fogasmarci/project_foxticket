@@ -14,4 +14,6 @@ public interface ArticleService {
   Article editArticle(AddArticleDTO addArticleDTO, Long articleId);
 
   MessageDTO deleteArticle(Long articleId);
+
+  Article mapDTOToArticle(AddArticleDTO addArticleDTO);
 }
