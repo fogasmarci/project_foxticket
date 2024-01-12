@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.integrations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
 import com.greenfoxacademy.springwebapp.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,5 +57,35 @@ public class ProductControllerTest {
 
     Map<String, String> map = objectMapper.readValue(responseContent, Map.class);
     return map.get("token");
+  }
+
+  @Test
+  void addNewProduct_WithValidRequest_ReturnsCorrectJson() throws Exception {
+    String jwt = login();
+    ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("1 week pass", 12000,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(post("/api/products")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productDTOWithoutID)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.name").value("1 week pass"))
+        .andExpect(jsonPath("$.price").value(12000))
+        .andExpect(jsonPath("$.type").value("jegy"));
+  }
+
+  @Test
+  void addNewProduct_WithMissingPriceField_ReturnsCorrectErrorMessage() throws Exception {
+    String jwt = login();
+    ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("1 week pass", null,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(post("/api/products")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productDTOWithoutID)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Price is missing"));
   }
 }

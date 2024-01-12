@@ -58,43 +58,43 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
+  public ProductDTO createProduct(ProductDTOWithoutID productDTOWithoutID) {
+    validateProduct(productDTOWithoutID);
+    Product productToSave = new Product(productDTOWithoutID.getName(),
+        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
+    productToSave.setType(findProductTypeById(productDTOWithoutID.getTypeId()));
+    productRepository.save(productToSave);
+
+    return createProductDTO(productToSave);
+  }
+
+  @Override
   public ProductDTO createProductDTO(Product product) {
     return new ProductDTO(product.getId(), product.getName(), product.getPrice(),
         product.getDuration(), product.getDescription(), product.getType().getName());
   }
 
-  @Override
-  public ProductDTO createProduct(ProductDTOWithoutID productDTOWithoutID) {
+  private void validateProduct(ProductDTOWithoutID productDTOWithoutID) {
     if (productDTOWithoutID.getName().isEmpty()) {
       throw new MissingFieldsException("Name is missing");
     }
     if (productDTOWithoutID.getDescription().isEmpty()) {
       throw new MissingFieldsException("Description is missing");
     }
-    if (!(productDTOWithoutID.getPrice() > 0)) {
+    if (productDTOWithoutID.getPrice() == null) {
       throw new MissingFieldsException("Price is missing");
     }
-    if (!(productDTOWithoutID.getDuration() > 0)) {
+    if (productDTOWithoutID.getDuration() == null) {
       throw new MissingFieldsException("Duration is missing");
     }
-    if (!(productDTOWithoutID.getTypeId() > 0)) {
+    if (productDTOWithoutID.getTypeId() == null) {
       throw new MissingFieldsException("Type ID is missing");
     }
-
     if (!(findProductByName(productDTOWithoutID.getName()) == null)) {
       throw new ProductNameAlreadyTakenException();
     }
-
-    ProductType productType = findProductTypeById(productDTOWithoutID.getTypeId());
-    if (productType == null) {
+    if (findProductTypeById(productDTOWithoutID.getTypeId()) == null) {
       throw new InvalidProductTypeException();
     }
-
-    Product productToSave = new Product(productDTOWithoutID.getName(),
-        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
-    productToSave.setType(productType);
-    productRepository.save(productToSave);
-
-    return createProductDTO(productToSave);
   }
 }
