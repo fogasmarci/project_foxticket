@@ -111,6 +111,4 @@ public class UserServiceImpl implements UserService {
     SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
     return securityUser.getId();
   }
-
-
 }

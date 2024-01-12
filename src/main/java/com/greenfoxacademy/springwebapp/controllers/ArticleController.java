@@ -24,9 +24,27 @@ public class ArticleController {
   }
 
   @PostMapping(path = "/api/news")
-  public ResponseEntity<?> addArticles(@RequestBody AddArticleDTO addArticleDTO) {
+  public ResponseEntity<?> addArticle(@RequestBody AddArticleDTO addArticleDTO) {
     try {
       return ResponseEntity.status(200).body(articleService.addArticle(addArticleDTO));
+    } catch (ArticleException e) {
+      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+    }
+  }
+
+  @PutMapping(path = "/api/news/{articleId}")
+  public ResponseEntity<?> editArticle(@RequestBody AddArticleDTO addArticleDTO, @PathVariable Long articleId) {
+    try {
+      return ResponseEntity.status(200).body(articleService.editArticle(addArticleDTO, articleId));
+    } catch (ArticleException e) {
+      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+    }
+  }
+
+  @DeleteMapping(path = "/api/news/{articleId}")
+  public ResponseEntity<?> deleteArticle(@PathVariable Long articleId) {
+    try {
+      return ResponseEntity.status(200).body(articleService.deleteArticle(articleId));
     } catch (ArticleException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }

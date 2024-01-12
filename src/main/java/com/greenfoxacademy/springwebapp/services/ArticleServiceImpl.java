@@ -2,6 +2,8 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.AddArticleDTO;
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
+import com.greenfoxacademy.springwebapp.exceptions.article.ArticleNotExistsException;
 import com.greenfoxacademy.springwebapp.exceptions.article.ContentRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.article.TitleAlreadyExistsException;
 import com.greenfoxacademy.springwebapp.exceptions.article.TitleRequiredException;
@@ -33,12 +35,7 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   public Article addArticle(AddArticleDTO addArticleDTO) {
-    if (addArticleDTO.getTitle() == null) {
-      throw new TitleRequiredException();
-    }
-    if (addArticleDTO.getContent() == null) {
-      throw new ContentRequiredException();
-    }
+    validateAddArticleDTO(addArticleDTO);
 
     Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
     if (existingArticle != null) {
@@ -49,7 +46,44 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  public Article editArticle(AddArticleDTO addArticleDTO, Long articleId) {
+    validateAddArticleDTO(addArticleDTO);
+
+    Article articleToEdit = articleRepository.findById(articleId)
+        .orElseThrow(ArticleNotExistsException::new);
+
+    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
+    if (existingArticle != null && !existingArticle.getTitle().equals(articleToEdit.getTitle())) {
+      throw new TitleAlreadyExistsException();
+    }
+
+    articleToEdit.setTitle(addArticleDTO.getTitle());
+    articleToEdit.setContent(addArticleDTO.getContent());
+
+    return articleRepository.save(articleToEdit);
+  }
+
+  @Override
+  public MessageDTO deleteArticle(Long articleId) {
+    Article articleToDelete = articleRepository.findById(articleId)
+        .orElseThrow(ArticleNotExistsException::new);
+
+    articleRepository.delete(articleToDelete);
+    String okMessage = String.format("Article %d is deleted.", articleId);
+
+    return new MessageDTO(okMessage);
+  }
+
   public Article mapDTOToArticle(AddArticleDTO addArticleDTO) {
     return new Article(addArticleDTO.getTitle(), addArticleDTO.getContent());
+  }
+
+  private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {
+    if (addArticleDTO.getTitle() == null) {
+      throw new TitleRequiredException();
+    }
+    if (addArticleDTO.getContent() == null) {
+      throw new ContentRequiredException();
+    }
   }
 }
