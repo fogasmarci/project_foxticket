@@ -40,6 +40,7 @@ public class ArticleServiceImpl implements ArticleService {
     if (existingArticle != null) {
       throw new TitleAlreadyExistsException();
     }
+
     return articleRepository.save(mapDTOToArticle(addArticleDTO));
   }
 
@@ -47,10 +48,8 @@ public class ArticleServiceImpl implements ArticleService {
   public Article editArticle(AddArticleDTO addArticleDTO, Long articleId) {
     validateAddArticleDTO(addArticleDTO);
 
-    Article articleToEdit = articleRepository.findById(articleId).orElse(null);
-    if (articleToEdit == null) {
-      throw new ArticleNotExistsException();
-    }
+    Article articleToEdit = articleRepository.findById(articleId)
+        .orElseThrow(ArticleNotExistsException::new);
 
     Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
     if (existingArticle != null && !existingArticle.getTitle().equals(articleToEdit.getTitle())) {
