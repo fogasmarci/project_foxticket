@@ -1,13 +1,7 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.dtos.LoginResponseDTO;
-import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
-import com.greenfoxacademy.springwebapp.exceptions.fields.AllFieldsMissingException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.EmailRequiredException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.NameRequiredException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.PasswordRequiredException;
+import com.greenfoxacademy.springwebapp.dtos.*;
+import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordException;
@@ -110,5 +104,14 @@ public class UserServiceImpl implements UserService {
     SecurityContext context = SecurityContextHolder.getContext();
     SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
     return securityUser.getId();
+  }
+
+  @Override
+  public MessageDTO updateUser(UserInfoRequestDTO updateDTO) {
+    if (updateDTO.getName() == null && updateDTO.getEmail() == null && updateDTO.getPassword() == null) {
+      throw new MissingFieldsException("Name, email or Password is required");
+    }
+
+    return null;
   }
 }
