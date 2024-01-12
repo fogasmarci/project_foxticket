@@ -1,10 +1,22 @@
 package com.greenfoxacademy.springwebapp.models;
 
+import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NamedNativeQuery(name = "Product.findProductsInUsersCart", query = """
+    SELECT products.id AS product_id, products.name AS name, products.price AS price 
+    FROM products JOIN cart_product 
+    ON products.id = product_id 
+    JOIN users 
+    ON cart_product.cart_id = users.cart_id 
+    WHERE users.id = :userId""", resultSetMapping = "Mapping.CartProductDTO")
+@SqlResultSetMapping(name = "Mapping.CartProductDTO",
+    classes = @ConstructorResult(targetClass = CartProductDTO.class,
+        columns = {@ColumnResult(name = "product_id"),
+            @ColumnResult(name = "name"), @ColumnResult(name = "price")}))
 @Entity
 @Table(name = "products")
 public class Product {

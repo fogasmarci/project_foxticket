@@ -6,7 +6,6 @@ import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.models.Cart;
-import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import com.greenfoxacademy.springwebapp.services.UserService;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class CartController {
@@ -46,9 +43,9 @@ public class CartController {
 
   @RequestMapping(path = "/api/cart", method = RequestMethod.GET)
   public ResponseEntity<CartListDTO> listCartContents() {
-    User user = userService.findLoggedInUser();
-    Cart cart = cartService.findCartByUser(user);
-    List<Product> productsInCart = cartService.findProductsInCart(cart);
-    return ResponseEntity.status(200).body(cartService.createCartListDTO(productsInCart));
+    Long userId = userService.findLoggedInUsersId();
+    CartListDTO productsInCart = cartService.findCartWithProductsByUser(userId);
+
+    return ResponseEntity.status(200).body(productsInCart);
   }
 }
