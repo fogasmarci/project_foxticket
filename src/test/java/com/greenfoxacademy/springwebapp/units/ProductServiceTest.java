@@ -32,7 +32,7 @@ public class ProductServiceTest {
   private ProductServiceImpl productService;
 
   @BeforeEach
-  public void ProductServiceTest() {
+  public void productServiceTests() {
     productRepository = Mockito.mock(ProductRepository.class);
     productTypeRepository = Mockito.mock(ProductTypeRepository.class);
     productService = new ProductServiceImpl(productRepository, productTypeRepository);
@@ -65,11 +65,10 @@ public class ProductServiceTest {
   @Test
   void createProduct_ProductIsSuccessfullySaved() {
     ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("new product", 480, 90, "teszt1", 2L);
-    Product product = new Product(productDTOWithoutID.getName(),
-        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
+    Product product = mapDTOToProduct(productDTOWithoutID);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
-    
+
     Mockito.when(productRepository.findByName(productDTOWithoutID.getName())).thenReturn(Optional.empty());
     Mockito.when(productTypeRepository.findById(productDTOWithoutID.getTypeId())).thenReturn(Optional.of(berlet));
     Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(product);
@@ -95,8 +94,7 @@ public class ProductServiceTest {
   void createProduct_WithExistingProductName_ThrowsCorrectException() {
     ProductDTOWithoutID productDTOWithoutID =
         new ProductDTOWithoutID("new product", 480, 90, "teszt1", 2L);
-    Product product = new Product(productDTOWithoutID.getName(),
-        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
+    Product product = mapDTOToProduct(productDTOWithoutID);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
 
@@ -105,5 +103,10 @@ public class ProductServiceTest {
     Throwable exception =
         assertThrows(ProductNameAlreadyTakenException.class, () -> productService.createProduct(productDTOWithoutID));
     assertEquals("Product name already exists.", exception.getMessage());
+  }
+
+  private Product mapDTOToProduct(ProductDTOWithoutID productDTOWithoutID) {
+    return new Product(productDTOWithoutID.getName(),
+        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
   }
 }
