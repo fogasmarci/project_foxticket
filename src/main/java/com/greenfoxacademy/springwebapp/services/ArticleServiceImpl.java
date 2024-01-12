@@ -45,6 +45,11 @@ public class ArticleServiceImpl implements ArticleService {
       throw new TitleAlreadyExistsException();
     }
 
-    return articleRepository.save(new Article(addArticleDTO.getTitle(), addArticleDTO.getContent()));
+    return articleRepository.save(mapDTOToArticle(addArticleDTO));
+  }
+
+  @Override
+  public Article mapDTOToArticle(AddArticleDTO addArticleDTO) {
+    return new Article(addArticleDTO.getTitle(), addArticleDTO.getContent());
   }
 }

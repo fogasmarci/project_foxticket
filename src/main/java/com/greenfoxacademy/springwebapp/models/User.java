@@ -89,4 +89,10 @@ public class User {
   public boolean getIsVerified() {
     return isVerified;
   }
+
+  public void addRole(String role) {
+    String currentRoles = this.getRoles();
+    String newRoles = String.format("%s,ROLE_%s", currentRoles, role);
+    this.setRoles(newRoles);
+  }
 }
