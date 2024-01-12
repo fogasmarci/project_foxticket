@@ -35,17 +35,17 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public Article addArticle(AddArticleDTO addArticleDTO) {
     validateAddArticleDTO(addArticleDTO);
+
+    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
+    if (existingArticle != null) {
+      throw new TitleAlreadyExistsException();
+    }
     return articleRepository.save(mapDTOToArticle(addArticleDTO));
   }
 
   @Override
   public Article editArticle(AddArticleDTO addArticleDTO, Long articleId) {
-    if (addArticleDTO.getTitle() == null) {
-      throw new TitleRequiredException();
-    }
-    if (addArticleDTO.getContent() == null) {
-      throw new ContentRequiredException();
-    }
+    validateAddArticleDTO(addArticleDTO);
 
     Article articleToEdit = articleRepository.findById(articleId).orElse(null);
     if (articleToEdit == null) {
@@ -74,11 +74,6 @@ public class ArticleServiceImpl implements ArticleService {
     }
     if (addArticleDTO.getContent() == null) {
       throw new ContentRequiredException();
-    }
-
-    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
-    if (existingArticle != null) {
-      throw new TitleAlreadyExistsException();
     }
   }
 }
