@@ -5,6 +5,7 @@ import com.greenfoxacademy.springwebapp.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,10 +38,9 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable);
     http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
     http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/admin").hasRole("ADMIN")
-            .requestMatchers("/register").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/news").hasRole("ADMIN")
             .requestMatchers("/api/users/**").permitAll()
-            .requestMatchers("/api/news").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/news").permitAll()
             .anyRequest().authenticated())
         .exceptionHandling(exceptionHandling ->
             exceptionHandling
