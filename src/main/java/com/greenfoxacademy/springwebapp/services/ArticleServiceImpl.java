@@ -35,21 +35,37 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public Article addArticle(AddArticleDTO addArticleDTO) {
     validateAddArticleDTO(addArticleDTO);
-    return articleRepository.save(new Article(addArticleDTO.getTitle(), addArticleDTO.getContent()));
+    return articleRepository.save(mapDTOToArticle(addArticleDTO));
   }
 
   @Override
   public Article editArticle(AddArticleDTO addArticleDTO, Long articleId) {
-    validateAddArticleDTO(addArticleDTO);
+    if (addArticleDTO.getTitle() == null) {
+      throw new TitleRequiredException();
+    }
+    if (addArticleDTO.getContent() == null) {
+      throw new ContentRequiredException();
+    }
 
     Article articleToEdit = articleRepository.findById(articleId).orElse(null);
     if (articleToEdit == null) {
       throw new ArticleNotExistsException();
     }
+
+    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
+    if (existingArticle != null && !existingArticle.getTitle().equals(articleToEdit.getTitle())) {
+      throw new TitleAlreadyExistsException();
+    }
+
     articleToEdit.setTitle(addArticleDTO.getTitle());
     articleToEdit.setContent(addArticleDTO.getContent());
 
     return articleRepository.save(articleToEdit);
+  }
+
+  @Override
+  public Article mapDTOToArticle(AddArticleDTO addArticleDTO) {
+    return new Article(addArticleDTO.getTitle(), addArticleDTO.getContent());
   }
 
   private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {

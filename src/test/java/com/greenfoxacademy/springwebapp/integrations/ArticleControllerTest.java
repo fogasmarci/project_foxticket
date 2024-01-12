@@ -86,7 +86,7 @@ public class ArticleControllerTest {
 
   @Test
   void addArticle_NotLoggedIn_ReturnsUnauthorized() throws Exception {
-    AddArticleDTO addArticleDTO = new AddArticleDTO("What is the future of travelling", "Something something about future of travel");
+    AddArticleDTO addArticleDTO = new AddArticleDTO("Test add", "Test Content");
 
     mvc.perform(post("/api/news")
             .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +98,7 @@ public class ArticleControllerTest {
   void addArticle_WithLoggedUser_ReturnsForbidden() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
-    AddArticleDTO addArticleDTO = new AddArticleDTO("What is the future of travelling", "Something something about future of travel");
+    AddArticleDTO addArticleDTO = new AddArticleDTO("Test add", "Test Content");
 
     mvc.perform(post("/api/news").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
