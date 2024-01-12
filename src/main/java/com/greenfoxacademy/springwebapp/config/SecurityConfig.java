@@ -39,6 +39,7 @@ public class SecurityConfig {
     http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
     http.authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.POST, "/api/news").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/api/news/{articleId}").hasRole("ADMIN")
             .requestMatchers("/api/users/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/news").permitAll()
             .anyRequest().authenticated())

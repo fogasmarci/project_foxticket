@@ -10,5 +10,7 @@ public interface ArticleService {
 
   Article addArticle(AddArticleDTO addArticleDTO);
 
+  Article editArticle(AddArticleDTO addArticleDTO, Long articleId);
+
   Article mapDTOToArticle(AddArticleDTO addArticleDTO);
 }
