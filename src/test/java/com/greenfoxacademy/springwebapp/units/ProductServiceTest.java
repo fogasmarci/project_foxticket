@@ -10,6 +10,7 @@ import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
 import com.greenfoxacademy.springwebapp.repositories.ProductTypeRepository;
 import com.greenfoxacademy.springwebapp.services.ProductServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
@@ -30,12 +31,10 @@ public class ProductServiceTest {
   private ProductTypeRepository productTypeRepository;
   private ProductServiceImpl productService;
 
-
-  public ProductServiceTest() {
+  @BeforeEach
+  public void ProductServiceTest() {
     productRepository = Mockito.mock(ProductRepository.class);
-
     productTypeRepository = Mockito.mock(ProductTypeRepository.class);
-
     productService = new ProductServiceImpl(productRepository, productTypeRepository);
   }
 
@@ -70,12 +69,15 @@ public class ProductServiceTest {
         productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
-
+    
     Mockito.when(productRepository.findByName(productDTOWithoutID.getName())).thenReturn(Optional.empty());
     Mockito.when(productTypeRepository.findById(productDTOWithoutID.getTypeId())).thenReturn(Optional.of(berlet));
     Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(product);
 
-    productService.createProduct(productDTOWithoutID);
+    ProductDTO productDTO = new ProductDTO(product.getId(), product.getName(), product.getPrice(),
+        product.getDuration(), product.getDescription(), product.getType().getName());
+    assertThat(productService.createProduct(productDTOWithoutID)).usingRecursiveComparison().isEqualTo(productDTO);
+
     verify(productRepository, times(1)).findByName(productDTOWithoutID.getName());
     verify(productRepository, times(1)).save(Mockito.any(Product.class));
   }
