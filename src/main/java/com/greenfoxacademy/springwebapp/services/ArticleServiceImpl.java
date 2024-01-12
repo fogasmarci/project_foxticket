@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.AddArticleDTO;
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.exceptions.article.ArticleNotExistsException;
 import com.greenfoxacademy.springwebapp.exceptions.article.ContentRequiredException;
 import com.greenfoxacademy.springwebapp.exceptions.article.TitleAlreadyExistsException;
@@ -50,6 +51,17 @@ public class ArticleServiceImpl implements ArticleService {
     articleToEdit.setContent(addArticleDTO.getContent());
 
     return articleRepository.save(articleToEdit);
+  }
+
+  @Override
+  public MessageDTO deleteArticle(Long articleId) {
+    Article articleToDelete = articleRepository.findById(articleId).orElse(null);
+    if (articleToDelete == null) {
+      throw new ArticleNotExistsException();
+    }
+    articleRepository.delete(articleToDelete);
+
+    return new MessageDTO(String.format("Article %d is deleted.", articleId));
   }
 
   private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {

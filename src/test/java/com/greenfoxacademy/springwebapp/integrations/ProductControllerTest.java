@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.integrations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.services.ProductService;
@@ -54,7 +55,8 @@ public class ProductControllerTest {
         .getResponse()
         .getContentAsString();
 
-    Map<String, String> map = objectMapper.readValue(responseContent, Map.class);
+    Map<String, String> map = objectMapper.readValue(responseContent, new TypeReference<>() {
+    });
     return map.get("token");
   }
 }
