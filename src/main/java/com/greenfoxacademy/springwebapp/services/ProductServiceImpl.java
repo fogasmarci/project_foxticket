@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTypeException;
 import com.greenfoxacademy.springwebapp.models.Product;
@@ -72,6 +73,24 @@ public class ProductServiceImpl implements ProductService {
   public ProductDTO createProductDTO(Product product) {
     return new ProductDTO(product.getId(), product.getName(), product.getPrice(),
         product.getDuration(), product.getDescription(), product.getType().getName());
+  }
+
+  @Override
+  public ProductDTO editProduct(ProductDTOWithoutID productDTOWithoutID, Long productId) {
+    Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
+
+    validateProduct(productDTOWithoutID);
+
+    productToEdit.setName(productDTOWithoutID.getName());
+    productToEdit.setPrice(productDTOWithoutID.getPrice());
+    productToEdit.setDuration(productDTOWithoutID.getDuration());
+    productToEdit.setDescription(productDTOWithoutID.getDescription());
+    ProductType productType = findProductTypeById(productDTOWithoutID.getTypeId());
+    productToEdit.setType(productType);
+
+    productRepository.save(productToEdit);
+
+    return createProductDTO(productToEdit);
   }
 
   private void validateProduct(ProductDTOWithoutID productDTOWithoutID) {
