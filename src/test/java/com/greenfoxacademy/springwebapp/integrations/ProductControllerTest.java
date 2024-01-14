@@ -1,7 +1,9 @@
 package com.greenfoxacademy.springwebapp.integrations;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
 import com.greenfoxacademy.springwebapp.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,8 @@ public class ProductControllerTest {
 
   @Test
   void getProductDetails_ListsAllProducts() throws Exception {
-    String jwt = login();
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
     mvc.perform(get("/api/products").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.products", isA(ArrayList.class)))
@@ -42,8 +45,52 @@ public class ProductControllerTest {
         .andExpect(jsonPath("$.products[1].description").value("teszt2"));
   }
 
-  private String login() throws Exception {
+  @Test
+  void addNewProduct_WithValidRequest_ReturnsCorrectJson() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("1 week pass", 12000,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(post("/api/products")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productDTOWithoutID)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.name").value("1 week pass"))
+        .andExpect(jsonPath("$.price").value(12000))
+        .andExpect(jsonPath("$.type").value("jegy"));
+  }
+
+  @Test
+  void addNewProduct_WithMissingPriceField_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("1 week pass", null,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(post("/api/products")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productDTOWithoutID)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Price is missing"));
+  }
+
+  @Test
+  void addNewProduct_WithLoggedUser_ReturnsForbidden() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("1 week pass", 12000,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(post("/api/products").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productDTOWithoutID)))
+        .andExpect(status().is(403));
+  }
+
+  private String login(LoginUserDTO loginUserDTO) throws Exception {
     String responseContent = mvc.perform(post("/api/users/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(loginUserDTO)))
@@ -54,7 +101,8 @@ public class ProductControllerTest {
         .getResponse()
         .getContentAsString();
 
-    Map<String, String> map = objectMapper.readValue(responseContent, Map.class);
+    Map<String, String> map = objectMapper.readValue(responseContent, new TypeReference<>() {
+    });
     return map.get("token");
   }
 }
