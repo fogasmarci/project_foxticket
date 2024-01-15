@@ -7,6 +7,7 @@ import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.security.JwtValidatorService;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,11 +19,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -37,7 +41,8 @@ public class CartControllerTest {
 
   @Test
   void addProductToCart_WithValidProductId_ReturnsCorrectJson() throws Exception {
-    String jwt = login();
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
     Claims claims = jwtValidatorService.parseAndValidateJwtToken(jwt);
     Long userId = ((Integer) claims.get("userId")).longValue();
     ProductIdDTO productIdDTO = new ProductIdDTO(2L);
@@ -52,7 +57,8 @@ public class CartControllerTest {
 
   @Test
   void addProductToCart_WithInvalidProductId_ReturnsCorrectErrorMessage() throws Exception {
-    String jwt = login();
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
     ProductIdDTO productIdDTO = new ProductIdDTO(50L);
 
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
@@ -64,7 +70,8 @@ public class CartControllerTest {
 
   @Test
   void addProductToCart_WithMissingProductId_ReturnsCorrectErrorMessage() throws Exception {
-    String jwt = login();
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
     ProductIdDTO productIdDTO = new ProductIdDTO(null);
 
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
@@ -74,8 +81,27 @@ public class CartControllerTest {
         .andExpect(jsonPath("$.error").value("Product ID is required."));
   }
 
-  private String login() throws Exception {
+  @Test
+  void listCartContents_WithEmptyCart_ReturnsCorrectJson() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(get("/api/cart").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.cart").value(hasSize(0)));
+  }
+
+  @Test
+  void listCartContents_WithProductsInCart_ReturnsCorrectJson() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(get("/api/cart").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.cart").value(hasSize(3)));
+  }
+
+  private String login(LoginUserDTO loginUserDTO) throws Exception {
     String responseContent = mvc.perform(post("/api/users/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(loginUserDTO)))

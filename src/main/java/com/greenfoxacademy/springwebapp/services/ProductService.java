@@ -1,13 +1,11 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
@@ -23,6 +21,4 @@ public interface ProductService {
   ProductDTO createProduct(ProductDTOWithoutID productDTOWithoutID);
 
   Optional<Product> findProductById(Long productId);
-
-  List<CartProductDTO> findProductsInUsersCart(Long userId);
 }

@@ -9,5 +9,5 @@ public interface CartService {
 
   Cart findCartByUser(User user);
 
-  CartListDTO findCartWithProductsByUser(Long userId);
+  CartListDTO getCartWithProducts(Long userId);
 }
