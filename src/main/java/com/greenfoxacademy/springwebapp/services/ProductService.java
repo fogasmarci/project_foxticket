@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 

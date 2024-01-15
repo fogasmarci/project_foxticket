@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
@@ -61,13 +61,18 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
     validateProductDTO(productWithoutIdDTO);
-    validateProductType(productWithoutIdDTO);
+
+    ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
+    if (productType == null) {
+      throw new InvalidProductTypeException();
+    }
     if (findProductByName(productWithoutIdDTO.getName()) != null) {
       throw new ProductNameAlreadyTakenException();
     }
+
     Product productToSave = new Product(productWithoutIdDTO.getName(),
         productWithoutIdDTO.getPrice(), productWithoutIdDTO.getDuration(), productWithoutIdDTO.getDescription());
-    productToSave.setType(findProductTypeById(productWithoutIdDTO.getTypeId()));
+    productToSave.setType(productType);
     productRepository.save(productToSave);
 
     return createProductDTO(productToSave);
@@ -118,15 +123,6 @@ public class ProductServiceImpl implements ProductService {
     }
     if (productWithoutIdDTO.getTypeId() == null) {
       throw new MissingFieldsException("Type ID is missing");
-    }
-  }
-
-  private void validateProductType(ProductWithoutIdDTO productWithoutIdDTO) {
-    if (findProductTypeById(productWithoutIdDTO.getTypeId()) == null) {
-      throw new InvalidProductTypeException();
-    }
-    if (findProductByName(productWithoutIdDTO.getName()) != null) {
-      throw new ProductNameAlreadyTakenException();
     }
   }
 }

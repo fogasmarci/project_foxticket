@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.units;
 
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.models.Product;
@@ -99,6 +99,7 @@ public class ProductServiceTest {
     product.setType(berlet);
 
     Mockito.when(productRepository.findByName(productDTOWithoutID.getName())).thenReturn(Optional.of(product));
+    Mockito.when(productTypeRepository.findById(productDTOWithoutID.getTypeId())).thenReturn(Optional.of(berlet));
 
     Throwable exception =
         assertThrows(ProductNameAlreadyTakenException.class, () -> productService.createProduct(productDTOWithoutID));
