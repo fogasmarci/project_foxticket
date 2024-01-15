@@ -1,9 +1,12 @@
 package com.greenfoxacademy.springwebapp.units;
 
+import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
+import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.Product;
+import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
 import com.greenfoxacademy.springwebapp.services.CartServiceImpl;
@@ -11,15 +14,16 @@ import com.greenfoxacademy.springwebapp.services.ProductService;
 import com.greenfoxacademy.springwebapp.services.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 public class CartServiceTest {
@@ -65,5 +69,29 @@ public class CartServiceTest {
     cart.setUser(user);
     Mockito.when(cartRepository.findByUser(user)).thenReturn(user.getCart());
     assertThat(cartService.findCartByUser(user)).usingRecursiveComparison().isEqualTo(cart);
+  }
+
+  @Test
+  void getCartWithProducts_WithLoggedInUserId_ReturnsCorrectCartContent() {
+    User user = new User();
+    Cart cart = user.getCart();
+    ProductType type1 = new ProductType("bérlet");
+    ProductType type2 = new ProductType("jegy");
+    Product product1 = new Product("teszt bérlet 1", 10000, 9000, "havi teljes aru berlet");
+    product1.setType(type1);
+    Product product2 = new Product("teszt bérlet 2", 4000, 9000, "havi diakberlet");
+    product1.setType(type1);
+    Product product3 = new Product("teszt vonaljegy", 400, 90, "egyszer hasznalhato");
+    product1.setType(type2);
+    cart.addProduct(product1);
+    cart.addProduct(product2);
+    cart.addProduct(product3);
+
+    Mockito.when(cartRepository.findAll(any(Specification.class))).thenReturn(List.of(cart));
+
+    List<CartProductDTO> cartContent = cart.getProducts().stream().map(CartProductDTO::new).toList();
+    CartListDTO cartListDTO = new CartListDTO(cartContent);
+
+    assertThat(cartService.getCartWithProducts(user.getId())).usingRecursiveComparison().isEqualTo(cartListDTO);
   }
 }
