@@ -57,7 +57,7 @@ public class CartServiceImpl implements CartService {
 
     List<CartProductDTO> productsInCart = carts.stream()
         .flatMap(cart -> cart.getProducts().stream()
-            .map(p -> new CartProductDTO(p.getId(), p.getName(), p.getPrice())))
+            .map(CartProductDTO::new))
         .toList();
 
     return new CartListDTO(productsInCart);
