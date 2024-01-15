@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class UserRestControllerTest {
   @Autowired
