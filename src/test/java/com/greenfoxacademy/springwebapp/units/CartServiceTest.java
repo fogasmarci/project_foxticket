@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.units;
 
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -40,25 +41,28 @@ public class CartServiceTest {
   @Test
   void addProductToCart_WithNullProductId_ThrowsCorrectException() {
     Cart cart = new Cart();
-    Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.addProductToCart(cart, null));
+    ProductIdDTO productIdDTO = new ProductIdDTO(null);
+    Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.addProductToCart(cart, productIdDTO));
     assertEquals("Product ID is required.", exception.getMessage());
   }
 
   @Test
   void addProductToCart_WithInvalidProductId_ThrowsCorrectException() {
     Cart cart = new Cart();
+    ProductIdDTO productIdDTO = new ProductIdDTO(50L);
     Mockito.when(productService.findProductById(50L)).thenReturn(Optional.empty());
-    Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.addProductToCart(cart, 50L));
+    Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.addProductToCart(cart, productIdDTO));
     assertEquals("Product doesn't exist.", exception.getMessage());
   }
 
   @Test
   void addProductToCart_WithValidProductId_WorksCorrectly() {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
     Cart cart = new Cart();
 
-    cartService.addProductToCart(cart, 2L);
+    cartService.addProductToCart(cart, productIdDTO);
     verify(cartRepository, times(1)).save(cart);
   }
 
