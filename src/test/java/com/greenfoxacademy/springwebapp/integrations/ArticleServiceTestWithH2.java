@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.units;
+package com.greenfoxacademy.springwebapp.integrations;
 
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
 import com.greenfoxacademy.springwebapp.models.Article;
