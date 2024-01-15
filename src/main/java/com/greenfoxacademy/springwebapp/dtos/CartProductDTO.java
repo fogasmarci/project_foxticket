@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.greenfoxacademy.springwebapp.models.Product;
 
 public class CartProductDTO {
   @JsonProperty("product_id")
@@ -12,6 +13,12 @@ public class CartProductDTO {
     this.productId = productId;
     this.name = name;
     this.price = price;
+  }
+
+  public CartProductDTO(Product product) {
+    productId = product.getId();
+    name = product.getName();
+    price = product.getPrice();
   }
 
   public Long getProductId() {

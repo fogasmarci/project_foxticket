@@ -44,8 +44,7 @@ public class CartController {
   @RequestMapping(path = "/api/cart", method = RequestMethod.GET)
   public ResponseEntity<CartListDTO> listCartContents() {
     Long userId = userService.findLoggedInUsersId();
-    CartListDTO productsInCart = cartService.findCartWithProductsByUser(userId);
-
-    return ResponseEntity.status(200).body(productsInCart);
+    CartListDTO productsInUsersCart = cartService.getCartWithProducts(userId);
+    return ResponseEntity.status(200).body(productsInUsersCart);
   }
 }

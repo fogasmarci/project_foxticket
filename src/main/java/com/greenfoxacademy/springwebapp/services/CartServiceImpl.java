@@ -10,10 +10,13 @@ import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUserId;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -48,11 +51,15 @@ public class CartServiceImpl implements CartService {
     return cartRepository.findByUser(user);
   }
 
-  @Override
-  public CartListDTO findCartWithProductsByUser(Long userId) {
-    List<CartProductDTO> productsInCart = productService.findProductsInUsersCart(userId);
+  public CartListDTO getCartWithProducts(Long userId) {
+    Specification<Cart> specification = hasUserId(userId);
+    List<Cart> carts = cartRepository.findAll(specification);
+
+    List<CartProductDTO> productsInCart = carts.stream()
+        .flatMap(cart -> cart.getProducts().stream()
+            .map(CartProductDTO::new))
+        .toList();
+
     return new CartListDTO(productsInCart);
   }
-
-
 }
