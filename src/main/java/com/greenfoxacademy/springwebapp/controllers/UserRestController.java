@@ -6,6 +6,7 @@ import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.dtos.UserInfoRequestDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.login.LoginException;
+import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +40,10 @@ public class UserRestController {
   }
 
   @PatchMapping(path = "/users")
-  public ResponseEntity<?> updateUserInformation(UserInfoRequestDTO updateDTO) {
+  public ResponseEntity<?> updateUserInformation(@RequestBody UserInfoRequestDTO updateDTO) {
     try {
       return ResponseEntity.status(200).body(userService.updateUser(updateDTO));
-    } catch (FieldsException e) {
+    } catch (FieldsException | EmailAlreadyTakenException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }

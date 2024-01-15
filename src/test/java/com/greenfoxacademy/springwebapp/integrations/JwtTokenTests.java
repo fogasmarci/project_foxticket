@@ -64,7 +64,8 @@ public class JwtTokenTests {
         .getResponse()
         .getContentAsString();
 
-    Map<String, String> map = objectMapper.readValue(responseContent, new TypeReference<>() {});
+    Map<String, String> map = objectMapper.readValue(responseContent, new TypeReference<>() {
+    });
     return map.get("token");
   }
 }

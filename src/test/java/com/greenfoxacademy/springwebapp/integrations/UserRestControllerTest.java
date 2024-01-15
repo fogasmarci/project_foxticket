@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.dtos.UserInfoRequestDTO;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class UserRestControllerTest {
   @Autowired
@@ -173,31 +175,119 @@ public class UserRestControllerTest {
         .andExpect(jsonPath("$.error").value("Name, email or Password is required"));
   }
 
-//  @Override
-//  public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
-//    String name = updateDTO.getName();
-//    String email = updateDTO.getEmail();
-//    String password = updateDTO.getPassword();
-//    if (name == null && email == null && password == null) {
-//      throw new FieldsException("Name, email or Password is required");
-//    }
-//    if (email != null && password != null) {
-//      throw new PasswordEmailUpdateException();
-//    }
-//
-//    User user = findLoggedInUser();
-//    if (name != null && name.length() > 3) {
-//      user.setName(name);
-//    }
-//    if (email != null && email.contains("@") && email.length() > 3) {
-//      user.setEmail(email);
-//    }
-//    if (password != null && password.length() > 7) {
-//      user.setPassword(password);
-//    }
-//
-//    return updateUserInfoResponse(user);
-//  }
+  @Test
+  public void updateUser_WithEmailAndPassword_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO(null, "test@testemail.com", "testtest");
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Cannot change password and email at the same time."));
+  }
+
+  @Test
+  public void updateUser_WithInvalidEmail_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("newname", "testtestemail.com", null);
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Invalid email input."));
+  }
+
+  @Test
+  public void updateUser_WithAlreadyTakenEmail_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("newname", "admin@admin.admin", null);
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Email is already taken."));
+  }
+
+  @Test
+  public void updateUser_WithShortName_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("a", null, "newPassword");
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Name must be at least 3 letters long"));
+  }
+
+  @Test
+  public void updateUser_WithShortEmail_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("newName", "@", null);
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Invalid email input."));
+  }
+
+  @Test
+  public void updateUser_WithShortPassword_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("newName", null, "short");
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Password must be at least 8 characters."));
+  }
+
+  @Test
+  public void updateUser_WithPasswordChange_ReturnsUpdatedInfo() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO(null, null, "newPassword");
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("TestUser"))
+        .andExpect(jsonPath("$.email").value("user@user.user"));
+  }
+
+  @Test
+  public void updateUser_WithNameChange_ReturnsUpdatedInfo() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("newName", null, null);
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("newName"))
+        .andExpect(jsonPath("$.email").value("user@user.user"));
+  }
+
+  @Test
+  public void updateUser_WithEmailChange_ReturnsUpdatedInfo() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO(null, "new@new.com", null);
+    mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.name").value("TestUser"))
+        .andExpect(jsonPath("$.email").value("new@new.com"));
+  }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {
     String responseContent = mockMvc.perform(post("/api/users/login")

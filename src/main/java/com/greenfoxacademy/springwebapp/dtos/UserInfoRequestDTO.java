@@ -1,10 +1,9 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class UserInfoRequestDTO {
-  private final String name;
-  private final String email;
-  private final String password;
-
+  private String name;
+  private String email;
+  private String password;
 
   public UserInfoRequestDTO(String name, String email, String password) {
     this.name = name;
@@ -22,5 +21,17 @@ public class UserInfoRequestDTO {
 
   public String getPassword() {
     return password;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 }

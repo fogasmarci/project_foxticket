@@ -17,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.function.Consumer;
+
 @Service
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
@@ -103,19 +105,29 @@ public class UserServiceImpl implements UserService {
     if (email != null && password != null) {
       throw new PasswordEmailUpdateException();
     }
+    if (email != null && !email.contains("@")) {
+      throw new InvalidEmailException();
+    }
+    if (userRepository.findByEmail(email).orElse(null) != null) {
+      throw new EmailAlreadyTakenException();
+    }
 
-    User user = findLoggedInUser();
-    if (name != null && name.length() > 3) {
-      user.setName(name);
-    }
-    if (email != null && email.contains("@") && email.length() > 3) {
-      user.setEmail(email);
-    }
-    if (password != null && password.length() > 7) {
-      user.setPassword(password);
-    }
+    User user = userRepository.findById(findLoggedInUsersId()).orElse(null);
+    setIfValid(name, 3, user::setName, new ShortNameException());
+    setIfValid(email, 4, user::setEmail, new InvalidEmailException());
+    setIfValid(password, 8, user::setPassword, new ShortPasswordException());
+    userRepository.save(user);
 
     return updateUserInfoResponse(user);
+  }
+
+  private void setIfValid(String validate, int length, Consumer<String> setter, FieldsException invalidException) {
+    if (validate != null && validate.length() < length) {
+      throw invalidException;
+    }
+    if (validate != null) {
+      setter.accept(validate);
+    }
   }
 
   private UserInfoResponseDTO updateUserInfoResponse(User user) {
