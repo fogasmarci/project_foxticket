@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
+import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
@@ -59,11 +59,15 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public ProductDTO createProduct(ProductDTOWithoutID productDTOWithoutID) {
-    validateProduct(productDTOWithoutID);
-    Product productToSave = new Product(productDTOWithoutID.getName(),
-        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
-    productToSave.setType(findProductTypeById(productDTOWithoutID.getTypeId()));
+  public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
+    validateProductDTO(productWithoutIdDTO);
+    validateProductType(productWithoutIdDTO);
+    if (findProductByName(productWithoutIdDTO.getName()) != null) {
+      throw new ProductNameAlreadyTakenException();
+    }
+    Product productToSave = new Product(productWithoutIdDTO.getName(),
+        productWithoutIdDTO.getPrice(), productWithoutIdDTO.getDuration(), productWithoutIdDTO.getDescription());
+    productToSave.setType(findProductTypeById(productWithoutIdDTO.getTypeId()));
     productRepository.save(productToSave);
 
     return createProductDTO(productToSave);
@@ -76,16 +80,22 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public ProductDTO editProduct(ProductDTOWithoutID productDTOWithoutID, Long productId) {
+  public ProductDTO editProduct(ProductWithoutIdDTO productWithoutIdDTO, Long productId) {
+    validateProductDTO(productWithoutIdDTO);
     Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
 
-    validateProduct(productDTOWithoutID);
+    ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
+    if (productType == null) {
+      throw new InvalidProductTypeException();
+    }
+    if (findProductByName(productWithoutIdDTO.getName()) != null && !productToEdit.getName().equals(productWithoutIdDTO.getName())) {
+      throw new ProductNameAlreadyTakenException();
+    }
 
-    productToEdit.setName(productDTOWithoutID.getName());
-    productToEdit.setPrice(productDTOWithoutID.getPrice());
-    productToEdit.setDuration(productDTOWithoutID.getDuration());
-    productToEdit.setDescription(productDTOWithoutID.getDescription());
-    ProductType productType = findProductTypeById(productDTOWithoutID.getTypeId());
+    productToEdit.setName(productWithoutIdDTO.getName());
+    productToEdit.setPrice(productWithoutIdDTO.getPrice());
+    productToEdit.setDuration(productWithoutIdDTO.getDuration());
+    productToEdit.setDescription(productWithoutIdDTO.getDescription());
     productToEdit.setType(productType);
 
     productRepository.save(productToEdit);
@@ -93,27 +103,30 @@ public class ProductServiceImpl implements ProductService {
     return createProductDTO(productToEdit);
   }
 
-  private void validateProduct(ProductDTOWithoutID productDTOWithoutID) {
-    if (productDTOWithoutID.getName().isEmpty()) {
+  private void validateProductDTO(ProductWithoutIdDTO productWithoutIdDTO) {
+    if (productWithoutIdDTO.getName().isEmpty()) {
       throw new MissingFieldsException("Name is missing");
     }
-    if (productDTOWithoutID.getDescription().isEmpty()) {
+    if (productWithoutIdDTO.getDescription().isEmpty()) {
       throw new MissingFieldsException("Description is missing");
     }
-    if (productDTOWithoutID.getPrice() == null) {
+    if (productWithoutIdDTO.getPrice() == null) {
       throw new MissingFieldsException("Price is missing");
     }
-    if (productDTOWithoutID.getDuration() == null) {
+    if (productWithoutIdDTO.getDuration() == null) {
       throw new MissingFieldsException("Duration is missing");
     }
-    if (productDTOWithoutID.getTypeId() == null) {
+    if (productWithoutIdDTO.getTypeId() == null) {
       throw new MissingFieldsException("Type ID is missing");
     }
-    if (!(findProductByName(productDTOWithoutID.getName()) == null)) {
-      throw new ProductNameAlreadyTakenException();
-    }
-    if (findProductTypeById(productDTOWithoutID.getTypeId()) == null) {
+  }
+
+  private void validateProductType(ProductWithoutIdDTO productWithoutIdDTO) {
+    if (findProductTypeById(productWithoutIdDTO.getTypeId()) == null) {
       throw new InvalidProductTypeException();
+    }
+    if (findProductByName(productWithoutIdDTO.getName()) != null) {
+      throw new ProductNameAlreadyTakenException();
     }
   }
 }

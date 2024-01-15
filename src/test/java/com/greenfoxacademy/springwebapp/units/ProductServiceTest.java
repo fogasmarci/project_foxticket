@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.units;
 
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
+import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
@@ -64,27 +64,27 @@ public class ProductServiceTest {
 
   @Test
   void createProduct_ProductIsSuccessfullySaved() {
-    ProductDTOWithoutID productDTOWithoutID = new ProductDTOWithoutID("new product", 480, 90, "teszt1", 2L);
-    Product product = mapDTOToProduct(productDTOWithoutID);
+    ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("new product", 480, 90, "teszt1", 2L);
+    Product product = mapDTOToProduct(productWithoutIdDTO);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
 
-    Mockito.when(productRepository.findByName(productDTOWithoutID.getName())).thenReturn(Optional.empty());
-    Mockito.when(productTypeRepository.findById(productDTOWithoutID.getTypeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.findByName(productWithoutIdDTO.getName())).thenReturn(Optional.empty());
+    Mockito.when(productTypeRepository.findById(productWithoutIdDTO.getTypeId())).thenReturn(Optional.of(berlet));
     Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(product);
 
     ProductDTO productDTO = new ProductDTO(product.getId(), product.getName(), product.getPrice(),
         product.getDuration(), product.getDescription(), product.getType().getName());
-    assertThat(productService.createProduct(productDTOWithoutID)).usingRecursiveComparison().isEqualTo(productDTO);
+    assertThat(productService.createProduct(productWithoutIdDTO)).usingRecursiveComparison().isEqualTo(productDTO);
 
-    verify(productRepository, times(1)).findByName(productDTOWithoutID.getName());
+    verify(productRepository, times(1)).findByName(productWithoutIdDTO.getName());
     verify(productRepository, times(1)).save(Mockito.any(Product.class));
   }
 
   @Test
   void createProduct_WithEmptyNameField_ThrowsCorrectException() {
-    ProductDTOWithoutID productDTOWithoutID =
-        new ProductDTOWithoutID("", 480, 90, "teszt1", 2L);
+    ProductWithoutIdDTO productDTOWithoutID =
+        new ProductWithoutIdDTO("", 480, 90, "teszt1", 2L);
 
     Throwable exception = assertThrows(MissingFieldsException.class, () -> productService.createProduct(productDTOWithoutID));
     assertEquals("Name is missing", exception.getMessage());
@@ -92,8 +92,8 @@ public class ProductServiceTest {
 
   @Test
   void createProduct_WithExistingProductName_ThrowsCorrectException() {
-    ProductDTOWithoutID productDTOWithoutID =
-        new ProductDTOWithoutID("new product", 480, 90, "teszt1", 2L);
+    ProductWithoutIdDTO productDTOWithoutID =
+        new ProductWithoutIdDTO("new product", 480, 90, "teszt1", 2L);
     Product product = mapDTOToProduct(productDTOWithoutID);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
@@ -105,7 +105,7 @@ public class ProductServiceTest {
     assertEquals("Product name already exists.", exception.getMessage());
   }
 
-  private Product mapDTOToProduct(ProductDTOWithoutID productDTOWithoutID) {
+  private Product mapDTOToProduct(ProductWithoutIdDTO productDTOWithoutID) {
     return new Product(productDTOWithoutID.getName(),
         productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
   }

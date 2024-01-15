@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductDTOWithoutID;
+import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.ProductTypeException;
@@ -30,18 +30,18 @@ public class ProductController {
   }
 
   @RequestMapping(path = "/api/products", method = RequestMethod.POST)
-  public ResponseEntity<?> addNewProduct(@RequestBody ProductDTOWithoutID productDTOWithoutID) {
+  public ResponseEntity<?> addNewProduct(@RequestBody ProductWithoutIdDTO productWithoutIdDTO) {
     try {
-      return ResponseEntity.status(200).body(productService.createProduct(productDTOWithoutID));
+      return ResponseEntity.status(200).body(productService.createProduct(productWithoutIdDTO));
     } catch (MissingFieldsException | ProductException | ProductTypeException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
 
   @RequestMapping(path = "/api/products/{productId}", method = RequestMethod.PATCH)
-  public ResponseEntity<?> editProduct(@PathVariable Long productId, @RequestBody ProductDTOWithoutID productDTOWithoutID) {
+  public ResponseEntity<?> editProduct(@PathVariable Long productId, @RequestBody ProductWithoutIdDTO productWithoutIdDTO) {
     try {
-      return ResponseEntity.status(200).body(productService.editProduct(productDTOWithoutID, productId));
+      return ResponseEntity.status(200).body(productService.editProduct(productWithoutIdDTO, productId));
     } catch (MissingFieldsException | ProductException | ProductTypeException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }

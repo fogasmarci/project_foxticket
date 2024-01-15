@@ -2,7 +2,7 @@ package com.greenfoxacademy.springwebapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ProductDTOWithoutID {
+public class ProductWithoutIdDTO {
   private String name;
   private Integer price;
   private Integer duration;
@@ -10,7 +10,7 @@ public class ProductDTOWithoutID {
   @JsonProperty("item_id")
   private Long typeId;
 
-  public ProductDTOWithoutID(String name, Integer price, Integer duration, String description, Long typeId) {
+  public ProductWithoutIdDTO(String name, Integer price, Integer duration, String description, Long typeId) {
     this.name = name;
     this.price = price;
     this.duration = duration;
