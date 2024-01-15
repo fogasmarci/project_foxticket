@@ -1,15 +1,18 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-public class UserInfoRequestDTO {
+public class UserInfoResponseDTO {
+  private final Long id;
   private final String name;
   private final String email;
-  private final String password;
 
-
-  public UserInfoRequestDTO(String name, String email, String password) {
+  public UserInfoResponseDTO(Long id, String name, String email) {
+    this.id = id;
     this.name = name;
     this.email = email;
-    this.password = password;
+  }
+
+  public Long getId() {
+    return id;
   }
 
   public String getName() {
@@ -18,9 +21,5 @@ public class UserInfoRequestDTO {
 
   public String getEmail() {
     return email;
-  }
-
-  public String getPassword() {
-    return password;
   }
 }

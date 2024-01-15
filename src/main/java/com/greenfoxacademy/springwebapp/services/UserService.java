@@ -17,5 +17,5 @@ public interface UserService {
 
   Long findLoggedInUsersId();
 
-  MessageDTO updateUser(UserInfoRequestDTO updateDTO);
+  UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO);
 }

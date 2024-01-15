@@ -4,7 +4,6 @@ import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
-import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordException;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
@@ -51,18 +50,9 @@ public class UserServiceImpl implements UserService {
     if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
       throw new AllFieldsMissingException();
     }
-    if (requestDTO.getPassword() == null) {
-      throw new PasswordRequiredException();
-    }
-    if (requestDTO.getName() == null) {
-      throw new NameRequiredException();
-    }
-    if (requestDTO.getEmail() == null) {
-      throw new EmailRequiredException();
-    }
-    if (requestDTO.getPassword().length() < 8) {
-      throw new ShortPasswordException();
-    }
+    validatePassword(requestDTO.getPassword());
+    validateEmail(requestDTO.getEmail());
+    validateName(requestDTO.getName());
     if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
       throw new EmailAlreadyTakenException();
     }
@@ -74,12 +64,8 @@ public class UserServiceImpl implements UserService {
     if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
       throw new AllFieldsMissingException();
     }
-    if (loginUserDTO.getPassword() == null) {
-      throw new PasswordRequiredException();
-    }
-    if (loginUserDTO.getEmail() == null) {
-      throw new EmailRequiredException();
-    }
+    validatePassword(loginUserDTO.getPassword());
+    validateEmail(loginUserDTO.getEmail());
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
@@ -107,11 +93,59 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public MessageDTO updateUser(UserInfoRequestDTO updateDTO) {
-    if (updateDTO.getName() == null && updateDTO.getEmail() == null && updateDTO.getPassword() == null) {
-      throw new MissingFieldsException("Name, email or Password is required");
+  public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
+    String name = updateDTO.getName();
+    String email = updateDTO.getEmail();
+    String password = updateDTO.getPassword();
+    if (name == null && email == null && password == null) {
+      throw new FieldsException("Name, email or Password is required");
+    }
+    if (email != null && password != null) {
+      throw new PasswordEmailUpdateException();
     }
 
-    return null;
+    User user = findLoggedInUser();
+    if (name != null && name.length() > 3) {
+      user.setName(name);
+    }
+    if (email != null && email.contains("@") && email.length() > 3) {
+      user.setEmail(email);
+    }
+    if (password != null && password.length() > 7) {
+      user.setPassword(password);
+    }
+
+    return updateUserInfoResponse(user);
+  }
+
+  private UserInfoResponseDTO updateUserInfoResponse(User user) {
+    return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
+  }
+
+  private void validateName(String name) {
+    if (name == null) {
+      throw new NameRequiredException();
+    }
+    if (name.length() < 4) {
+      throw new ShortNameException();
+    }
+  }
+
+  private void validateEmail(String email) {
+    if (email == null) {
+      throw new EmailRequiredException();
+    }
+    if (!email.contains("@") && email.length() < 4) {
+      throw new InvalidEmailException();
+    }
+  }
+
+  private void validatePassword(String password) {
+    if (password == null) {
+      throw new PasswordRequiredException();
+    }
+    if (password.length() < 8) {
+      throw new ShortPasswordException();
+    }
   }
 }
