@@ -56,9 +56,9 @@ public class UserServiceImpl implements UserService {
     if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
       throw new AllFieldsMissingException();
     }
-    validatePassword(requestDTO.getPassword());
-    validateEmail(requestDTO.getEmail());
-    validateName(requestDTO.getName());
+    validateField(requestDTO.getName(), nameMinLength, true, new ShortNameException(), new NameRequiredException());
+    validateField(requestDTO.getEmail(), emailMinLength, true, new InvalidEmailException(), new EmailRequiredException());
+    validateField(requestDTO.getPassword(), passwordMinLength, true, new ShortPasswordException(), new PasswordRequiredException());
     if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
       throw new EmailAlreadyTakenException();
     }
@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
     if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
       throw new AllFieldsMissingException();
     }
-    validatePassword(loginUserDTO.getPassword());
-    validateEmail(loginUserDTO.getEmail());
+    validateField(loginUserDTO.getEmail(), emailMinLength, true, new InvalidEmailException(), new EmailRequiredException());
+    validateField(loginUserDTO.getPassword(), passwordMinLength, true, new ShortPasswordException(), new PasswordRequiredException());
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
@@ -117,17 +117,20 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyTakenException();
     }
 
-    User user = getCurrnetUser();
-    setIfValid(name, nameMinLength, user::setName, new ShortNameException());
-    setIfValid(email, emailMinLength, user::setEmail, new InvalidEmailException());
-    setIfValid(password, passwordMinLength, user::setPassword, new ShortPasswordException());
+    User user = getCurrentUser();
+    validateField(name, nameMinLength, false, new ShortNameException(), new NameRequiredException());
+    validateField(email, emailMinLength, false, new InvalidEmailException(), new EmailRequiredException());
+    validateField(password, passwordMinLength, false, new ShortPasswordException(), new PasswordRequiredException());
+    setField(name, user::setName);
+    setField(email, user::setEmail);
+    setField(password, user::setPassword);
     userRepository.save(user);
 
     return updateUserInfoResponse(user);
   }
 
   @Override
-  public User getCurrnetUser() {
+  public User getCurrentUser() {
     return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
@@ -135,39 +138,18 @@ public class UserServiceImpl implements UserService {
     return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
   }
 
-  private void setIfValid(String validate, int length, Consumer<String> setter, FieldsException invalidException) {
-    if (validate != null) {
-      if (validate.length() < length) {
-        throw invalidException;
-      }
-      setter.accept(validate);
+  private void validateField(String validate, int length, boolean doNullCheck, FieldsException invalidException, FieldsException nullException) {
+    if (validate == null && doNullCheck) {
+      throw nullException;
+    }
+    if (validate != null && validate.length() < length) {
+      throw invalidException;
     }
   }
 
-  private void validateName(String name) {
-    if (name == null) {
-      throw new NameRequiredException();
-    }
-    if (name.length() < nameMinLength) {
-      throw new ShortNameException();
-    }
-  }
-
-  private void validateEmail(String email) {
-    if (email == null) {
-      throw new EmailRequiredException();
-    }
-    if (!email.contains("@") && email.length() < emailMinLength) {
-      throw new InvalidEmailException();
-    }
-  }
-
-  private void validatePassword(String password) {
-    if (password == null) {
-      throw new PasswordRequiredException();
-    }
-    if (password.length() < passwordMinLength) {
-      throw new ShortPasswordException();
+  private void setField(String value, Consumer<String> setter) {
+    if (value != null) {
+      setter.accept(value);
     }
   }
 }

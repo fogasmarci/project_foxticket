@@ -19,5 +19,5 @@ public interface UserService {
 
   UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO);
 
-  User getCurrnetUser();
+  User getCurrentUser();
 }
