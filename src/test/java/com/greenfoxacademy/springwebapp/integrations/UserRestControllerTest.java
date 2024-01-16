@@ -164,6 +164,15 @@ public class UserRestControllerTest {
   }
 
   @Test
+  void updateUser_NotLoggedIn_ReturnsUnauthorized() throws Exception {
+    UserInfoRequestDTO requestDTO = new UserInfoRequestDTO("newName", null, null);
+    mockMvc.perform(patch("/api/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestDTO)))
+        .andExpect(status().is(401));
+  }
+
+  @Test
   public void updateUser_WithNullInput_ReturnsCorrectError() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
