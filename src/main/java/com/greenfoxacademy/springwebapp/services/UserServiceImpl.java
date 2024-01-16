@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -94,6 +95,8 @@ public class UserServiceImpl implements UserService {
     return securityUser.getId();
   }
 
+
+
   @Override
   public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
     String name = updateDTO.getName();
@@ -112,13 +115,18 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyTakenException();
     }
 
-    User user = userRepository.findById(findLoggedInUsersId()).orElse(null);
+    User user = getCurrnetUser();
     setIfValid(name, 3, user::setName, new ShortNameException());
     setIfValid(email, 4, user::setEmail, new InvalidEmailException());
     setIfValid(password, 8, user::setPassword, new ShortPasswordException());
     userRepository.save(user);
 
     return updateUserInfoResponse(user);
+  }
+
+  @Override
+  public User getCurrnetUser() {
+    return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
   private void setIfValid(String validate, int length, Consumer<String> setter, FieldsException invalidException) {

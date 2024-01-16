@@ -10,6 +10,7 @@ import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTake
 import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,7 +44,7 @@ public class UserRestController {
   public ResponseEntity<?> updateUserInformation(@RequestBody UserInfoRequestDTO updateDTO) {
     try {
       return ResponseEntity.status(200).body(userService.updateUser(updateDTO));
-    } catch (FieldsException | EmailAlreadyTakenException e) {
+    } catch (FieldsException | EmailAlreadyTakenException | UsernameNotFoundException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
