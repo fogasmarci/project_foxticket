@@ -1,9 +1,6 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.dtos.LoginResponseDTO;
-import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
+import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.models.User;
 
 public interface UserService {
@@ -19,4 +16,8 @@ public interface UserService {
   User findLoggedInUser();
 
   Long findLoggedInUsersId();
+
+  UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO);
+
+  User getCurrentUser();
 }

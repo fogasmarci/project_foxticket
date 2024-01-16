@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.services;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
-import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTypeException;
@@ -110,19 +110,19 @@ public class ProductServiceImpl implements ProductService {
 
   private void validateProductDTO(ProductWithoutIdDTO productWithoutIdDTO) {
     if (productWithoutIdDTO.getName().isEmpty()) {
-      throw new MissingFieldsException("Name is missing");
+      throw new FieldsException("Name is missing");
     }
     if (productWithoutIdDTO.getDescription().isEmpty()) {
-      throw new MissingFieldsException("Description is missing");
+      throw new FieldsException("Description is missing");
     }
     if (productWithoutIdDTO.getPrice() == null) {
-      throw new MissingFieldsException("Price is missing");
+      throw new FieldsException("Price is missing");
     }
     if (productWithoutIdDTO.getDuration() == null) {
-      throw new MissingFieldsException("Duration is missing");
+      throw new FieldsException("Duration is missing");
     }
     if (productWithoutIdDTO.getTypeId() == null) {
-      throw new MissingFieldsException("Type ID is missing");
+      throw new FieldsException("Type ID is missing");
     }
   }
 }
