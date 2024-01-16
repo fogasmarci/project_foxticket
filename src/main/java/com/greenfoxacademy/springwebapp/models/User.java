@@ -3,6 +3,9 @@ package com.greenfoxacademy.springwebapp.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -20,6 +23,8 @@ public class User {
   private Cart cart;
   private boolean isAdmin;
   private boolean isVerified;
+  @OneToMany(mappedBy = "user")
+  private List<Order> orders;
 
   public User() {
     roles = "ROLE_USER";
@@ -27,6 +32,7 @@ public class User {
     cart.setUser(this);
     isAdmin = false;
     isVerified = false;
+    orders = new ArrayList<>();
   }
 
   public User(Long userId, String email) {
@@ -94,5 +100,14 @@ public class User {
     String currentRoles = this.getRoles();
     String newRoles = String.format("%s,ROLE_%s", currentRoles, role);
     this.setRoles(newRoles);
+  }
+
+  public List<Order> getOrders() {
+    return orders;
+  }
+
+  public void addOrder(Order order) {
+    orders.add(order);
+    order.setUser(this);
   }
 }
