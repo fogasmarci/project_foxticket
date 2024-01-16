@@ -1,15 +1,15 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
-import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
+import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
+import com.greenfoxacademy.springwebapp.models.Order;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
+import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,11 +24,15 @@ import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUser
 public class CartServiceImpl implements CartService {
   private CartRepository cartRepository;
   private ProductService productService;
+  private UserService userService;
+  private OrderRepository orderRepository;
 
   @Autowired
-  public CartServiceImpl(CartRepository cartRepository, ProductService productService) {
+  public CartServiceImpl(CartRepository cartRepository, ProductService productService, UserService userService, OrderRepository orderRepository) {
     this.cartRepository = cartRepository;
     this.productService = productService;
+    this.userService = userService;
+    this.orderRepository = orderRepository;
   }
 
   @Override
@@ -74,4 +78,25 @@ public class CartServiceImpl implements CartService {
 
     return new CartListDTO(productsInCart);
   }
+
+  @Override
+  @Transactional
+  public OrderListDTO buyProductsInCart() {
+    User user = userService.getCurrentUser();
+    Specification<Cart> specification = hasUserId(user.getId());
+    List<Cart> carts = cartRepository.findAll(specification);
+
+    List<Order> orders = carts.stream()
+        .flatMap(cart -> cart.getProducts().stream()
+            .map(p -> {Order o =new Order();
+              o.setProduct(p);
+              o.setUser(user);
+              orderRepository.save(o);
+              return o;}))
+        .toList();
+
+    return new OrderListDTO(orders);
+  }
+
+
 }

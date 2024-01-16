@@ -37,7 +37,7 @@ public class CartServiceTest {
   public CartServiceTest() {
     cartRepository = Mockito.mock(CartRepository.class);
     productService = Mockito.mock(ProductServiceImpl.class);
-    cartService = new CartServiceImpl(cartRepository, productService);
+    cartService = new CartServiceImpl(cartRepository, productService, userService, orderRepository);
   }
 
   @Test

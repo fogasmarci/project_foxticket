@@ -12,10 +12,15 @@ public class Order {
   private Long id;
   private Status status;
   private LocalDateTime expiry;
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.PERSIST)
   private Product product;
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.PERSIST)
   private User user;
+
+  public Order() {
+    status = Status.NOT_ACTIVE;
+    expiry = null;
+  }
 
   public Long getId() {
     return id;
