@@ -115,4 +115,18 @@ public class CartControllerTest {
     });
     return map.get("token");
   }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndAmountOverLimit_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
+
+    mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productIdDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Selected items cannot be added to cart. Cart limit is 50."));
+
+  }
 }

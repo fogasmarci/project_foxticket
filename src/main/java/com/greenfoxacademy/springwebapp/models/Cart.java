@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.models;
 
+import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Cart {
   private List<Product> products;
   @OneToOne(mappedBy = "cart")
   private User user;
+  static final int productLimit = 50;
 
   public Cart() {
     products = new ArrayList<>();
@@ -32,6 +34,9 @@ public class Cart {
   }
 
   public void addProduct(Product product) {
+    if (products.size() >= productLimit) {
+      throw new ExceedLimitException();
+    }
     products.add(product);
     product.addCart(this);
   }
