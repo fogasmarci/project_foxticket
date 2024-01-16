@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -31,7 +32,8 @@ public class CartServiceImpl implements CartService {
 
   @Override
   @Transactional
-  public void addProductToCart(Cart cart, Long productId) {
+  public void addProductToCart(Cart cart, ProductIdDTO productIdDTO) {
+    Long productId = productIdDTO.getProductId();
     if (productId == null) {
       throw new ProductIdMissingException();
     }
@@ -39,7 +41,12 @@ public class CartServiceImpl implements CartService {
     Optional<Product> optionalProduct = productService.findProductById(productId);
     if (optionalProduct.isPresent()) {
       Product productToAdd = optionalProduct.get();
-      cart.addProduct(productToAdd);
+      int amount = productIdDTO.getAmount();
+      for (int i = 0; i < amount; i++) {
+        cart.addProduct(productToAdd);
+      }
+
+
       cartRepository.save(cart);
     } else {
       throw new ProductIdInvalidException();

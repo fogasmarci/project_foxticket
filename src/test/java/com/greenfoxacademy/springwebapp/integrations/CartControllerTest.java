@@ -6,7 +6,6 @@ import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.security.JwtValidatorService;
 import com.greenfoxacademy.springwebapp.services.CartService;
-import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,16 +42,16 @@ public class CartControllerTest {
   void addProductToCart_WithValidProductId_ReturnsCorrectJson() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
-    Claims claims = jwtValidatorService.parseAndValidateJwtToken(jwt);
-    Long userId = ((Integer) claims.get("userId")).longValue();
     ProductIdDTO productIdDTO = new ProductIdDTO(2L);
 
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.id").value(userId))
-        .andExpect(jsonPath("$.productId").value(productIdDTO.getProductId()));
+        .andExpect(jsonPath("$.cart").value(hasSize(1)))
+        .andExpect(jsonPath("$['cart'][0]['product_id']").value(productIdDTO.getProductId()))
+        .andExpect(jsonPath("$['cart'][0]['name']").value("teszt bérlet 1"))
+        .andExpect(jsonPath("$['cart'][0]['price']").value(4000));
   }
 
   @Test
