@@ -1,6 +1,5 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
-import com.greenfoxacademy.springwebapp.dtos.AddToCartResponseDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
@@ -33,9 +32,9 @@ public class CartController {
     Cart cart = cartService.findCartByUser(user);
 
     try {
-      Long productId = productIdDTO.getProductId();
-      cartService.addProductToCart(cart, productId);
-      return ResponseEntity.status(200).body(new AddToCartResponseDTO(cart.getId(), productId));
+      cartService.addProductToCart(cart, productIdDTO);
+      CartListDTO productsInUsersCart = cartService.getCartWithProducts(user.getId());
+      return ResponseEntity.status(200).body(productsInUsersCart);
     } catch (ProductException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
