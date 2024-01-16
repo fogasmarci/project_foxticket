@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.units;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
-import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
@@ -86,7 +86,7 @@ public class ProductServiceTest {
     ProductWithoutIdDTO productDTOWithoutID =
         new ProductWithoutIdDTO("", 480, 90, "teszt1", 2L);
 
-    Throwable exception = assertThrows(MissingFieldsException.class, () -> productService.createProduct(productDTOWithoutID));
+    Throwable exception = assertThrows(FieldsException.class, () -> productService.createProduct(productDTOWithoutID));
     assertEquals("Name is missing", exception.getMessage());
   }
 
