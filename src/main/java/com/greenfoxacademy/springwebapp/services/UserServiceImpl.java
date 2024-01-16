@@ -56,9 +56,9 @@ public class UserServiceImpl implements UserService {
     if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
       throw new AllFieldsMissingException();
     }
-    validateField(requestDTO.getName(), nameMinLength, true, new ShortNameException(), new NameRequiredException());
-    validateField(requestDTO.getEmail(), emailMinLength, true, new InvalidEmailException(), new EmailRequiredException());
-    validateField(requestDTO.getPassword(), passwordMinLength, true, new ShortPasswordException(), new PasswordRequiredException());
+    validateField(requestDTO.getName(), nameMinLength, new ShortNameException(), new NameRequiredException());
+    validateField(requestDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(requestDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
       throw new EmailAlreadyTakenException();
     }
@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
     if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
       throw new AllFieldsMissingException();
     }
-    validateField(loginUserDTO.getEmail(), emailMinLength, true, new InvalidEmailException(), new EmailRequiredException());
-    validateField(loginUserDTO.getPassword(), passwordMinLength, true, new ShortPasswordException(), new PasswordRequiredException());
+    validateField(loginUserDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(loginUserDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
@@ -98,7 +98,6 @@ public class UserServiceImpl implements UserService {
     return securityUser.getId();
   }
 
-
   @Override
   public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
     String name = updateDTO.getName();
@@ -118,9 +117,9 @@ public class UserServiceImpl implements UserService {
     }
 
     User user = getCurrentUser();
-    validateField(name, nameMinLength, false, new ShortNameException(), new NameRequiredException());
-    validateField(email, emailMinLength, false, new InvalidEmailException(), new EmailRequiredException());
-    validateField(password, passwordMinLength, false, new ShortPasswordException(), new PasswordRequiredException());
+    validateMinLength(name, nameMinLength, new ShortNameException());
+    validateMinLength(email, emailMinLength, new InvalidEmailException());
+    validateMinLength(password, passwordMinLength, new ShortPasswordException());
     setField(name, user::setName);
     setField(email, user::setEmail);
     setField(password, user::setPassword);
@@ -138,10 +137,14 @@ public class UserServiceImpl implements UserService {
     return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
   }
 
-  private void validateField(String validate, int length, boolean doNullCheck, FieldsException invalidException, FieldsException nullException) {
-    if (validate == null && doNullCheck) {
+  private void validateField(String validate, int length, FieldsException invalidException, FieldsException nullException) {
+    if (validate == null) {
       throw nullException;
     }
+    validateMinLength(validate, length, invalidException);
+  }
+
+  private void validateMinLength(String validate, int length, FieldsException invalidException) {
     if (validate != null && validate.length() < length) {
       throw invalidException;
     }
