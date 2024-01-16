@@ -122,10 +122,10 @@ public class UserServiceImpl implements UserService {
   }
 
   private void setIfValid(String validate, int length, Consumer<String> setter, FieldsException invalidException) {
-    if (validate != null && validate.length() < length) {
-      throw invalidException;
-    }
     if (validate != null) {
+      if (validate.length() < length) {
+        throw invalidException;
+      }
       setter.accept(validate);
     }
   }
