@@ -38,16 +38,20 @@ public class CartServiceImpl implements CartService {
       throw new ProductIdMissingException();
     }
 
+    int amount = productIdDTO.getAmount();
+    if (amount <= 0) {
+      return;
+    }
+
     Optional<Product> optionalProduct = productService.findProductById(productId);
     if (optionalProduct.isPresent()) {
       Product productToAdd = optionalProduct.get();
-      int amount = productIdDTO.getAmount();
       for (int i = 0; i < amount; i++) {
         cart.addProduct(productToAdd);
       }
 
-
       cartRepository.save(cart);
+
     } else {
       throw new ProductIdInvalidException();
     }

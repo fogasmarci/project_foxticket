@@ -98,4 +98,54 @@ public class CartServiceTest {
 
     assertThat(cartService.getCartWithProducts(user.getId())).usingRecursiveComparison().isEqualTo(cartListDTO);
   }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndAmount_WorksCorrectly() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 3);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    cartService.addProductToCart(cart, productIdDTO);
+    verify(cartRepository, times(1)).save(cart);
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndNegativeAmount_DoesNotSaveCart() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, -5);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    cartService.addProductToCart(cart, productIdDTO);
+    verify(cartRepository, times(0)).save(cart);
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndZeroAmount_DoesNotSaveCart() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 0);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    cartService.addProductToCart(cart, productIdDTO);
+    verify(cartRepository, times(0)).save(cart);
+  }
+
+  @Test
+  void addProductToCart_WithNullProductId_AndValidAmount_ThrowsCorrectException() {
+    Cart cart = new Cart();
+    ProductIdDTO productIdDTO = new ProductIdDTO(null, 3);
+    Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Product ID is required.", exception.getMessage());
+  }
+
+  @Test
+  void addProductToCart_WithInvalidProductId_AndValidAmount_ThrowsCorrectException() {
+    Cart cart = new Cart();
+    ProductIdDTO productIdDTO = new ProductIdDTO(50L, 3);
+    Mockito.when(productService.findProductById(50L)).thenReturn(Optional.empty());
+    Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Product doesn't exist.", exception.getMessage());
+  }
 }
