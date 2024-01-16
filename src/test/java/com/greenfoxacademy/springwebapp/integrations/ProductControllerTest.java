@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.services.ProductService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,12 +19,12 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class ProductControllerTest {
@@ -88,6 +89,68 @@ public class ProductControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productWithoutIdDTO)))
         .andExpect(status().is(403));
+  }
+
+  @Test
+  void editProduct_WithValidRequest_ReturnsCorrectJson() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", 12000,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(patch("/api/products/1")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newProductDetails)))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.name").value("1 week pass"))
+        .andExpect(jsonPath("$.price").value(12000))
+        .andExpect(jsonPath("$.type").value("jegy"));
+  }
+
+  @Test
+  void editProduct_WithInvalidProductId_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", 12000,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(patch("/api/products/11")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newProductDetails)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Product doesn't exist."));
+  }
+
+  @Test
+  void editProduct_WithMissingPrice_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", null,
+        168, "Use this pass for a whole week!", 1L);
+
+    mvc.perform(patch("/api/products/1")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newProductDetails)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Price is missing"));
+  }
+
+  @Test
+  void editProduct_WithInvalidProductType_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", 9999,
+        168, "Use this pass for a whole week!", 99L);
+
+    mvc.perform(patch("/api/products/1")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newProductDetails)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Product type is wrong."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

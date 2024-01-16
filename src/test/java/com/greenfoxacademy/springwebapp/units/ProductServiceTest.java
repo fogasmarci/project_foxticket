@@ -106,6 +106,66 @@ public class ProductServiceTest {
     assertEquals("Product name already exists.", exception.getMessage());
   }
 
+  @Test
+  void editProduct_ProductNameIsNotChanged_ProductIsSuccessfullyEdited() {
+    Long productToEditId = 2L;
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt bérlet 1", 480, 90, "teszt1", 2L);
+
+    Product productToEdit = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductType berlet = new ProductType("bérlet");
+    productToEdit.setType(berlet);
+
+    Mockito.when(productRepository.findById(productToEditId)).thenReturn(Optional.of(productToEdit));
+    Mockito.when(productTypeRepository.findById(newProductDetails.getTypeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.findByName(newProductDetails.getName())).thenReturn(Optional.of(productToEdit));
+    Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(productToEdit);
+
+    productToEdit.setName(newProductDetails.getName());
+    productToEdit.setPrice(newProductDetails.getPrice());
+    productToEdit.setDuration(newProductDetails.getDuration());
+    productToEdit.setDescription(newProductDetails.getDescription());
+    productToEdit.setType(berlet);
+
+    ProductDTO productDTO = new ProductDTO(productToEdit.getId(), productToEdit.getName(), productToEdit.getPrice(),
+        productToEdit.getDuration(), productToEdit.getDescription(), productToEdit.getType().getName());
+    assertThat(productService.editProduct(newProductDetails, productToEditId)).usingRecursiveComparison().isEqualTo(productDTO);
+
+    verify(productRepository, times(1)).findByName(newProductDetails.getName());
+    verify(productRepository, times(1)).save(Mockito.any(Product.class));
+  }
+
+  @Test
+  void editProduct_ExistingProductNameIsGiven_ThrowsCorrectException() {
+    Long productToEditId = 2L;
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt jegy 1", 480, 90, "teszt1", 2L);
+
+    Product productToEdit = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductType berlet = new ProductType("bérlet");
+    productToEdit.setType(berlet);
+
+    Mockito.when(productRepository.findById(productToEditId)).thenReturn(Optional.of(productToEdit));
+    Mockito.when(productTypeRepository.findById(newProductDetails.getTypeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.findByName(newProductDetails.getName())).thenReturn(Optional.of(productToEdit));
+
+    Throwable exception =
+        assertThrows(ProductNameAlreadyTakenException.class, () -> productService.editProduct(newProductDetails, productToEditId));
+    assertEquals("Product name already exists.", exception.getMessage());
+  }
+
+  @Test
+  void editProduct_ProductNameIsMissing_ThrowsCorrectException() {
+    Long productToEditId = 2L;
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("", 480, 90, "teszt1", 2L);
+
+    Product productToEdit = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductType berlet = new ProductType("bérlet");
+    productToEdit.setType(berlet);
+
+    Throwable exception =
+        assertThrows(MissingFieldsException.class, () -> productService.editProduct(newProductDetails, productToEditId));
+    assertEquals("Name is missing", exception.getMessage());
+  }
+
   private Product mapDTOToProduct(ProductWithoutIdDTO productDTOWithoutID) {
     return new Product(productDTOWithoutID.getName(),
         productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
