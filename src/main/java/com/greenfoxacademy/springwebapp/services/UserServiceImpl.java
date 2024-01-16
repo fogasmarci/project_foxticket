@@ -22,6 +22,9 @@ import java.util.function.Consumer;
 
 @Service
 public class UserServiceImpl implements UserService {
+  public static final int emailMinLength = 3;
+  public static final int nameMinLength = 3;
+  public static final int passwordMinLength = 8;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
@@ -96,7 +99,6 @@ public class UserServiceImpl implements UserService {
   }
 
 
-
   @Override
   public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
     String name = updateDTO.getName();
@@ -116,9 +118,9 @@ public class UserServiceImpl implements UserService {
     }
 
     User user = getCurrnetUser();
-    setIfValid(name, 3, user::setName, new ShortNameException());
-    setIfValid(email, 4, user::setEmail, new InvalidEmailException());
-    setIfValid(password, 8, user::setPassword, new ShortPasswordException());
+    setIfValid(name, nameMinLength, user::setName, new ShortNameException());
+    setIfValid(email, emailMinLength, user::setEmail, new InvalidEmailException());
+    setIfValid(password, passwordMinLength, user::setPassword, new ShortPasswordException());
     userRepository.save(user);
 
     return updateUserInfoResponse(user);
@@ -127,6 +129,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public User getCurrnetUser() {
     return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  private UserInfoResponseDTO updateUserInfoResponse(User user) {
+    return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
   }
 
   private void setIfValid(String validate, int length, Consumer<String> setter, FieldsException invalidException) {
@@ -138,15 +144,11 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  private UserInfoResponseDTO updateUserInfoResponse(User user) {
-    return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
-  }
-
   private void validateName(String name) {
     if (name == null) {
       throw new NameRequiredException();
     }
-    if (name.length() < 4) {
+    if (name.length() < nameMinLength) {
       throw new ShortNameException();
     }
   }
@@ -155,7 +157,7 @@ public class UserServiceImpl implements UserService {
     if (email == null) {
       throw new EmailRequiredException();
     }
-    if (!email.contains("@") && email.length() < 4) {
+    if (!email.contains("@") && email.length() < emailMinLength) {
       throw new InvalidEmailException();
     }
   }
@@ -164,7 +166,7 @@ public class UserServiceImpl implements UserService {
     if (password == null) {
       throw new PasswordRequiredException();
     }
-    if (password.length() < 8) {
+    if (password.length() < passwordMinLength) {
       throw new ShortPasswordException();
     }
   }
