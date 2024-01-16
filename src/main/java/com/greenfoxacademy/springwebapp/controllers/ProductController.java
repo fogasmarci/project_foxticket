@@ -41,4 +41,13 @@ public class ProductController {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
+
+  @RequestMapping(path = "/api/products/{productId}", method = RequestMethod.DELETE)
+  public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
+    try {
+      return ResponseEntity.status(200).body(productService.deleteProduct(productId));
+    } catch (MissingFieldsException | ProductException | ProductTypeException e) {
+      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+    }
+  }
 }
