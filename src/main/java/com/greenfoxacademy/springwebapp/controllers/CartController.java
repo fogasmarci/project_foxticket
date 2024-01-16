@@ -48,7 +48,7 @@ public class CartController {
   }
 
   @PostMapping("/api/orders")
-  public ResponseEntity<?> buyProductsInCart(){
+  public ResponseEntity<?> buyProductsInCart() {
     try {
       OrderListDTO orderListDTO = cartService.buyProductsInCart();
       return ResponseEntity.status(200).body(orderListDTO);

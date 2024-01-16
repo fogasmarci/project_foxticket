@@ -12,9 +12,9 @@ public class Order {
   private Long id;
   private Status status;
   private LocalDateTime expiry;
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   private Product product;
-  @ManyToOne(cascade = CascadeType.PERSIST)
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   private User user;
 
   public Order() {

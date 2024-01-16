@@ -1,17 +1,15 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-import com.greenfoxacademy.springwebapp.models.Order;
-
 import java.util.List;
 
 public class OrderListDTO {
-  private List<Order> orders;
+  private List<OrderDTO> orders;
 
-  public OrderListDTO(List<Order> orders) {
+  public OrderListDTO(List<OrderDTO> orders) {
     this.orders = orders;
   }
 
-  public List<Order> getOrders() {
+  public List<OrderDTO> getOrders() {
     return orders;
   }
 }

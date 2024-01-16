@@ -88,15 +88,19 @@ public class CartServiceImpl implements CartService {
 
     List<Order> orders = carts.stream()
         .flatMap(cart -> cart.getProducts().stream()
-            .map(p -> {Order o =new Order();
+            .map(p -> {
+              Order o = new Order();
               o.setProduct(p);
               o.setUser(user);
               orderRepository.save(o);
-              return o;}))
+              return o;
+            }))
         .toList();
 
-    return new OrderListDTO(orders);
+    List<OrderDTO> orderDTOList = orders.stream()
+        .map(o -> new OrderDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
+        .toList();
+
+    return new OrderListDTO(orderDTOList);
   }
-
-
 }

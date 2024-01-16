@@ -23,7 +23,7 @@ public class User {
   private Cart cart;
   private boolean isAdmin;
   private boolean isVerified;
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   private List<Order> orders;
 
   public User() {
