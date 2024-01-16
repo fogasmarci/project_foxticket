@@ -22,9 +22,9 @@ import java.util.function.Consumer;
 
 @Service
 public class UserServiceImpl implements UserService {
-  public static final int emailMinLength = 3;
-  public static final int nameMinLength = 3;
-  public static final int passwordMinLength = 8;
+  private static final int emailMinLength = 3;
+  private static final int nameMinLength = 3;
+  private static final int passwordMinLength = 8;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
