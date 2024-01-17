@@ -18,8 +18,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -87,6 +86,35 @@ public class ProductControllerTest {
     mvc.perform(post("/api/products").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productWithoutIdDTO)))
+        .andExpect(status().is(403));
+  }
+
+  @Test
+  void deleteProduct_WithValidProductId_DeleteIsSuccessful() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/products/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.message").value("Product teszt jegy 1 is deleted."));
+  }
+
+  @Test
+  void deleteProduct_WithInvalidProductId_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/products/111").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Product doesn't exist."));
+  }
+
+  @Test
+  void deleteProduct_WithLoggedUser_ReturnsForbidden() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/products/1").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(403));
   }
 

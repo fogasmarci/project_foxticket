@@ -111,8 +111,8 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public MessageDTO deleteProduct(Long productId) {
-    Product productToDelete = findProductById(productId).
-        orElseThrow(ProductIdInvalidException::new);
+    Product productToDelete = findProductById(productId)
+        .orElseThrow(ProductIdInvalidException::new);
 
     productRepository.delete(productToDelete);
     String okMessage = "Product " + productToDelete.getName() + " is deleted.";
