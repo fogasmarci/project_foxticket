@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -67,6 +68,7 @@ public class CartServiceImpl implements CartService {
     return cartRepository.findByUser(user);
   }
 
+  @Override
   public CartListDTO getCartWithProducts(Long userId) {
     Specification<Cart> specification = hasUserId(userId);
     List<Cart> carts = cartRepository.findAll(specification);
@@ -85,22 +87,29 @@ public class CartServiceImpl implements CartService {
     User user = userService.getCurrentUser();
     Specification<Cart> specification = hasUserId(user.getId());
     List<Cart> carts = cartRepository.findAll(specification);
+    if (carts.isEmpty()) {
+      throw new CartNotFoundException();
+    }
 
-    List<Order> orders = carts.stream()
-        .flatMap(cart -> cart.getProducts().stream()
-            .map(p -> {
-              Order o = new Order();
-              o.setProduct(p);
-              o.setUser(user);
-              orderRepository.save(o);
-              return o;
-            }))
+    Cart cart = carts.get(0);
+    List<Order> orders = cart.getProducts().stream()
+        .map(p -> {
+          Order o = new Order();
+          o.setProduct(p);
+          o.setUser(user);
+          return orderRepository.save(o);
+        })
         .toList();
 
-    List<OrderDTO> orderDTOList = orders.stream()
+    cart.clear();
+    cartRepository.save(cart);
+
+    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orders));
+  }
+
+  private List<OrderDTO> mapOrdersIntoListOfOrderDTOs(List<Order> orders) {
+    return orders.stream()
         .map(o -> new OrderDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
         .toList();
-
-    return new OrderListDTO(orderDTOList);
   }
 }
