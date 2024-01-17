@@ -162,7 +162,7 @@ public class ProductServiceTest {
     productToEdit.setType(berlet);
 
     Throwable exception =
-        assertThrows(MissingFieldsException.class, () -> productService.editProduct(newProductDetails, productToEditId));
+        assertThrows(FieldsException.class, () -> productService.editProduct(newProductDetails, productToEditId));
     assertEquals("Name is missing", exception.getMessage());
   }
 
