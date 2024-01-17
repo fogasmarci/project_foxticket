@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.controllers;
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
-import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.User;
@@ -36,7 +36,7 @@ public class CartController {
       cartService.addProductToCart(cart, productIdDTO);
       CartListDTO productsInUsersCart = cartService.getCartWithProducts(user.getId());
       return ResponseEntity.status(200).body(productsInUsersCart);
-    } catch (ProductException | ExceedLimitException e) {
+    } catch (ProductException | FieldsException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }

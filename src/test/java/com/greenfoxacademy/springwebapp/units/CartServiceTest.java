@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -112,25 +113,25 @@ public class CartServiceTest {
   }
 
   @Test
-  void addProductToCart_WithValidProductId_AndNegativeAmount_DoesNotSaveCart() {
+  void addProductToCart_WithValidProductId_AndNegativeAmount_ThrowsCorrectException() {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, -5);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
     Cart cart = new Cart();
 
-    cartService.addProductToCart(cart, productIdDTO);
-    verify(cartRepository, times(0)).save(cart);
+    Throwable exception = assertThrows(InvalidAmountException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Amount must be greater than 0.", exception.getMessage());
   }
 
   @Test
-  void addProductToCart_WithValidProductId_AndZeroAmount_DoesNotSaveCart() {
+  void addProductToCart_WithValidProductId_AndZeroAmount_ThrowsCorrectException() {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 0);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
     Cart cart = new Cart();
 
-    cartService.addProductToCart(cart, productIdDTO);
-    verify(cartRepository, times(0)).save(cart);
+    Throwable exception = assertThrows(InvalidAmountException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Amount must be greater than 0.", exception.getMessage());
   }
 
   @Test

@@ -154,12 +154,12 @@ public class CartControllerTest {
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
-        .andExpect(status().is(200))
-        .andExpect(jsonPath("$.cart").value(hasSize(0)));
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Amount must be greater than 0."));
   }
 
   @Test
-  void addProductToCart_WithValidProductId_AndZeroAmount_DoesNotAddAnythingToCart() throws Exception {
+  void addProductToCart_WithValidProductId_AndZeroAmount_ReturnsCorrectErrorMessage() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 0);
@@ -167,8 +167,22 @@ public class CartControllerTest {
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
-        .andExpect(status().is(200))
-        .andExpect(jsonPath("$.cart").value(hasSize(0)));
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Amount must be greater than 0."));
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndAmountOverLimit_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
+
+    mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productIdDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Selected items cannot be added to cart. Cart limit is 50."));
+
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {
@@ -185,19 +199,5 @@ public class CartControllerTest {
     Map<String, String> map = objectMapper.readValue(responseContent, new TypeReference<>() {
     });
     return map.get("token");
-  }
-
-  @Test
-  void addProductToCart_WithValidProductId_AndAmountOverLimit_ReturnsCorrectErrorMessage() throws Exception {
-    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
-    String jwt = login(loginUserDTO);
-    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
-
-    mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(productIdDTO)))
-        .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Selected items cannot be added to cart. Cart limit is 50."));
-
   }
 }
