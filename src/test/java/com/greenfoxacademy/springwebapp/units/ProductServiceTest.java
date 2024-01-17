@@ -123,7 +123,7 @@ public class ProductServiceTest {
   }
 
   @Test
-  void deleteProduct_WithInvalidProductId_ProductIsDeleted() {
+  void deleteProduct_WithInvalidProductId_ThrowsCorrectException() {
     Long productId = 11L;
 
     Throwable exception =

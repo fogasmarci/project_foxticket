@@ -115,7 +115,7 @@ public class ProductServiceImpl implements ProductService {
         .orElseThrow(ProductIdInvalidException::new);
 
     productRepository.delete(productToDelete);
-    String okMessage = "Product " + productToDelete.getName() + " is deleted.";
+    String okMessage = String.format("Product %s is deleted.", productToDelete.getName());
 
     return new MessageDTO(okMessage);
   }
