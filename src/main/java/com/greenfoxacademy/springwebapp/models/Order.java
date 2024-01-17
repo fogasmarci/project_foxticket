@@ -10,6 +10,7 @@ public class Order {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @Enumerated(EnumType.STRING)
   private Status status;
   private LocalDateTime expiry;
   @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
@@ -18,7 +19,7 @@ public class Order {
   private User user;
 
   public Order() {
-    status = Status.NOT_ACTIVE;
+    status = Status.Not_active;
     expiry = null;
   }
 

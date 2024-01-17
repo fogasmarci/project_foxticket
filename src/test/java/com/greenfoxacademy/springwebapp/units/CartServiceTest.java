@@ -12,9 +12,8 @@ import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
-import com.greenfoxacademy.springwebapp.services.CartServiceImpl;
-import com.greenfoxacademy.springwebapp.services.ProductService;
-import com.greenfoxacademy.springwebapp.services.ProductServiceImpl;
+import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
+import com.greenfoxacademy.springwebapp.services.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,10 +32,14 @@ public class CartServiceTest {
   CartServiceImpl cartService;
   CartRepository cartRepository;
   ProductService productService;
+  UserService userService;
+  OrderRepository orderRepository;
 
   public CartServiceTest() {
     cartRepository = Mockito.mock(CartRepository.class);
     productService = Mockito.mock(ProductServiceImpl.class);
+    userService = Mockito.mock(UserServiceImpl.class);
+    orderRepository = Mockito.mock(OrderRepository.class);
     cartService = new CartServiceImpl(cartRepository, productService, userService, orderRepository);
   }
 

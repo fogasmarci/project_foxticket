@@ -90,3 +90,18 @@ VALUES ('TestAdmin', 'admin@admin.admin', '$2a$10$YpqEwYeCugXTRDRtC1RnAuRsBIDgSz
 INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLES, CART_ID)
 VALUES ('CartTestUser', 'cica@cartuser.ab', '$2a$12$RDfNaPDsUMJWlZgdvbR0JOXhPRAfD6ptrPx/4q8oDoQMHJ2AEvVdO',
         'ROLE_USER', (SELECT ID FROM CARTS LIMIT 1 OFFSET 2) );
+
+CREATE TABLE ORDERS
+(
+    ID         int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    EXPIRY     timestamp(6) DEFAULT NULL,
+    STATUS     varchar(50) check (STATUS in ('Not_active', 'Active', 'Expired')),
+    PRODUCT_ID int NOT NULL,
+    USER_ID    int NOT NULL,
+    CONSTRAINT FK_PROD
+        FOREIGN KEY (PRODUCT_ID)
+            REFERENCES PRODUCTS (ID),
+    CONSTRAINT FK_USER
+        FOREIGN KEY (USER_ID)
+            REFERENCES USERS (ID)
+);
