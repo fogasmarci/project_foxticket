@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User createUser(String name, String email, String password) {
-    return userRepository.save(new User(name, email, passwordEncoder(password)));
+    return userRepository.save(new User(name, email, encodePassword(password)));
   }
 
   @Override
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
     validateMinLength(email, emailMinLength, new InvalidEmailException());
     validateMinLength(password, passwordMinLength, new ShortPasswordException());
     if (password != null) {
-      password = passwordEncoder(password);
+      password = encodePassword(password);
     }
     User user = getCurrentUser();
     setField(name, user::setName);
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
     return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
-  private String passwordEncoder(String password) {
+  private String encodePassword(String password) {
     return passwordEncoder.encode(password);
   }
 
