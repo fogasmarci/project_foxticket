@@ -1,9 +1,11 @@
 package com.greenfoxacademy.springwebapp.units;
 
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
@@ -20,10 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 public class ProductServiceTest {
@@ -104,6 +104,32 @@ public class ProductServiceTest {
     Throwable exception =
         assertThrows(ProductNameAlreadyTakenException.class, () -> productService.createProduct(productDTOWithoutID));
     assertEquals("Product name already exists.", exception.getMessage());
+  }
+
+  @Test
+  void deleteProduct_WithExistingProductId_ProductIsDeleted() {
+    Long productId = 1L;
+    Product productToDelete = new Product("vonaljegy", 480, 90, "teszt1");
+    ProductType ticket = new ProductType("jegy");
+    productToDelete.setType(ticket);
+
+    Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(productToDelete));
+    Mockito.doNothing().when(productRepository).delete(productToDelete);
+
+    MessageDTO result = productService.deleteProduct(productId);
+
+    assertEquals("Product vonaljegy is deleted.", result.getMessage());
+  }
+
+  @Test
+  void deleteProduct_WithInvalidProductId_ProductIsDeleted() {
+    Long productId = 11L;
+
+    Throwable exception =
+        assertThrows(ProductIdInvalidException.class, () -> productService.deleteProduct(productId));
+    assertEquals("Product doesn't exist.", exception.getMessage());
+
+    verify(productRepository, never()).delete(any());
   }
 
   private Product mapDTOToProduct(ProductWithoutIdDTO productDTOWithoutID) {

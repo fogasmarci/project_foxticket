@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.MissingFieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
+import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.ProductTypeException;
 import com.greenfoxacademy.springwebapp.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class ProductController {
   public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
     try {
       return ResponseEntity.status(200).body(productService.deleteProduct(productId));
-    } catch (MissingFieldsException | ProductException | ProductTypeException e) {
+    } catch (ProductIdInvalidException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
