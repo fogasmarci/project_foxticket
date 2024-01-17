@@ -3,6 +3,7 @@ package com.greenfoxacademy.springwebapp.units;
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
+import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -147,5 +148,16 @@ public class CartServiceTest {
     Mockito.when(productService.findProductById(50L)).thenReturn(Optional.empty());
     Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.addProductToCart(cart, productIdDTO));
     assertEquals("Product doesn't exist.", exception.getMessage());
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndAmountOverLimit_ThrowsException() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    assertThrows(ExceedLimitException.class, () -> cartService.addProductToCart(cart, productIdDTO),
+        "Selected items cannot be added to cart. Cart limit is 50.");
   }
 }
