@@ -3,6 +3,7 @@ package com.greenfoxacademy.springwebapp.services;
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
+import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -40,7 +41,7 @@ public class CartServiceImpl implements CartService {
 
     int amount = productIdDTO.getAmount();
     if (amount <= 0) {
-      return;
+      throw new InvalidAmountException();
     }
 
     Optional<Product> optionalProduct = productService.findProductById(productId);
