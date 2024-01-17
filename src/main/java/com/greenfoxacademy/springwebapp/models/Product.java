@@ -17,7 +17,7 @@ public class Product {
   private String description;
   @ManyToOne
   private ProductType type;
-  @ManyToMany
+  @ManyToMany(mappedBy = "products")
   private List<Cart> carts;
 
   public Product() {
