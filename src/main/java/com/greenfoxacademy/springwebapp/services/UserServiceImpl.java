@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User createUser(String name, String email, String password) {
-    return userRepository.save(new User(name, email, passwordEncoder.encode(password)));
+    return userRepository.save(new User(name, email, encodePassword(password)));
   }
 
   @Override
@@ -103,6 +103,7 @@ public class UserServiceImpl implements UserService {
     String name = updateDTO.getName();
     String email = updateDTO.getEmail();
     String password = updateDTO.getPassword();
+
     if (name == null && email == null && password == null) {
       throw new FieldsException("Name, email or Password is required");
     }
@@ -115,11 +116,13 @@ public class UserServiceImpl implements UserService {
     if (userRepository.findByEmail(email).orElse(null) != null) {
       throw new EmailAlreadyTakenException();
     }
-
-    User user = getCurrentUser();
     validateMinLength(name, nameMinLength, new ShortNameException());
     validateMinLength(email, emailMinLength, new InvalidEmailException());
     validateMinLength(password, passwordMinLength, new ShortPasswordException());
+    if (password != null) {
+      password = encodePassword(password);
+    }
+    User user = getCurrentUser();
     setField(name, user::setName);
     setField(email, user::setEmail);
     setField(password, user::setPassword);
@@ -131,6 +134,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public User getCurrentUser() {
     return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  private String encodePassword(String password) {
+    return passwordEncoder.encode(password);
   }
 
   private UserInfoResponseDTO updateUserInfoResponse(User user) {

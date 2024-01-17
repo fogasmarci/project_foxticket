@@ -268,6 +268,8 @@ public class UserRestControllerTest {
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.name").value("TestUser"))
         .andExpect(jsonPath("$.email").value("user@user.user"));
+    LoginUserDTO newLogin = new LoginUserDTO("user@user.user", "newPassword");
+    login(newLogin);
   }
 
   @Test
