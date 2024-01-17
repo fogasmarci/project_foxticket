@@ -1,16 +1,9 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.dtos.LoginResponseDTO;
-import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationResponseDTO;
-import com.greenfoxacademy.springwebapp.exceptions.fields.AllFieldsMissingException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.EmailRequiredException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.NameRequiredException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.PasswordRequiredException;
+import com.greenfoxacademy.springwebapp.dtos.*;
+import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
-import com.greenfoxacademy.springwebapp.exceptions.registration.ShortPasswordException;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
@@ -21,11 +14,17 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.function.Consumer;
+
 @Service
 public class UserServiceImpl implements UserService {
+  private static final int emailMinLength = 3;
+  private static final int nameMinLength = 3;
+  private static final int passwordMinLength = 8;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
@@ -57,18 +56,9 @@ public class UserServiceImpl implements UserService {
     if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
       throw new AllFieldsMissingException();
     }
-    if (requestDTO.getPassword() == null) {
-      throw new PasswordRequiredException();
-    }
-    if (requestDTO.getName() == null) {
-      throw new NameRequiredException();
-    }
-    if (requestDTO.getEmail() == null) {
-      throw new EmailRequiredException();
-    }
-    if (requestDTO.getPassword().length() < 8) {
-      throw new ShortPasswordException();
-    }
+    validateField(requestDTO.getName(), nameMinLength, new ShortNameException(), new NameRequiredException());
+    validateField(requestDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(requestDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
       throw new EmailAlreadyTakenException();
     }
@@ -80,12 +70,8 @@ public class UserServiceImpl implements UserService {
     if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
       throw new AllFieldsMissingException();
     }
-    if (loginUserDTO.getPassword() == null) {
-      throw new PasswordRequiredException();
-    }
-    if (loginUserDTO.getEmail() == null) {
-      throw new EmailRequiredException();
-    }
+    validateField(loginUserDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(loginUserDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
@@ -110,5 +96,63 @@ public class UserServiceImpl implements UserService {
     SecurityContext context = SecurityContextHolder.getContext();
     SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
     return securityUser.getId();
+  }
+
+  @Override
+  public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
+    String name = updateDTO.getName();
+    String email = updateDTO.getEmail();
+    String password = updateDTO.getPassword();
+    if (name == null && email == null && password == null) {
+      throw new FieldsException("Name, email or Password is required");
+    }
+    if (email != null && password != null) {
+      throw new PasswordEmailUpdateException();
+    }
+    if (email != null && !email.contains("@")) {
+      throw new InvalidEmailException();
+    }
+    if (userRepository.findByEmail(email).orElse(null) != null) {
+      throw new EmailAlreadyTakenException();
+    }
+
+    User user = getCurrentUser();
+    validateMinLength(name, nameMinLength, new ShortNameException());
+    validateMinLength(email, emailMinLength, new InvalidEmailException());
+    validateMinLength(password, passwordMinLength, new ShortPasswordException());
+    setField(name, user::setName);
+    setField(email, user::setEmail);
+    setField(password, user::setPassword);
+    userRepository.save(user);
+
+    return updateUserInfoResponse(user);
+  }
+
+  @Override
+  public User getCurrentUser() {
+    return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  private UserInfoResponseDTO updateUserInfoResponse(User user) {
+    return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
+  }
+
+  private void validateField(String validate, int length, FieldsException invalidException, FieldsException nullException) {
+    if (validate == null) {
+      throw nullException;
+    }
+    validateMinLength(validate, length, invalidException);
+  }
+
+  private void validateMinLength(String validate, int length, FieldsException invalidException) {
+    if (validate != null && validate.length() < length) {
+      throw invalidException;
+    }
+  }
+
+  private void setField(String value, Consumer<String> setter) {
+    if (value != null) {
+      setter.accept(value);
+    }
   }
 }
