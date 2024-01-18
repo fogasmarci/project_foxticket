@@ -51,11 +51,6 @@ public class Cart {
   }
 
   private int getCurrentCartCapacity() {
-    int numberOfProducts = 0;
-    for (Map.Entry<Product, Integer> e : productsInCart.entrySet()) {
-      numberOfProducts += e.getValue();
-    }
-
-    return numberOfProducts;
+    return productsInCart.values().stream().mapToInt(value -> value).sum();
   }
 }
