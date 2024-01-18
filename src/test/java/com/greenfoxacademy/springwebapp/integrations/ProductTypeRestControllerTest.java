@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.NameDTO;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +32,7 @@ public class ProductTypeRestControllerTest {
   @Test
   void addProductType_NotLoggedIn_ReturnsUnauthorized() throws Exception {
     NameDTO nameDTO = new NameDTO("pass");
-    mockMvc.perform(post("/api/product-types")
+    mockMvc.perform(post("/api/producttypes")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(nameDTO)))
         .andExpect(status().is(401));
@@ -43,7 +44,7 @@ public class ProductTypeRestControllerTest {
     String jwt = login(loginUserDTO);
     NameDTO nameDTO = new NameDTO("pass");
 
-    mockMvc.perform(post("/api/product-types").header("Authorization", "Bearer " + jwt)
+    mockMvc.perform(post("/api/producttypes").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(nameDTO)))
         .andExpect(status().is(403));
@@ -53,9 +54,9 @@ public class ProductTypeRestControllerTest {
   void addProductType_WithLoggedAdminAndNullTitle_ReturnsCorrectError() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
-    NameDTO nameDTO = new NameDTO(null);
+    NameDTO nameDTO = new NameDTO("");
 
-    mockMvc.perform(post("/api/product-types").header("Authorization", "Bearer " + jwt)
+    mockMvc.perform(post("/api/producttypes").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(nameDTO)))
         .andExpect(status().is(400))
@@ -68,7 +69,7 @@ public class ProductTypeRestControllerTest {
     String jwt = login(loginUserDTO);
     NameDTO nameDTO = new NameDTO("jegy");
 
-    mockMvc.perform(post("/api/product-types").header("Authorization", "Bearer " + jwt)
+    mockMvc.perform(post("/api/producttypes").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(nameDTO)))
         .andExpect(status().is(400))
@@ -81,7 +82,7 @@ public class ProductTypeRestControllerTest {
     String jwt = login(loginUserDTO);
     NameDTO nameDTO = new NameDTO("test pass");
 
-    mockMvc.perform(post("/api/product-types").header("Authorization", "Bearer " + jwt)
+    mockMvc.perform(post("/api/producttypes").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(nameDTO)))
         .andExpect(status().is(200))

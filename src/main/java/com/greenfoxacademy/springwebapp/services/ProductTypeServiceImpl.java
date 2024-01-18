@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.NameDTO;
+import com.greenfoxacademy.springwebapp.dtos.ProductTypeResponseDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.ProductTypeNameAlreadyExist;
 import com.greenfoxacademy.springwebapp.models.ProductType;
@@ -19,14 +20,16 @@ public class ProductTypeServiceImpl implements ProductTypeService {
   }
 
   @Override
-  public ProductType addProductType(NameDTO nameDTO) {
-    if (nameDTO.getName() == null) {
+  public ProductTypeResponseDTO addProductType(NameDTO nameDTO) {
+    if (nameDTO.getName().isBlank()) {
       throw new FieldsException("Name is required");
     }
     ProductType existingProductType = productTypeRepository.findByName(nameDTO.getName()).orElse(null);
     if (existingProductType != null) {
       throw new ProductTypeNameAlreadyExist();
     }
-    return productTypeRepository.save(new ProductType(nameDTO.getName()));
+    ProductType newProductType = new ProductType(nameDTO.getName());
+    productTypeRepository.save(newProductType);
+    return new ProductTypeResponseDTO(newProductType.getId(), newProductType.getName());
   }
 }
