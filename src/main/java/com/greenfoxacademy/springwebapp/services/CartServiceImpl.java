@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUserId;
@@ -37,33 +39,6 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  @Transactional
-  public void addProductToCart(Cart cart, ProductIdDTO productIdDTO) {
-    Long productId = productIdDTO.getProductId();
-    if (productId == null) {
-      throw new ProductIdMissingException();
-    }
-
-    int amount = productIdDTO.getAmount();
-    if (amount <= 0) {
-      throw new InvalidAmountException();
-    }
-
-    Optional<Product> optionalProduct = productService.findProductById(productId);
-    if (optionalProduct.isPresent()) {
-      Product productToAdd = optionalProduct.get();
-      for (int i = 0; i < amount; i++) {
-        cart.addProduct(productToAdd);
-      }
-
-      cartRepository.save(cart);
-
-    } else {
-      throw new ProductIdInvalidException();
-    }
-  }
-
-  @Override
   public Cart findCartByUser(User user) {
     return cartRepository.findByUser(user);
   }
@@ -72,13 +47,16 @@ public class CartServiceImpl implements CartService {
   public CartListDTO getCartWithProducts(Long userId) {
     Specification<Cart> specification = hasUserId(userId);
     List<Cart> carts = cartRepository.findAll(specification);
+    if (carts.isEmpty()) {
+      throw new CartNotFoundException();
+    }
 
-    List<CartProductDTO> productsInCart = carts.stream()
-        .flatMap(cart -> cart.getProducts().stream()
-            .map(CartProductDTO::new))
+    Cart cart = carts.get(0);
+    List<CartProductDTO> productsInUsersCart = cart.getProductsInCart().keySet().stream()
+        .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p)))
         .toList();
 
-    return new CartListDTO(productsInCart);
+    return new CartListDTO(productsInUsersCart);
   }
 
   @Override
@@ -92,14 +70,16 @@ public class CartServiceImpl implements CartService {
     }
 
     Cart cart = carts.get(0);
-    List<OrderedItem> orderedItems = cart.getProducts().stream()
-        .map(p -> {
-          OrderedItem o = new OrderedItem();
-          o.setProduct(p);
-          o.setUser(user);
-          return orderRepository.save(o);
-        })
-        .toList();
+    List<OrderedItem> orderedItems = new ArrayList<>();
+    for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
+      for (int i = 0; i < e.getValue(); i++) {
+        OrderedItem o = new OrderedItem();
+        o.setProduct(e.getKey());
+        o.setUser(user);
+        orderRepository.save(o);
+        orderedItems.add(o);
+      }
+    }
 
     cart.clear();
     cartRepository.save(cart);
@@ -107,6 +87,44 @@ public class CartServiceImpl implements CartService {
     return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
+  @Override
+  @Transactional
+  public void putProductsInCart(Cart cart, ProductIdDTO productIdDTO) {
+    Long productId = productIdDTO.getProductId();
+    if (productId == null) {
+      throw new ProductIdMissingException();
+    }
+
+    int amount = productIdDTO.getAmount();
+    if (amount <= 0) {
+      throw new InvalidAmountException();
+    }
+
+    Optional<Product> optionalProduct = productService.findProductById(productId);
+    if (optionalProduct.isPresent()) {
+      Product productToAdd = optionalProduct.get();
+      cart.putProductInCart(productToAdd, amount);
+
+      cartRepository.save(cart);
+
+    } else {
+      throw new ProductIdInvalidException();
+    }
+  }
+
+  @Override
+  public CartListDTO createPutProductsInCartResponse(Long userId) {
+    Specification<Cart> specification = hasUserId(userId);
+    List<Cart> carts = cartRepository.findAll(specification);
+
+    List<CartProductDTO> productsInCart = carts.stream()
+        .flatMap(cart -> cart.getProductsInCart().keySet().stream()
+            .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p))))
+        .toList();
+
+    return new CartListDTO(productsInCart);
+  }
+  
   private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
     return orderedItems.stream()
         .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
