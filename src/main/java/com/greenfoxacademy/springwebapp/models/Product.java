@@ -83,13 +83,12 @@ public class Product {
   }
 
   public void addCart(Cart cart) {
-    if (carts.contains(cart)) {
-      cart.addProduct(this);
+    if (!carts.contains(cart)) {
+      carts.add(cart);
     }
   }
 
   public void addOrder(OrderedItem orderedItem) {
     orderedItemList.add(orderedItem);
-    orderedItem.setProduct(this);
   }
 }

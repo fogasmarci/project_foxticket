@@ -53,9 +53,11 @@ public class OrderedItem {
 
   public void setProduct(Product product) {
     this.product = product;
+    product.addOrder(this);
   }
 
   public void setUser(User user) {
     this.user = user;
+    user.addOrder(this);
   }
 }
