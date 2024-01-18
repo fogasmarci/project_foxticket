@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUserId;
 
@@ -100,16 +99,9 @@ public class CartServiceImpl implements CartService {
       throw new InvalidAmountException();
     }
 
-    Optional<Product> optionalProduct = productService.findProductById(productId);
-    if (optionalProduct.isPresent()) {
-      Product productToAdd = optionalProduct.get();
-      cart.putProductInCart(productToAdd, amount);
-
-      cartRepository.save(cart);
-
-    } else {
-      throw new ProductIdInvalidException();
-    }
+    Product productToAdd = productService.findProductById(productId).orElseThrow(ProductIdInvalidException::new);
+    cart.putProductInCart(productToAdd, amount);
+    cartRepository.save(cart);
   }
 
   @Override
@@ -124,7 +116,7 @@ public class CartServiceImpl implements CartService {
 
     return new CartListDTO(productsInCart);
   }
-  
+
   private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
     return orderedItems.stream()
         .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))

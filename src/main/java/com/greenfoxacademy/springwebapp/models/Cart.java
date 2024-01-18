@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Entity
 @Table(name = "carts")
@@ -20,7 +19,6 @@ public class Cart {
   @MapKeyJoinColumn(name = "product_id")
   @Column(name = "quantity")
   private Map<Product, Integer> productsInCart;
-  private int quantity;
   static final int productLimit = 50;
 
   public Cart() {
@@ -45,12 +43,7 @@ public class Cart {
       throw new ExceedLimitException();
     }
 
-    Optional<Product> productsAlreadyInCart = productsInCart.keySet().stream().filter(p -> p.getId() == product.getId()).findFirst();
-    if (productsAlreadyInCart.isEmpty()) {
-      productsInCart.put(product, amount);
-    } else {
-      productsInCart.put(productsAlreadyInCart.get(), productsInCart.get(productsAlreadyInCart.get()) + amount);
-    }
+    productsInCart.merge(product, amount, Integer::sum);
   }
 
   public Map<Product, Integer> getProductsInCart() {

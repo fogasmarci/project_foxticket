@@ -2,7 +2,7 @@ package com.greenfoxacademy.springwebapp.models;
 
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "products")
@@ -16,8 +16,6 @@ public class Product {
   private String description;
   @ManyToOne
   private ProductType type;
-  @OneToMany(mappedBy = "product")
-  private List<OrderedItem> orderedItemList;
 
   public Product() {
   }
@@ -74,7 +72,20 @@ public class Product {
     this.type = type;
   }
 
-  public void addOrder(OrderedItem orderedItem) {
-    orderedItemList.add(orderedItem);
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    Product otherProduct = (Product) obj;
+    return Objects.equals(this.id, otherProduct.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }
