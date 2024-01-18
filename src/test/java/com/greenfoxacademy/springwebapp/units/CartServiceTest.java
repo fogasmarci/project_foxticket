@@ -3,6 +3,8 @@ package com.greenfoxacademy.springwebapp.units;
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
+import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -10,9 +12,8 @@ import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
-import com.greenfoxacademy.springwebapp.services.CartServiceImpl;
-import com.greenfoxacademy.springwebapp.services.ProductService;
-import com.greenfoxacademy.springwebapp.services.ProductServiceImpl;
+import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
+import com.greenfoxacademy.springwebapp.services.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,11 +32,15 @@ public class CartServiceTest {
   CartServiceImpl cartService;
   CartRepository cartRepository;
   ProductService productService;
+  UserService userService;
+  OrderRepository orderRepository;
 
   public CartServiceTest() {
     cartRepository = Mockito.mock(CartRepository.class);
     productService = Mockito.mock(ProductServiceImpl.class);
-    cartService = new CartServiceImpl(cartRepository, productService);
+    userService = Mockito.mock(UserServiceImpl.class);
+    orderRepository = Mockito.mock(OrderRepository.class);
+    cartService = new CartServiceImpl(cartRepository, productService, userService, orderRepository);
   }
 
   @Test
@@ -97,5 +102,66 @@ public class CartServiceTest {
     CartListDTO cartListDTO = new CartListDTO(cartContent);
 
     assertThat(cartService.getCartWithProducts(user.getId())).usingRecursiveComparison().isEqualTo(cartListDTO);
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndAmount_WorksCorrectly() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 3);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    cartService.addProductToCart(cart, productIdDTO);
+    verify(cartRepository, times(1)).save(cart);
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndNegativeAmount_ThrowsCorrectException() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, -5);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    Throwable exception = assertThrows(InvalidAmountException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Amount must be greater than 0.", exception.getMessage());
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndZeroAmount_ThrowsCorrectException() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 0);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    Throwable exception = assertThrows(InvalidAmountException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Amount must be greater than 0.", exception.getMessage());
+  }
+
+  @Test
+  void addProductToCart_WithNullProductId_AndValidAmount_ThrowsCorrectException() {
+    Cart cart = new Cart();
+    ProductIdDTO productIdDTO = new ProductIdDTO(null, 3);
+    Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Product ID is required.", exception.getMessage());
+  }
+
+  @Test
+  void addProductToCart_WithInvalidProductId_AndValidAmount_ThrowsCorrectException() {
+    Cart cart = new Cart();
+    ProductIdDTO productIdDTO = new ProductIdDTO(50L, 3);
+    Mockito.when(productService.findProductById(50L)).thenReturn(Optional.empty());
+    Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.addProductToCart(cart, productIdDTO));
+    assertEquals("Product doesn't exist.", exception.getMessage());
+  }
+
+  @Test
+  void addProductToCart_WithValidProductId_AndAmountOverLimit_ThrowsException() {
+    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
+    Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
+    Cart cart = new Cart();
+
+    assertThrows(ExceedLimitException.class, () -> cartService.addProductToCart(cart, productIdDTO),
+        "Selected items cannot be added to cart. Cart limit is 50.");
   }
 }

@@ -18,4 +18,6 @@ public interface UserService {
   Long findLoggedInUsersId();
 
   UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO);
+
+  User getCurrentUser();
 }

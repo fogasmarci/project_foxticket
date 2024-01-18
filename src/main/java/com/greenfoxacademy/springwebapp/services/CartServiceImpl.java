@@ -1,14 +1,16 @@
 package com.greenfoxacademy.springwebapp.services;
 
-import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
-import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
-import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
+import com.greenfoxacademy.springwebapp.dtos.*;
+import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
+import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
+import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,11 +25,15 @@ import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUser
 public class CartServiceImpl implements CartService {
   private CartRepository cartRepository;
   private ProductService productService;
+  private UserService userService;
+  private OrderRepository orderRepository;
 
   @Autowired
-  public CartServiceImpl(CartRepository cartRepository, ProductService productService) {
+  public CartServiceImpl(CartRepository cartRepository, ProductService productService, UserService userService, OrderRepository orderRepository) {
     this.cartRepository = cartRepository;
     this.productService = productService;
+    this.userService = userService;
+    this.orderRepository = orderRepository;
   }
 
   @Override
@@ -38,16 +44,20 @@ public class CartServiceImpl implements CartService {
       throw new ProductIdMissingException();
     }
 
+    int amount = productIdDTO.getAmount();
+    if (amount <= 0) {
+      throw new InvalidAmountException();
+    }
+
     Optional<Product> optionalProduct = productService.findProductById(productId);
     if (optionalProduct.isPresent()) {
       Product productToAdd = optionalProduct.get();
-      int amount = productIdDTO.getAmount();
       for (int i = 0; i < amount; i++) {
         cart.addProduct(productToAdd);
       }
 
-
       cartRepository.save(cart);
+
     } else {
       throw new ProductIdInvalidException();
     }
@@ -58,6 +68,7 @@ public class CartServiceImpl implements CartService {
     return cartRepository.findByUser(user);
   }
 
+  @Override
   public CartListDTO getCartWithProducts(Long userId) {
     Specification<Cart> specification = hasUserId(userId);
     List<Cart> carts = cartRepository.findAll(specification);
@@ -68,5 +79,37 @@ public class CartServiceImpl implements CartService {
         .toList();
 
     return new CartListDTO(productsInCart);
+  }
+
+  @Override
+  @Transactional
+  public OrderListDTO buyProductsInCart() {
+    User user = userService.getCurrentUser();
+    Specification<Cart> specification = hasUserId(user.getId());
+    List<Cart> carts = cartRepository.findAll(specification);
+    if (carts.isEmpty()) {
+      throw new CartNotFoundException();
+    }
+
+    Cart cart = carts.get(0);
+    List<OrderedItem> orderedItems = cart.getProducts().stream()
+        .map(p -> {
+          OrderedItem o = new OrderedItem();
+          o.setProduct(p);
+          o.setUser(user);
+          return orderRepository.save(o);
+        })
+        .toList();
+
+    cart.clear();
+    cartRepository.save(cart);
+
+    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
+  }
+
+  private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
+    return orderedItems.stream()
+        .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
+        .toList();
   }
 }

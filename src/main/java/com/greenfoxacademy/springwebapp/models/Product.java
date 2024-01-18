@@ -17,8 +17,10 @@ public class Product {
   private String description;
   @ManyToOne
   private ProductType type;
-  @ManyToMany
+  @ManyToMany(mappedBy = "products")
   private List<Cart> carts;
+  @OneToMany(mappedBy = "product")
+  private List<OrderedItem> orderedItemList;
 
   public Product() {
     carts = new ArrayList<>();
@@ -84,5 +86,10 @@ public class Product {
     if (carts.contains(cart)) {
       cart.addProduct(this);
     }
+  }
+
+  public void addOrder(OrderedItem orderedItem) {
+    orderedItemList.add(orderedItem);
+    orderedItem.setProduct(this);
   }
 }

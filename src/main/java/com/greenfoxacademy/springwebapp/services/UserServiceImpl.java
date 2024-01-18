@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,9 @@ import java.util.function.Consumer;
 
 @Service
 public class UserServiceImpl implements UserService {
+  private static final int emailMinLength = 3;
+  private static final int nameMinLength = 3;
+  private static final int passwordMinLength = 8;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
@@ -38,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User createUser(String name, String email, String password) {
-    return userRepository.save(new User(name, email, passwordEncoder.encode(password)));
+    return userRepository.save(new User(name, email, encodePassword(password)));
   }
 
   @Override
@@ -52,9 +56,9 @@ public class UserServiceImpl implements UserService {
     if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
       throw new AllFieldsMissingException();
     }
-    validatePassword(requestDTO.getPassword());
-    validateEmail(requestDTO.getEmail());
-    validateName(requestDTO.getName());
+    validateField(requestDTO.getName(), nameMinLength, new ShortNameException(), new NameRequiredException());
+    validateField(requestDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(requestDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
       throw new EmailAlreadyTakenException();
     }
@@ -66,8 +70,8 @@ public class UserServiceImpl implements UserService {
     if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
       throw new AllFieldsMissingException();
     }
-    validatePassword(loginUserDTO.getPassword());
-    validateEmail(loginUserDTO.getEmail());
+    validateField(loginUserDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(loginUserDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
     } catch (BadCredentialsException e) {
@@ -99,6 +103,7 @@ public class UserServiceImpl implements UserService {
     String name = updateDTO.getName();
     String email = updateDTO.getEmail();
     String password = updateDTO.getPassword();
+
     if (name == null && email == null && password == null) {
       throw new FieldsException("Name, email or Password is required");
     }
@@ -111,53 +116,50 @@ public class UserServiceImpl implements UserService {
     if (userRepository.findByEmail(email).orElse(null) != null) {
       throw new EmailAlreadyTakenException();
     }
-
-    User user = userRepository.findById(findLoggedInUsersId()).orElse(null);
-    setIfValid(name, 3, user::setName, new ShortNameException());
-    setIfValid(email, 4, user::setEmail, new InvalidEmailException());
-    setIfValid(password, 8, user::setPassword, new ShortPasswordException());
+    validateMinLength(name, nameMinLength, new ShortNameException());
+    validateMinLength(email, emailMinLength, new InvalidEmailException());
+    validateMinLength(password, passwordMinLength, new ShortPasswordException());
+    if (password != null) {
+      password = encodePassword(password);
+    }
+    User user = getCurrentUser();
+    setField(name, user::setName);
+    setField(email, user::setEmail);
+    setField(password, user::setPassword);
     userRepository.save(user);
 
     return updateUserInfoResponse(user);
   }
 
-  private void setIfValid(String validate, int length, Consumer<String> setter, FieldsException invalidException) {
-    if (validate != null) {
-      if (validate.length() < length) {
-        throw invalidException;
-      }
-      setter.accept(validate);
-    }
+  @Override
+  public User getCurrentUser() {
+    return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  private String encodePassword(String password) {
+    return passwordEncoder.encode(password);
   }
 
   private UserInfoResponseDTO updateUserInfoResponse(User user) {
     return new UserInfoResponseDTO(user.getId(), user.getName(), user.getEmail());
   }
 
-  private void validateName(String name) {
-    if (name == null) {
-      throw new NameRequiredException();
+  private void validateField(String validate, int length, FieldsException invalidException, FieldsException nullException) {
+    if (validate == null) {
+      throw nullException;
     }
-    if (name.length() < 4) {
-      throw new ShortNameException();
+    validateMinLength(validate, length, invalidException);
+  }
+
+  private void validateMinLength(String validate, int length, FieldsException invalidException) {
+    if (validate != null && validate.length() < length) {
+      throw invalidException;
     }
   }
 
-  private void validateEmail(String email) {
-    if (email == null) {
-      throw new EmailRequiredException();
-    }
-    if (!email.contains("@") && email.length() < 4) {
-      throw new InvalidEmailException();
-    }
-  }
-
-  private void validatePassword(String password) {
-    if (password == null) {
-      throw new PasswordRequiredException();
-    }
-    if (password.length() < 8) {
-      throw new ShortPasswordException();
+  private void setField(String value, Consumer<String> setter) {
+    if (value != null) {
+      setter.accept(value);
     }
   }
 }
