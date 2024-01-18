@@ -1,5 +1,6 @@
 package com.greenfoxacademy.springwebapp.services;
 
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
@@ -106,6 +107,17 @@ public class ProductServiceImpl implements ProductService {
     productRepository.save(productToEdit);
 
     return createProductDTO(productToEdit);
+  }
+
+  @Override
+  public MessageDTO deleteProduct(Long productId) {
+    Product productToDelete = findProductById(productId)
+        .orElseThrow(ProductIdInvalidException::new);
+
+    productRepository.delete(productToDelete);
+    String okMessage = String.format("Product %s is deleted.", productToDelete.getName());
+
+    return new MessageDTO(okMessage);
   }
 
   private void validateProductDTO(ProductWithoutIdDTO productWithoutIdDTO) {
