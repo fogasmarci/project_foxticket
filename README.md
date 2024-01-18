@@ -9,7 +9,7 @@
 - Do not use `Lombok`
 - Do not create getters/setters which are not used
 - Make *everything* configurable (e.g. via values in `.env` and `application.properties`), i.e. no constant value should be hard-coded. The database credentials are already pre-configured this way. See [MATERIALS#Dotenv](MATERIALS.md#dotenv)
-- Place contents into classes according to this order:
+- Place contents into classes according to this orderedItem:
   - Final fields
   - Fields
   - Default constructor
@@ -79,7 +79,7 @@ See [CONTRIBUTING](CONTRIBUTING.md)
 
 ### Start New Feature/Bugfix
 
-In order to minimize merge conflicts later always open a new feature branch from the most recent state of the `master` branch on GitHub.
+In orderedItem to minimize merge conflicts later always open a new feature branch from the most recent state of the `master` branch on GitHub.
 
 - `git pull`
 - `git checkout -b <branch_name> origin/development`

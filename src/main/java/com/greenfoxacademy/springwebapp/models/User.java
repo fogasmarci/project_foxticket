@@ -24,7 +24,7 @@ public class User {
   private boolean isAdmin;
   private boolean isVerified;
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-  private List<Order> orders;
+  private List<OrderedItem> orderedItems;
 
   public User() {
     roles = "ROLE_USER";
@@ -32,7 +32,7 @@ public class User {
     cart.setUser(this);
     isAdmin = false;
     isVerified = false;
-    orders = new ArrayList<>();
+    orderedItems = new ArrayList<>();
   }
 
   public User(Long userId, String email) {
@@ -102,12 +102,12 @@ public class User {
     this.setRoles(newRoles);
   }
 
-  public List<Order> getOrders() {
-    return orders;
+  public List<OrderedItem> getOrders() {
+    return orderedItems;
   }
 
-  public void addOrder(Order order) {
-    orders.add(order);
-    order.setUser(this);
+  public void addOrder(OrderedItem orderedItem) {
+    orderedItems.add(orderedItem);
+    orderedItem.setUser(this);
   }
 }

@@ -5,14 +5,14 @@ import com.greenfoxacademy.springwebapp.models.Status;
 
 import java.time.LocalDateTime;
 
-public class OrderDTO {
+public class OrderedItemDTO {
   private Long id;
   private Status status;
   private LocalDateTime expiry;
   @JsonProperty("product_id")
   private Long productId;
 
-  public OrderDTO(Long id, Status status, LocalDateTime expiry, Long productId) {
+  public OrderedItemDTO(Long id, Status status, LocalDateTime expiry, Long productId) {
     this.id = id;
     this.status = status;
     this.expiry = expiry;

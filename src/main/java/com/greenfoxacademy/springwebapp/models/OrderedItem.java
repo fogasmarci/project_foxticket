@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders")
-public class Order {
+@Table(name = "ordered_items")
+public class OrderedItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -18,7 +18,7 @@ public class Order {
   @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   private User user;
 
-  public Order() {
+  public OrderedItem() {
     status = Status.Not_active;
     expiry = null;
   }

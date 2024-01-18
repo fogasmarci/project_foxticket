@@ -6,7 +6,7 @@ import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
 import com.greenfoxacademy.springwebapp.models.Cart;
-import com.greenfoxacademy.springwebapp.models.Order;
+import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
@@ -92,9 +92,9 @@ public class CartServiceImpl implements CartService {
     }
 
     Cart cart = carts.get(0);
-    List<Order> orders = cart.getProducts().stream()
+    List<OrderedItem> orderedItems = cart.getProducts().stream()
         .map(p -> {
-          Order o = new Order();
+          OrderedItem o = new OrderedItem();
           o.setProduct(p);
           o.setUser(user);
           return orderRepository.save(o);
@@ -104,12 +104,12 @@ public class CartServiceImpl implements CartService {
     cart.clear();
     cartRepository.save(cart);
 
-    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orders));
+    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
-  private List<OrderDTO> mapOrdersIntoListOfOrderDTOs(List<Order> orders) {
-    return orders.stream()
-        .map(o -> new OrderDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
+  private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
+    return orderedItems.stream()
+        .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
         .toList();
   }
 }
