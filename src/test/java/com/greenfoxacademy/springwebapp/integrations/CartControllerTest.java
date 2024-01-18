@@ -182,7 +182,21 @@ public class CartControllerTest {
             .content(objectMapper.writeValueAsString(productIdDTO)))
         .andExpect(status().is(400))
         .andExpect(jsonPath("$.error").value("Selected items cannot be added to cart. Cart limit is 50."));
+  }
 
+  @Test
+  void buyProductsInCart_WithLoggedInUser_ReturnsCorrectJson() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(post("/api/orders").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.orders").value(hasSize(3)))
+        .andExpect(jsonPath("$['orders'][0]['id']").value(1))
+        .andExpect(jsonPath("$['orders'][0]['product_id']").value(2))
+        .andExpect(jsonPath("$['orders'][0]['status']").value("Not_active"))
+        .andExpect(jsonPath("$['orders'][1]['product_id']").value(2))
+        .andExpect(jsonPath("$['orders'][2]['product_id']").value(1));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {
