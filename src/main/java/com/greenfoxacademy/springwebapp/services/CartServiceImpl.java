@@ -55,29 +55,6 @@ public class CartServiceImpl implements CartService {
 
   @Override
   @Transactional
-  public OrderListDTO buyProductsInCart() {
-    User user = userService.getCurrentUser();
-    Cart cart = getCart(user.getId());
-
-    List<OrderedItem> orderedItems = new ArrayList<>();
-    for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
-      for (int i = 0; i < e.getValue(); i++) {
-        OrderedItem o = new OrderedItem();
-        o.setProduct(e.getKey());
-        o.setUser(user);
-        orderRepository.save(o);
-        orderedItems.add(o);
-      }
-    }
-
-    cart.clear();
-    cartRepository.save(cart);
-
-    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
-  }
-
-  @Override
-  @Transactional
   public void putProductsInCart(Cart cart, ProductIdDTO productIdDTO) {
     Long productId = productIdDTO.getProductId();
     if (productId == null) {
@@ -102,6 +79,29 @@ public class CartServiceImpl implements CartService {
         .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p))).toList();
 
     return new CartListDTO(productsInCart);
+  }
+
+  @Override
+  @Transactional
+  public OrderListDTO buyProductsInCart() {
+    User user = userService.getCurrentUser();
+    Cart cart = getCart(user.getId());
+
+    List<OrderedItem> orderedItems = new ArrayList<>();
+    for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
+      for (int i = 0; i < e.getValue(); i++) {
+        OrderedItem o = new OrderedItem();
+        o.setProduct(e.getKey());
+        o.setUser(user);
+        orderRepository.save(o);
+        orderedItems.add(o);
+      }
+    }
+
+    cart.clear();
+    cartRepository.save(cart);
+
+    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
   private Cart getCart(Long userId) {

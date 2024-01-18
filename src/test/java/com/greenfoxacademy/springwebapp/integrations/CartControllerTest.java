@@ -97,7 +97,7 @@ public class CartControllerTest {
 
     mvc.perform(get("/api/cart").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.cart").value(hasSize(3)));
+        .andExpect(jsonPath("$.cart").value(hasSize(2)));
   }
 
   @Test
@@ -110,11 +110,9 @@ public class CartControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.cart").value(hasSize(3)))
+        .andExpect(jsonPath("$.cart").value(hasSize(1)))
         .andExpectAll(jsonPath("$['cart'][0]['product_id']").value(productIdDTO.getProductId()),
             jsonPath("$['cart'][0]['name']").value("teszt bérlet 1"),
-            jsonPath("$['cart'][0]['price']").value(4000))
-        .andExpectAll(jsonPath("$['cart'][2]['product_id']").value(productIdDTO.getProductId()),
             jsonPath("$['cart'][0]['name']").value("teszt bérlet 1"),
             jsonPath("$['cart'][0]['price']").value(4000));
   }
@@ -196,7 +194,7 @@ public class CartControllerTest {
         .andExpect(jsonPath("$['orders'][0]['product_id']").value(2))
         .andExpect(jsonPath("$['orders'][0]['status']").value("Not_active"))
         .andExpect(jsonPath("$['orders'][1]['product_id']").value(2))
-        .andExpect(jsonPath("$['orders'][2]['product_id']").value(1));
+        .andExpect(jsonPath("$['orders'][2]['product_id']").value(2));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {
