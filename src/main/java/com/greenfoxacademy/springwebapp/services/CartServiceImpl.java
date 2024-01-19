@@ -44,13 +44,8 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartListDTO getCartWithProducts(Long userId) {
-    Specification<Cart> specification = hasUserId(userId);
-    List<Cart> carts = cartRepository.findAll(specification);
-    if (carts.isEmpty()) {
-      throw new CartNotFoundException();
-    }
+    Cart cart = getCart(userId);
 
-    Cart cart = carts.get(0);
     List<CartProductDTO> productsInUsersCart = cart.getProductsInCart().keySet().stream()
         .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p)))
         .toList();
@@ -62,13 +57,8 @@ public class CartServiceImpl implements CartService {
   @Transactional
   public OrderListDTO buyProductsInCart() {
     User user = userService.getCurrentUser();
-    Specification<Cart> specification = hasUserId(user.getId());
-    List<Cart> carts = cartRepository.findAll(specification);
-    if (carts.isEmpty()) {
-      throw new CartNotFoundException();
-    }
+    Cart cart = getCart(user.getId());
 
-    Cart cart = carts.get(0);
     List<OrderedItem> orderedItems = new ArrayList<>();
     for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
       for (int i = 0; i < e.getValue(); i++) {
@@ -106,15 +96,17 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartListDTO createPutProductsInCartResponse(Long userId) {
-    Specification<Cart> specification = hasUserId(userId);
-    List<Cart> carts = cartRepository.findAll(specification);
+    Cart cart = getCart(userId);
 
-    List<CartProductDTO> productsInCart = carts.stream()
-        .flatMap(cart -> cart.getProductsInCart().keySet().stream()
-            .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p))))
-        .toList();
+    List<CartProductDTO> productsInCart = cart.getProductsInCart().keySet().stream()
+        .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p))).toList();
 
     return new CartListDTO(productsInCart);
+  }
+
+  private Cart getCart(Long userId) {
+    Specification<Cart> specification = hasUserId(userId);
+    return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
   }
 
   private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {

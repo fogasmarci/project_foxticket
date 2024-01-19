@@ -51,6 +51,6 @@ public class Cart {
   }
 
   private int getCurrentCartCapacity() {
-    return productsInCart.values().stream().mapToInt(value -> value).sum();
+    return productsInCart.values().stream().mapToInt(Integer::intValue).sum();
   }
 }
