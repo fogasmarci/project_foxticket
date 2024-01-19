@@ -100,7 +100,7 @@ public class CartServiceTest {
     cart.putProductInCart(product2, 1);
     cart.putProductInCart(product3, 5);
 
-    Mockito.when(cartRepository.findAll(any(Specification.class))).thenReturn(List.of(cart));
+    Mockito.when(cartRepository.findOne(any(Specification.class))).thenReturn(Optional.of(cart));
 
     List<CartProductDTO> cartContent = cart.getProductsInCart().keySet().stream()
         .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p)))
