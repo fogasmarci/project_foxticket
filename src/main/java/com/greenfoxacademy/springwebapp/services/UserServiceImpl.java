@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
+import com.greenfoxacademy.springwebapp.models.Authorities;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public RegistrationResponseDTO createRegistrationDTO(User user) {
-    boolean isAdmin = user.getRoles().contains("ADMIN");
+    boolean isAdmin = user.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals(Authorities.ROLE_ADMIN.toString()));
     return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin);
   }
 

@@ -2,6 +2,8 @@ package com.greenfoxacademy.springwebapp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
+import com.greenfoxacademy.springwebapp.models.Role;
+import com.greenfoxacademy.springwebapp.models.Authorities;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import io.jsonwebtoken.Claims;
@@ -66,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     User user = new User(userId, email);
 
     if (isAdmin) {
-      user.addRole("ADMIN");
+      user.addRole(new Role(Authorities.ROLE_ADMIN));
     }
 
     return new SecurityUser(user, isAdmin, isVerified);
