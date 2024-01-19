@@ -20,12 +20,12 @@ public class ProductController {
     this.productService = productService;
   }
 
-  @RequestMapping(path = "/api/products", method = RequestMethod.GET)
+  @GetMapping(path = "/api/products")
   public ResponseEntity<?> getProductDetails() {
     return ResponseEntity.status(200).body(productService.listProductDetails());
   }
 
-  @RequestMapping(path = "/api/products", method = RequestMethod.POST)
+  @PostMapping(path = "/api/products")
   public ResponseEntity<?> addNewProduct(@RequestBody ProductWithoutIdDTO productWithoutIdDTO) {
     try {
       return ResponseEntity.status(200).body(productService.createProduct(productWithoutIdDTO));
@@ -34,7 +34,7 @@ public class ProductController {
     }
   }
 
-  @RequestMapping(path = "/api/products/{productId}", method = RequestMethod.PATCH)
+  @PatchMapping(path = "/api/products/{productId}")
   public ResponseEntity<?> editProduct(@PathVariable Long productId, @RequestBody ProductWithoutIdDTO productWithoutIdDTO) {
     try {
       return ResponseEntity.status(200).body(productService.editProduct(productWithoutIdDTO, productId));

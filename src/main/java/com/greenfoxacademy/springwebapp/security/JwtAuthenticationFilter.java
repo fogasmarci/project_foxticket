@@ -40,7 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     String jwt = getJwtFromHeader(request);
-
     if (StringUtils.isBlank(jwt)) {
       chain.doFilter(request, response);
       return;
@@ -48,7 +47,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     try {
       SecurityUser userDetails = getUserDetailsFromJwt(jwt);
-
       setUserAuthenticated(request, userDetails);
       chain.doFilter(request, response);
     } catch (JwtException e) {
