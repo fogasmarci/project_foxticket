@@ -2,8 +2,8 @@ package com.greenfoxacademy.springwebapp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
-import com.greenfoxacademy.springwebapp.models.Role;
 import com.greenfoxacademy.springwebapp.models.Authorities;
+import com.greenfoxacademy.springwebapp.models.Role;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
 import io.jsonwebtoken.Claims;
