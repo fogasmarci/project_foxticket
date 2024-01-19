@@ -24,10 +24,12 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     if (nameDTO.getName().isBlank()) {
       throw new FieldsException("Name is required");
     }
-    ProductType existingProductType = productTypeRepository.findByName(nameDTO.getName()).orElse(null);
-    if (existingProductType != null) {
+
+    boolean isProductTypePresent = productTypeRepository.existsByName(nameDTO.getName());
+    if (isProductTypePresent) {
       throw new ProductTypeNameAlreadyExist();
     }
+
     ProductType newProductType = new ProductType(nameDTO.getName());
     productTypeRepository.save(newProductType);
     return new ProductTypeResponseDTO(newProductType.getId(), newProductType.getName());
