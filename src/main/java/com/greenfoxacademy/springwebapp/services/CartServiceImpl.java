@@ -2,7 +2,6 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
-import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
@@ -45,7 +44,7 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartListDTO getCartWithProducts(Long userId) {
-    Cart cart = getCart(userId);
+    Cart cart = getCartByUserId(userId);
 
     List<CartProductDTO> productsInUsersCart = mapCartContentToList(cart);
 
@@ -72,7 +71,7 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartListDTO createPutProductsInCartResponse(Long userId) {
-    Cart cart = getCart(userId);
+    Cart cart = getCartByUserId(userId);
 
     List<CartProductDTO> productsInCart = mapCartContentToList(cart);
 
@@ -83,7 +82,7 @@ public class CartServiceImpl implements CartService {
   @Transactional
   public OrderListDTO buyProductsInCart() {
     User user = userService.getCurrentUser();
-    Cart cart = getCart(user.getId());
+    Cart cart = getCartByUserId(user.getId());
 
     List<OrderedItem> orderedItems = new ArrayList<>();
     for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
@@ -103,17 +102,12 @@ public class CartServiceImpl implements CartService {
   }
 
   public MessageDTO removeProductFromCart(Long itemId) {
-    User user = userService.getCurrentUser();
-    Cart cart = getCart(user.getId());
+    Cart cart = getCart();
 
     Product product = productService.findProductById(itemId)
         .orElseThrow(ProductIdInvalidException::new);
 
-    boolean isProductInCart = cart.getProductsInCart().keySet().stream().anyMatch(p -> p.equals(product));
-    if (!isProductInCart) {
-      throw new IdInCartNotFoundException();
-    }
-    cart.getProductsInCart().keySet().remove(product);
+    cart.removeProduct(product);
     cartRepository.save(cart);
 
     String productName = product.getName().substring(0, 1).toUpperCase() + product.getName().substring(1);
@@ -122,17 +116,22 @@ public class CartServiceImpl implements CartService {
   }
 
   public MessageDTO removeAllProductsFromCart() {
-    User user = userService.getCurrentUser();
-    Cart cart = getCart(user.getId());
+    Cart cart = getCart();
 
-    cart.getProductsInCart().clear();
+    cart.clearProducts();
     cartRepository.save(cart);
 
     String okMessage = "All items are cleared from the cart.";
     return new MessageDTO(okMessage);
   }
 
-  private Cart getCart(Long userId) {
+  private Cart getCart() {
+    User user = userService.getCurrentUser();
+    Specification<Cart> specification = hasUserId(user.getId());
+    return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
+  }
+
+  private Cart getCartByUserId(Long userId) {
     Specification<Cart> specification = hasUserId(userId);
     return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
   }

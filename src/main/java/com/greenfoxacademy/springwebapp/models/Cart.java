@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.models;
 
 import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import jakarta.persistence.*;
 
 import java.util.HashMap;
@@ -52,5 +53,17 @@ public class Cart {
 
   private int getCurrentCartCapacity() {
     return productsInCart.values().stream().mapToInt(Integer::intValue).sum();
+  }
+
+  public void removeProduct(Product product) {
+    boolean isProductInCart = productsInCart.keySet().stream().anyMatch(p -> p.equals(product));
+    if (!isProductInCart) {
+      throw new IdInCartNotFoundException();
+    }
+    productsInCart.keySet().remove(product);
+  }
+
+  public void clearProducts() {
+    productsInCart.clear();
   }
 }
