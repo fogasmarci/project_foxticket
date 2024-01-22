@@ -46,9 +46,7 @@ public class CartServiceImpl implements CartService {
   public CartListDTO getCartWithProducts(Long userId) {
     Cart cart = getCart(userId);
 
-    List<CartProductDTO> productsInUsersCart = cart.getProductsInCart().keySet().stream()
-        .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p)))
-        .toList();
+    List<CartProductDTO> productsInUsersCart = mapCartContentToList(cart);
 
     return new CartListDTO(productsInUsersCart);
   }
@@ -75,8 +73,7 @@ public class CartServiceImpl implements CartService {
   public CartListDTO createPutProductsInCartResponse(Long userId) {
     Cart cart = getCart(userId);
 
-    List<CartProductDTO> productsInCart = cart.getProductsInCart().keySet().stream()
-        .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p))).toList();
+    List<CartProductDTO> productsInCart = mapCartContentToList(cart);
 
     return new CartListDTO(productsInCart);
   }
@@ -112,6 +109,12 @@ public class CartServiceImpl implements CartService {
   private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
     return orderedItems.stream()
         .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
+        .toList();
+  }
+
+  private List<CartProductDTO> mapCartContentToList(Cart cart) {
+    return cart.getProductsInCart().keySet().stream()
+        .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p)))
         .toList();
   }
 }
