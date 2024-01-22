@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -18,7 +20,12 @@ public class User {
   private String email;
   @JsonIgnore
   private String password;
-  private String roles;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "user_role",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Role> authorities;
   @OneToOne(cascade = CascadeType.ALL)
   private Cart cart;
   private boolean isAdmin;
@@ -27,7 +34,8 @@ public class User {
   private List<OrderedItem> orderedItems;
 
   public User() {
-    roles = "ROLE_USER";
+    authorities = new HashSet<>();
+    authorities.add(new Role(Authorities.USER));
     cart = new Cart();
     cart.setUser(this);
     isAdmin = false;
@@ -76,14 +84,6 @@ public class User {
     this.password = password;
   }
 
-  public String getRoles() {
-    return roles;
-  }
-
-  public void setRoles(String roles) {
-    this.roles = roles;
-  }
-
   public Cart getCart() {
     return cart;
   }
@@ -96,10 +96,8 @@ public class User {
     return isVerified;
   }
 
-  public void addRole(String role) {
-    String currentRoles = this.getRoles();
-    String newRoles = String.format("%s,ROLE_%s", currentRoles, role);
-    this.setRoles(newRoles);
+  public void addRole(Role role) {
+    authorities.add(role);
   }
 
   public List<OrderedItem> getOrders() {
@@ -108,5 +106,13 @@ public class User {
 
   public void addOrder(OrderedItem orderedItem) {
     orderedItems.add(orderedItem);
+  }
+
+  public Set<Role> getAuthorities() {
+    return authorities;
+  }
+
+  public boolean getIsAdminByRoles() {
+    return this.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals(Authorities.ADMIN.toString()));
   }
 }

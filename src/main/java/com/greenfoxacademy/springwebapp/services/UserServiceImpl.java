@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public RegistrationResponseDTO createRegistrationDTO(User user) {
-    boolean isAdmin = user.getRoles().contains("ADMIN");
+    boolean isAdmin = user.getIsAdminByRoles();
     return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin);
   }
 
