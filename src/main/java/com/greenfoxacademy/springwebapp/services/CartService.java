@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.models.Cart;
@@ -16,4 +17,7 @@ public interface CartService {
   OrderListDTO buyProductsInCart();
 
   CartListDTO createPutProductsInCartResponse(Long userId);
+
+  MessageDTO removeProductFromCart(Long itemId);
+  MessageDTO removeAllProductsFromCart();
 }

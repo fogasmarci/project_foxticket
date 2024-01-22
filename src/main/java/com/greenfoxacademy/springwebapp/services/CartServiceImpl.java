@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
@@ -99,6 +100,36 @@ public class CartServiceImpl implements CartService {
     cartRepository.save(cart);
 
     return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
+  }
+
+  public MessageDTO removeProductFromCart(Long itemId){
+    User user = userService.getCurrentUser();
+    Cart cart = getCart(user.getId());
+
+    Product product = productService.findProductById(itemId)
+        .orElseThrow(ProductIdInvalidException::new);
+
+    boolean isProductInCart = cart.getProductsInCart().keySet().stream().anyMatch(p -> p.equals(product));
+    if(!isProductInCart) {
+      throw new IdInCartNotFoundException();
+    }
+    cart.getProductsInCart().keySet().remove(product);
+    cartRepository.save(cart);
+
+    String productName = product.getName().substring(0, 1).toUpperCase() + product.getName().substring(1);
+    String okMessage = String.format("%s is deleted from cart.", productName);
+    return new MessageDTO(okMessage);
+  }
+
+  public MessageDTO removeAllProductsFromCart(){
+    User user = userService.getCurrentUser();
+    Cart cart = getCart(user.getId());
+
+    cart.getProductsInCart().clear();
+    cartRepository.save(cart);
+
+    String okMessage = "All items are cleared from the cart.";
+    return new MessageDTO(okMessage);
   }
 
   private Cart getCart(Long userId) {
