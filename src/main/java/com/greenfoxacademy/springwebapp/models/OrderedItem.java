@@ -57,5 +57,6 @@ public class OrderedItem {
 
   public void setUser(User user) {
     this.user = user;
+    user.addOrder(this);
   }
 }

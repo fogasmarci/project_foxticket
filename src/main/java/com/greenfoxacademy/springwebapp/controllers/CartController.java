@@ -35,8 +35,8 @@ public class CartController {
     Cart cart = cartService.findCartByUser(user);
 
     try {
-      cartService.addProductToCart(cart, productIdDTO);
-      CartListDTO productsInUsersCart = cartService.getCartWithProducts(user.getId());
+      cartService.putProductsInCart(cart, productIdDTO);
+      CartListDTO productsInUsersCart = cartService.createPutProductsInCartResponse(user.getId());
       return ResponseEntity.status(200).body(productsInUsersCart);
     } catch (ProductException | FieldsException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));

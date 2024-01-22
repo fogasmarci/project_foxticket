@@ -2,8 +2,7 @@ package com.greenfoxacademy.springwebapp.models;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "products")
@@ -17,13 +16,8 @@ public class Product {
   private String description;
   @ManyToOne
   private ProductType type;
-  @ManyToMany(mappedBy = "products")
-  private List<Cart> carts;
-  @OneToMany(mappedBy = "product")
-  private List<OrderedItem> orderedItemList;
 
   public Product() {
-    carts = new ArrayList<>();
   }
 
   public Product(String name, int price, int duration, String description) {
@@ -78,18 +72,20 @@ public class Product {
     this.type = type;
   }
 
-  public List<Cart> getCarts() {
-    return carts;
-  }
-
-  public void addCart(Cart cart) {
-    if (carts.contains(cart)) {
-      cart.addProduct(this);
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    Product otherProduct = (Product) obj;
+    return Objects.equals(this.id, otherProduct.id);
   }
 
-  public void addOrder(OrderedItem orderedItem) {
-    orderedItemList.add(orderedItem);
-    orderedItem.setProduct(this);
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }

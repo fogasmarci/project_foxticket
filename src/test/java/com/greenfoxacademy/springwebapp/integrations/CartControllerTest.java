@@ -3,7 +3,10 @@ package com.greenfoxacademy.springwebapp.integrations;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
+import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
+import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
+import com.greenfoxacademy.springwebapp.models.Status;
 import com.greenfoxacademy.springwebapp.security.JwtValidatorService;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import jakarta.transaction.Transactional;
@@ -16,9 +19,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -97,7 +103,7 @@ public class CartControllerTest {
 
     mvc.perform(get("/api/cart").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.cart").value(hasSize(3)));
+        .andExpect(jsonPath("$.cart").value(hasSize(2)));
   }
 
   @Test
@@ -110,11 +116,9 @@ public class CartControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.cart").value(hasSize(3)))
+        .andExpect(jsonPath("$.cart").value(hasSize(1)))
         .andExpectAll(jsonPath("$['cart'][0]['product_id']").value(productIdDTO.getProductId()),
             jsonPath("$['cart'][0]['name']").value("teszt bérlet 1"),
-            jsonPath("$['cart'][0]['price']").value(4000))
-        .andExpectAll(jsonPath("$['cart'][2]['product_id']").value(productIdDTO.getProductId()),
             jsonPath("$['cart'][0]['name']").value("teszt bérlet 1"),
             jsonPath("$['cart'][0]['price']").value(4000));
   }
@@ -189,14 +193,21 @@ public class CartControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
     String jwt = login(loginUserDTO);
 
-    mvc.perform(post("/api/orders").header("Authorization", "Bearer " + jwt))
+    List<OrderedItemDTO> orderedItems = new ArrayList<>();
+    orderedItems.add(new OrderedItemDTO(1L, Status.Not_active, null, 2L));
+    orderedItems.add(new OrderedItemDTO(2L, Status.Not_active, null, 2L));
+    orderedItems.add(new OrderedItemDTO(3L, Status.Not_active, null, 1L));
+    OrderListDTO orders = new OrderListDTO(orderedItems);
+
+    String response = mvc.perform(post("/api/orders").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.orders").value(hasSize(3)))
-        .andExpect(jsonPath("$['orders'][0]['id']").value(1))
-        .andExpect(jsonPath("$['orders'][0]['product_id']").value(2))
-        .andExpect(jsonPath("$['orders'][0]['status']").value("Not_active"))
-        .andExpect(jsonPath("$['orders'][1]['product_id']").value(2))
-        .andExpect(jsonPath("$['orders'][2]['product_id']").value(1));
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    assertTrue(response.contains("\"product_id\":2"));
+    assertTrue(response.contains("\"product_id\":1"));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

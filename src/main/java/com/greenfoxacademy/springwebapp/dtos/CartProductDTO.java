@@ -8,17 +8,20 @@ public class CartProductDTO {
   private Long productId;
   private String name;
   private int price;
+  private int quantity;
 
-  public CartProductDTO(Long productId, String name, int price) {
+  public CartProductDTO(Long productId, String name, int price, int quantity) {
     this.productId = productId;
     this.name = name;
     this.price = price;
+    this.quantity = quantity;
   }
 
-  public CartProductDTO(Product product) {
+  public CartProductDTO(Product product, int quantity) {
     productId = product.getId();
     name = product.getName();
     price = product.getPrice();
+    this.quantity = quantity;
   }
 
   public Long getProductId() {
@@ -31,5 +34,9 @@ public class CartProductDTO {
 
   public int getPrice() {
     return price;
+  }
+
+  public int getQuantity() {
+    return quantity;
   }
 }

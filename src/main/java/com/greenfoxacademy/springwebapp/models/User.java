@@ -108,6 +108,5 @@ public class User {
 
   public void addOrder(OrderedItem orderedItem) {
     orderedItems.add(orderedItem);
-    orderedItem.setUser(this);
   }
 }
