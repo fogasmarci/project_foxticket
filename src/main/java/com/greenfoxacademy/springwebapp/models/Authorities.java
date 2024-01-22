@@ -1,6 +1,11 @@
 package com.greenfoxacademy.springwebapp.models;
 
 public enum Authorities {
-  ROLE_USER,
-  ROLE_ADMIN
+  USER,
+  ADMIN;
+
+  @Override
+  public String toString() {
+    return String.format("ROLE_%s", name());
+  }
 }

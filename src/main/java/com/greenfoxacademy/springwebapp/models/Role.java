@@ -22,6 +22,10 @@ public class Role implements GrantedAuthority {
     this.authority = role;
   }
 
+  public Long getRoleId() {
+    return roleId;
+  }
+
   @Override
   public String getAuthority() {
     return this.authority.toString();
@@ -29,13 +33,5 @@ public class Role implements GrantedAuthority {
 
   public void setAuthority(Authorities authority) {
     this.authority = authority;
-  }
-
-  public Long getRoleId() {
-    return roleId;
-  }
-
-  public void setRoleId(Long roleId) {
-    this.roleId = roleId;
   }
 }

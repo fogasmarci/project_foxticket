@@ -22,10 +22,9 @@ public class User {
   private String password;
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "user_role_junction",
-      joinColumns = {@JoinColumn(name = "user_id")},
-      inverseJoinColumns = {@JoinColumn(name = "role_id")}
-  )
+      name = "user_role",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> authorities;
   @OneToOne(cascade = CascadeType.ALL)
   private Cart cart;
@@ -36,7 +35,7 @@ public class User {
 
   public User() {
     authorities = new HashSet<>();
-    authorities.add(new Role(Authorities.ROLE_USER));
+    authorities.add(new Role(Authorities.USER));
     cart = new Cart();
     cart.setUser(this);
     isAdmin = false;
@@ -114,7 +113,7 @@ public class User {
     return authorities;
   }
 
-  public void setAuthorities(Set<Role> authorities) {
-    this.authorities = authorities;
+  public boolean getIsAdminByRoles() {
+    return this.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals(Authorities.ADMIN.toString()));
   }
 }

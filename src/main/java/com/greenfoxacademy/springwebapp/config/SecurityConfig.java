@@ -1,7 +1,6 @@
 package com.greenfoxacademy.springwebapp.config;
 
 import com.greenfoxacademy.springwebapp.security.JwtAuthenticationFilter;
-import com.greenfoxacademy.springwebapp.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -24,19 +22,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-  private final JpaUserDetailsService myUserDetailsService;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Autowired
-  public SecurityConfig(JpaUserDetailsService myUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
-    this.myUserDetailsService = myUserDetailsService;
+  public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable);
-    http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
     http.authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.POST, "/api/news").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PUT, "/api/news/{articleId}").hasRole("ADMIN")
@@ -54,7 +49,6 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler())
                 .authenticationEntryPoint(authenticationEntryPoint())
         )
-        .userDetailsService(myUserDetailsService)
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
