@@ -19,5 +19,6 @@ public interface CartService {
   CartListDTO createPutProductsInCartResponse(Long userId);
 
   MessageDTO removeProductFromCart(Long itemId);
+
   MessageDTO removeAllProductsFromCart();
 }

@@ -102,7 +102,7 @@ public class CartServiceImpl implements CartService {
     return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
-  public MessageDTO removeProductFromCart(Long itemId){
+  public MessageDTO removeProductFromCart(Long itemId) {
     User user = userService.getCurrentUser();
     Cart cart = getCart(user.getId());
 
@@ -110,7 +110,7 @@ public class CartServiceImpl implements CartService {
         .orElseThrow(ProductIdInvalidException::new);
 
     boolean isProductInCart = cart.getProductsInCart().keySet().stream().anyMatch(p -> p.equals(product));
-    if(!isProductInCart) {
+    if (!isProductInCart) {
       throw new IdInCartNotFoundException();
     }
     cart.getProductsInCart().keySet().remove(product);
@@ -121,7 +121,7 @@ public class CartServiceImpl implements CartService {
     return new MessageDTO(okMessage);
   }
 
-  public MessageDTO removeAllProductsFromCart(){
+  public MessageDTO removeAllProductsFromCart() {
     User user = userService.getCurrentUser();
     Cart cart = getCart(user.getId());
 
