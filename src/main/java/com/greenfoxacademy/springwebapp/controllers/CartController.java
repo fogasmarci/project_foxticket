@@ -12,6 +12,7 @@ import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidExcep
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.CartService;
+import com.greenfoxacademy.springwebapp.services.OrderService;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +23,13 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
   private CartService cartService;
   private UserService userService;
+  private OrderService orderService;
 
   @Autowired
-  public CartController(CartService cartService, UserService userService) {
+  public CartController(CartService cartService, UserService userService, OrderService orderService) {
     this.cartService = cartService;
     this.userService = userService;
+    this.orderService = orderService;
   }
 
   @PostMapping("/api/cart")
@@ -76,5 +79,10 @@ public class CartController {
     } catch (CartNotFoundException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
+  }
+
+  @GetMapping("/api/orders")
+  public ResponseEntity<OrderListDTO> listAllPurchasedItems() {
+    return ResponseEntity.status(200).body(orderService.listAllPurchases());
   }
 }

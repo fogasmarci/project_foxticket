@@ -35,7 +35,7 @@ public class User {
 
   public User() {
     authorities = new HashSet<>();
-    authorities.add(new Role(Authorities.USER));
+    // authorities.add(new Role(Authorities.USER));
     cart = new Cart();
     cart.setUser(this);
     isAdmin = false;
