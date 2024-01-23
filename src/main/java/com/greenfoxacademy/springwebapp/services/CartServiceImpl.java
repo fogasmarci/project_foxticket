@@ -44,7 +44,7 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartListDTO getCartWithProducts(Long userId) {
-    Cart cart = getCart(userId);
+    Cart cart = getCartByUserId(userId);
 
     List<CartProductDTO> productsInUsersCart = mapCartContentToList(cart);
 
@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService {
 
   @Override
   public CartListDTO createPutProductsInCartResponse(Long userId) {
-    Cart cart = getCart(userId);
+    Cart cart = getCartByUserId(userId);
 
     List<CartProductDTO> productsInCart = mapCartContentToList(cart);
 
@@ -82,7 +82,7 @@ public class CartServiceImpl implements CartService {
   @Transactional
   public OrderListDTO buyProductsInCart() {
     User user = userService.getCurrentUser();
-    Cart cart = getCart(user.getId());
+    Cart cart = getCartByUserId(user.getId());
 
     List<OrderedItem> orderedItems = new ArrayList<>();
     for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
@@ -101,7 +101,37 @@ public class CartServiceImpl implements CartService {
     return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
-  private Cart getCart(Long userId) {
+  public MessageDTO removeProductFromCart(Long itemId) {
+    Cart cart = getCart();
+
+    Product product = productService.findProductById(itemId)
+        .orElseThrow(ProductIdInvalidException::new);
+
+    cart.removeProduct(product);
+    cartRepository.save(cart);
+
+    String productName = product.getName().substring(0, 1).toUpperCase() + product.getName().substring(1);
+    String okMessage = String.format("%s is deleted from cart.", productName);
+    return new MessageDTO(okMessage);
+  }
+
+  public MessageDTO removeAllProductsFromCart() {
+    Cart cart = getCart();
+
+    cart.clearProducts();
+    cartRepository.save(cart);
+
+    String okMessage = "All items are cleared from the cart.";
+    return new MessageDTO(okMessage);
+  }
+
+  private Cart getCart() {
+    User user = userService.getCurrentUser();
+    Specification<Cart> specification = hasUserId(user.getId());
+    return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
+  }
+
+  private Cart getCartByUserId(Long userId) {
     Specification<Cart> specification = hasUserId(userId);
     return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
   }
