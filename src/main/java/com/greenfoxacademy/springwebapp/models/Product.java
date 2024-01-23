@@ -81,11 +81,11 @@ public class Product {
       return false;
     }
     Product otherProduct = (Product) obj;
-    return Objects.equals(this.id, otherProduct.id);
+    return Objects.equals(this.name, otherProduct.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(name);
   }
 }

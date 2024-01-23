@@ -6,6 +6,7 @@ import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
+import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
@@ -87,7 +88,6 @@ public class CartServiceTest {
   @Test
   void getCartWithProducts_WithLoggedInUserId_ReturnsCorrectCartContent() {
     Cart cart = returnCartWithProducts();
-    User user = cart.getUser();
 
     Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
@@ -162,24 +162,34 @@ public class CartServiceTest {
 
   @Test
   void removeProductFromCart_ItemIdInCartNotFound_ThrowsCorrectException() {
-    Long productId = 1L;
-    assertThrows(ProductIdInvalidException.class, () -> cartService.removeProductFromCart(productId),
-        "Product doesn't exist.");
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+
+    ProductType type = new ProductType("bérlet");
+    Product product1 = new Product("teszt bérlet 1", 10000, 9000, "havi teljes aru berlet");
+    product1.setType(type);
+    //product1.setId(1L);
+    cart.putProductInCart(product1, 3);
+
+    Product product2 = new Product("teszt bérlet 2", 10000, 9000, "havi teljes aru berlet");
+    product2.setType(type);
+    //product2.setId(2L);
+
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
+    Mockito.when(productService.findProductById(product2.getId())).thenReturn(Optional.of(product2));
+
+    assertThrows(IdInCartNotFoundException.class, () -> cartService.removeProductFromCart(product2.getId()),
+        "There is no item with the given id in the cart.");
   }
 
   @Test
   void removeProductFromCart_WithInvalidProductId_ThrowsCorrectException() {
     Long productId = 11L;
-    User user = new User();
-    Long userId = user.getId();
-    Cart cart = user.getCart();
-    Specification<Cart> specification = hasUserId(userId);
+    Cart cart = returnCartWithProducts();
 
-    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
-    Mockito.when(cartRepository.findOne(specification)).thenReturn(Optional.of(cart));
-
-    Mockito.when(cartRepository.findOne(specification)).thenReturn(Optional.of(cart));
-
+    Mockito.when(productService.findProductById(productId)).thenThrow(ProductIdInvalidException.class);
 
     assertThrows(ProductIdInvalidException.class, () -> cartService.removeProductFromCart(productId),
         "Product doesn't exist.");
@@ -198,7 +208,11 @@ public class CartServiceTest {
 
   private Cart returnCartWithProducts() {
     User user = new User();
+    Long userId = user.getId();
     Cart cart = user.getCart();
+
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
     ProductType type1 = new ProductType("bérlet");
     ProductType type2 = new ProductType("jegy");
