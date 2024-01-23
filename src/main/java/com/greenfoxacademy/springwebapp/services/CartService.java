@@ -8,15 +8,15 @@ import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.User;
 
 public interface CartService {
-  void putProductsInCart(Cart cart, ProductIdDTO productIdDTO);
+  void putProductsInCart(ProductIdDTO productIdDTO);
 
   Cart findCartByUser(User user);
 
-  CartListDTO getCartWithProducts(Long userId);
+  CartListDTO getCartWithProducts();
 
   OrderListDTO buyProductsInCart();
 
-  CartListDTO createPutProductsInCartResponse(Long userId);
+  CartListDTO createPutProductsInCartResponse();
 
   MessageDTO removeProductFromCart(Long itemId);
 
