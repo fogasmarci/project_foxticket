@@ -101,6 +101,7 @@ public class CartServiceImpl implements CartService {
     return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
+  @Override
   public MessageDTO removeProductFromCart(Long itemId) {
     Cart cart = getCart();
 
@@ -115,6 +116,7 @@ public class CartServiceImpl implements CartService {
     return new MessageDTO(okMessage);
   }
 
+  @Override
   public MessageDTO removeAllProductsFromCart() {
     Cart cart = getCart();
 
@@ -123,6 +125,13 @@ public class CartServiceImpl implements CartService {
 
     String okMessage = "All items are cleared from the cart.";
     return new MessageDTO(okMessage);
+  }
+
+  @Override
+  public List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
+    return orderedItems.stream()
+        .map(OrderedItemDTO::new)
+        .toList();
   }
 
   private Cart getCart() {
@@ -134,12 +143,6 @@ public class CartServiceImpl implements CartService {
   private Cart getCartByUserId(Long userId) {
     Specification<Cart> specification = hasUserId(userId);
     return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
-  }
-
-  private List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
-    return orderedItems.stream()
-        .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
-        .toList();
   }
 
   private List<CartProductDTO> mapCartContentToList(Cart cart) {

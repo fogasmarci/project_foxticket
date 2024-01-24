@@ -4,8 +4,10 @@ import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
+import com.greenfoxacademy.springwebapp.models.Authorities;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
+import com.greenfoxacademy.springwebapp.repositories.RoleRepository;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
 import com.greenfoxacademy.springwebapp.security.JwtBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +32,23 @@ public class UserServiceImpl implements UserService {
   private final AuthenticationManager authenticationManager;
   private final JwtBuilder jwtBuilder;
   private final JpaUserDetailsService userDetailsService;
+  private final RoleRepository roleRepository;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtBuilder jwtBuilder, JpaUserDetailsService userDetailsService) {
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtBuilder jwtBuilder, JpaUserDetailsService userDetailsService, RoleRepository roleRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.jwtBuilder = jwtBuilder;
     this.userDetailsService = userDetailsService;
+    this.roleRepository = roleRepository;
   }
 
   @Override
   public User createUser(String name, String email, String password) {
-    return userRepository.save(new User(name, email, encodePassword(password)));
+    User user = new User(name, email, encodePassword(password));
+    user.addRole(roleRepository.findByAuthority(Authorities.USER).get());
+    return userRepository.save(user);
   }
 
   @Override

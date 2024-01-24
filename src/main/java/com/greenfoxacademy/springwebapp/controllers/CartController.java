@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CartController {
-  private CartService cartService;
-  private UserService userService;
+  private final CartService cartService;
+  private final UserService userService;
 
   @Autowired
   public CartController(CartService cartService, UserService userService) {

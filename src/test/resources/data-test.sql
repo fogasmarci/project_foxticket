@@ -51,6 +51,7 @@ CREATE TABLE CARTS
 INSERT INTO CARTS (ID)
 VALUES (default),
        (default),
+       (default),
        (default);
 
 CREATE TABLE CART_PRODUCTS
@@ -63,7 +64,6 @@ CREATE TABLE CART_PRODUCTS
 INSERT INTO CART_PRODUCTS(CART_ID, PRODUCT_ID, QUANTITY)
 VALUES ((SELECT ID FROM CARTS LIMIT 1 OFFSET 2), 2, 2),
        ((SELECT ID FROM CARTS LIMIT 1 OFFSET 2), 1, 1);
-
 
 CREATE TABLE ROLES
 (
@@ -101,6 +101,10 @@ INSERT INTO USERS (NAME, EMAIL, PASSWORD, CART_ID)
 VALUES ('CartTestUser', 'cica@cartuser.ab', '$2a$12$RDfNaPDsUMJWlZgdvbR0JOXhPRAfD6ptrPx/4q8oDoQMHJ2AEvVdO',
         (SELECT ID FROM CARTS LIMIT 1 OFFSET 2) );
 
+INSERT INTO USERS (NAME, EMAIL, PASSWORD, CART_ID)
+VALUES ('OrderTestUser', 'something@orderuser.xy', '$2a$12$6MLSdozTf7Bddnyrd9tMIekHsbeS.YlkxH//wbRoc8T8wiNTl3Sru',
+        (SELECT ID FROM CARTS LIMIT 1 OFFSET 3) );
+
 CREATE TABLE USER_ROLE
 (
     ROLE_ID int NOT NULL,
@@ -110,7 +114,8 @@ CREATE TABLE USER_ROLE
 INSERT INTO USER_ROLE (USER_ID, ROLE_ID)
 VALUES (1, 1),
        (2, 2),
-       (3, 1);
+       (3, 1),
+       (4, 1);
 
 CREATE TABLE ORDERED_ITEMS
 (
@@ -126,3 +131,9 @@ CREATE TABLE ORDERED_ITEMS
         FOREIGN KEY (USER_ID)
             REFERENCES USERS (ID)
 );
+
+INSERT INTO ORDERED_ITEMS (STATUS, PRODUCT_ID, USER_ID)
+VALUES ('Not_active', 2, 4),
+       ('Not_active', 2, 4),
+       ('Not_active', 1, 4),
+       ('Not_active', 3, 4);
