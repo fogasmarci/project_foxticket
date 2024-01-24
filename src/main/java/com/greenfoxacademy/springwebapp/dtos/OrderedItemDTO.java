@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Status;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,13 @@ public class OrderedItemDTO {
     this.status = status;
     this.expiry = expiry;
     this.productId = productId;
+  }
+
+  public OrderedItemDTO(OrderedItem order) {
+    id = order.getId();
+    status = order.getStatus();
+    expiry = order.getExpiry();
+    productId = order.getProduct().getId();
   }
 
   public Long getId() {
