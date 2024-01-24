@@ -43,9 +43,8 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public CartListDTO getCartWithProducts(Long userId) {
-    Cart cart = getCartByUserId(userId);
-
+  public CartListDTO getCartWithProducts() {
+    Cart cart = getCart();
     List<CartProductDTO> productsInUsersCart = mapCartContentToList(cart);
 
     return new CartListDTO(productsInUsersCart);
@@ -53,7 +52,8 @@ public class CartServiceImpl implements CartService {
 
   @Override
   @Transactional
-  public void putProductsInCart(Cart cart, ProductIdDTO productIdDTO) {
+  public void putProductsInCart(ProductIdDTO productIdDTO) {
+    Cart cart = getCart();
     Long productId = productIdDTO.getProductId();
     if (productId == null) {
       throw new ProductIdMissingException();
@@ -70,9 +70,8 @@ public class CartServiceImpl implements CartService {
   }
 
   @Override
-  public CartListDTO createPutProductsInCartResponse(Long userId) {
-    Cart cart = getCartByUserId(userId);
-
+  public CartListDTO createPutProductsInCartResponse() {
+    Cart cart = getCart();
     List<CartProductDTO> productsInCart = mapCartContentToList(cart);
 
     return new CartListDTO(productsInCart);
@@ -82,9 +81,9 @@ public class CartServiceImpl implements CartService {
   @Transactional
   public OrderListDTO buyProductsInCart() {
     User user = userService.getCurrentUser();
-    Cart cart = getCartByUserId(user.getId());
-
+    Cart cart = user.getCart();
     List<OrderedItem> orderedItems = new ArrayList<>();
+
     for (Map.Entry<Product, Integer> e : cart.getProductsInCart().entrySet()) {
       for (int i = 0; i < e.getValue(); i++) {
         OrderedItem o = new OrderedItem();
@@ -104,7 +103,6 @@ public class CartServiceImpl implements CartService {
   @Override
   public MessageDTO removeProductFromCart(Long itemId) {
     Cart cart = getCart();
-
     Product product = productService.findProductById(itemId)
         .orElseThrow(ProductIdInvalidException::new);
 
@@ -112,7 +110,7 @@ public class CartServiceImpl implements CartService {
     cartRepository.save(cart);
 
     String productName = product.getName().substring(0, 1).toUpperCase() + product.getName().substring(1);
-    String okMessage = String.format("%s is deleted from cart.", productName);
+    String okMessage = String.format("%s is deleted from the cart.", productName);
     return new MessageDTO(okMessage);
   }
 
@@ -135,13 +133,7 @@ public class CartServiceImpl implements CartService {
   }
 
   private Cart getCart() {
-    User user = userService.getCurrentUser();
-    Specification<Cart> specification = hasUserId(user.getId());
-    return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
-  }
-
-  private Cart getCartByUserId(Long userId) {
-    Specification<Cart> specification = hasUserId(userId);
+    Specification<Cart> specification = hasUserId(userService.findLoggedInUsersId());
     return cartRepository.findOne(specification).orElseThrow(CartNotFoundException::new);
   }
 

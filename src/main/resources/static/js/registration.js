@@ -4,41 +4,35 @@ document.getElementById("registrationForm").addEventListener("submit", function 
 });
 
 function submitForm() {
-    const request = () => {
-        let name = document.getElementById("name").value;
-        let email = document.getElementById("email").value;
-        let password = document.getElementById("password").value;
+    const formData = new FormData(document.getElementById("registrationForm"));
 
-        return {
-            name: name,
-            email: email,
-            password: password
-        }
+    const registrationRequest = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        password: formData.get("password")
     };
-
-    const postRequest = post => {
+    const postRequest = req => {
         const options = {
             method: 'POST',
-            body: JSON.stringify(request()),
+            body: JSON.stringify(registrationRequest),
             headers: new Headers({
                 'Content-Type': 'application/json'
             })
         }
 
-        fetch(`http://localhost:8080/api/users`, options)
-            .then(res => res.json())
-            .then(response => {
-                if (response.id) {
-                    window.location.href = 'http://localhost:8080/login';
+        fetch(`/api/users`, options)
+            .then(res =>  res.json())
+            .then(jsonData => {
+                if (jsonData.id) {
+                    window.location.href = '/login';
                 } else {
-                    console.log(response)
-                    displayErrorMessages(response)
+                    displayErrorMessages(jsonData)
                 }
             })
             .catch(error => console.error(`${error}`));
     }
 
-    postRequest(request());
+    postRequest(registrationRequest);
 }
 
 function displayErrorMessages(error) {

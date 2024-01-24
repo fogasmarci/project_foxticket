@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/register.css">
-    <title>Register</title>
+    <link rel="icon" type="image/png" href="/images/companylogo.png">
+    <title>Register to FoxTicket</title>
 </head>
 <body>
 <div class="container">
-    <form class="registration" id="registrationForm" action="/api/users" method="post">
+    <form class="registration" id="registrationForm">
+        <img src="/images/companylogo.png" alt="fox" class="logo">
         <h2>Register</h2>
         <label for="name">Name:</label>
         <input type="text" id="name" name="name">
@@ -16,9 +18,9 @@
         <input type="email" id="email" name="email">
 
         <label for="password">Password:</label>
-        <input type="password" id="password">
+        <input type="password" id="password" name="password">
         <div class="error-message" id="messageError"></div>
-        <button type="submit">Sign Up</button>
+        <button type="submit">Sign In</button>
     </form>
 </div>
 <script src="/js/registration.js"></script>
