@@ -4,7 +4,6 @@ import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
 import com.greenfoxacademy.springwebapp.dtos.CartProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
-import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
@@ -17,6 +16,8 @@ import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import com.greenfoxacademy.springwebapp.services.*;
+import io.jsonwebtoken.lang.Assert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,12 +26,11 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
-import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUserId;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.OPTIONAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ActiveProfiles("test")
 public class CartServiceTest {
@@ -40,7 +40,8 @@ public class CartServiceTest {
   UserService userService;
   OrderRepository orderRepository;
 
-  public CartServiceTest() {
+  @BeforeEach
+  public void CartServiceTests() {
     cartRepository = Mockito.mock(CartRepository.class);
     productService = Mockito.mock(ProductServiceImpl.class);
     userService = Mockito.mock(UserServiceImpl.class);
@@ -50,7 +51,12 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithNullProductId_ThrowsCorrectException() {
-    Cart cart = new Cart();
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
+
     ProductIdDTO productIdDTO = new ProductIdDTO(null);
     Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.putProductsInCart(productIdDTO));
     assertEquals("Product ID is required.", exception.getMessage());
@@ -58,7 +64,12 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithInvalidProductId_ThrowsCorrectException() {
-    Cart cart = new Cart();
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
+
     ProductIdDTO productIdDTO = new ProductIdDTO(50L);
     Mockito.when(productService.findProductById(50L)).thenReturn(Optional.empty());
     Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.putProductsInCart(productIdDTO));
@@ -70,7 +81,12 @@ public class CartServiceTest {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
-    Cart cart = new Cart();
+
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
     cartService.putProductsInCart(productIdDTO);
     verify(cartRepository, times(1)).save(cart);
@@ -104,7 +120,12 @@ public class CartServiceTest {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 3);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
-    Cart cart = new Cart();
+
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
     cartService.putProductsInCart(productIdDTO);
     verify(cartRepository, times(1)).save(cart);
@@ -115,7 +136,12 @@ public class CartServiceTest {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, -5);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
-    Cart cart = new Cart();
+
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
     Throwable exception = assertThrows(InvalidAmountException.class, () -> cartService.putProductsInCart(productIdDTO));
     assertEquals("Amount must be greater than 0.", exception.getMessage());
@@ -126,7 +152,12 @@ public class CartServiceTest {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 0);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
-    Cart cart = new Cart();
+
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
     Throwable exception = assertThrows(InvalidAmountException.class, () -> cartService.putProductsInCart(productIdDTO));
     assertEquals("Amount must be greater than 0.", exception.getMessage());
@@ -134,7 +165,12 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithNullProductId_AndValidAmount_ThrowsCorrectException() {
-    Cart cart = new Cart();
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
+
     ProductIdDTO productIdDTO = new ProductIdDTO(null, 3);
     Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.putProductsInCart(productIdDTO));
     assertEquals("Product ID is required.", exception.getMessage());
@@ -142,9 +178,15 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithInvalidProductId_AndValidAmount_ThrowsCorrectException() {
-    Cart cart = new Cart();
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
     ProductIdDTO productIdDTO = new ProductIdDTO(50L, 3);
+
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
     Mockito.when(productService.findProductById(50L)).thenReturn(Optional.empty());
+
     Throwable exception = assertThrows(ProductIdInvalidException.class, () -> cartService.putProductsInCart(productIdDTO));
     assertEquals("Product doesn't exist.", exception.getMessage());
   }
@@ -154,33 +196,37 @@ public class CartServiceTest {
     Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
-    Cart cart = new Cart();
+
+    User user = new User();
+    Long userId = user.getId();
+    Cart cart = user.getCart();
+    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
 
     assertThrows(ExceedLimitException.class, () -> cartService.putProductsInCart(productIdDTO),
         "Selected items cannot be added to cart. Cart limit is 50.");
   }
 
   @Test
+  void removeProductFromCart_ItemIsSuccessfullyRemoved() {
+    Cart cart = returnCartWithProducts();
+    Product itemToRemove = new Product("teszt bérlet 1", 10000, 9000, "havi teljes aru berlet");
+
+    Mockito.when(productService.findProductById(itemToRemove.getId())).thenReturn(Optional.of(itemToRemove));
+    Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(null);
+
+    MessageDTO messageDTO = cartService.removeProductFromCart(itemToRemove.getId());
+    assertEquals("Teszt bérlet 1 is deleted from the cart.", messageDTO.getMessage());
+  }
+
+  @Test
   void removeProductFromCart_ItemIdInCartNotFound_ThrowsCorrectException() {
-    User user = new User();
-    Long userId = user.getId();
-    Cart cart = user.getCart();
+    Cart cart = returnCartWithProducts();
+    Product itemToRemove = new Product("teszt bérlet 111", 10000, 9000, "havi teljes aru berlet");
 
-    ProductType type = new ProductType("bérlet");
-    Product product1 = new Product("teszt bérlet 1", 10000, 9000, "havi teljes aru berlet");
-    product1.setType(type);
-    //product1.setId(1L);
-    cart.putProductInCart(product1, 3);
+    Mockito.when(productService.findProductById(itemToRemove.getId())).thenReturn(Optional.of(itemToRemove));
 
-    Product product2 = new Product("teszt bérlet 2", 10000, 9000, "havi teljes aru berlet");
-    product2.setType(type);
-    //product2.setId(2L);
-
-    Mockito.when(userService.findLoggedInUsersId()).thenReturn(userId);
-    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
-    Mockito.when(productService.findProductById(product2.getId())).thenReturn(Optional.of(product2));
-
-    assertThrows(IdInCartNotFoundException.class, () -> cartService.removeProductFromCart(product2.getId()),
+    assertThrows(IdInCartNotFoundException.class, () -> cartService.removeProductFromCart(itemToRemove.getId()),
         "There is no item with the given id in the cart.");
   }
 
@@ -196,14 +242,15 @@ public class CartServiceTest {
   }
 
   @Test
-  void removeAllProductsFromCart_ItemIsSuccessfullyRemoved() {
+  void removeAllProductsFromCart_ItemsAreSuccessfullyRemoved() {
     Cart cart = returnCartWithProducts();
 
     cart.getProductsInCart().clear();
     Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cart);
 
-    String okMessage = "All items are cleared from the cart.";
-    assertEquals("All items are cleared from the cart.", okMessage);
+    MessageDTO messageDTO = cartService.removeAllProductsFromCart();
+    assertEquals("All items are cleared from the cart.", messageDTO.getMessage());
+    Assert.isTrue(cart.getProductsInCart().keySet().isEmpty());
   }
 
   private Cart returnCartWithProducts() {
@@ -225,7 +272,6 @@ public class CartServiceTest {
     product3.setType(type2);
 
     cart.putProductInCart(product1, 3);
-    cart.putProductInCart(product1, 13);
     cart.putProductInCart(product2, 1);
     cart.putProductInCart(product3, 5);
 

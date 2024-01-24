@@ -109,7 +109,7 @@ public class CartServiceImpl implements CartService {
     cartRepository.save(cart);
 
     String productName = product.getName().substring(0, 1).toUpperCase() + product.getName().substring(1);
-    String okMessage = String.format("%s is deleted from cart.", productName);
+    String okMessage = String.format("%s is deleted from the cart.", productName);
     return new MessageDTO(okMessage);
   }
 

@@ -9,8 +9,6 @@ import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundExceptio
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
-import com.greenfoxacademy.springwebapp.models.Cart;
-import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
