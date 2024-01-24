@@ -130,7 +130,7 @@ public class CartServiceImpl implements CartService {
   @Override
   public List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
     return orderedItems.stream()
-        .map(o -> new OrderedItemDTO(o.getId(), o.getStatus(), o.getExpiry(), o.getProduct().getId()))
+        .map(OrderedItemDTO::new)
         .toList();
   }
 
