@@ -41,7 +41,7 @@ public class CartServiceTest {
   OrderRepository orderRepository;
 
   @BeforeEach
-  public void CartServiceTests() {
+  public void cartServiceTests() {
     cartRepository = Mockito.mock(CartRepository.class);
     productService = Mockito.mock(ProductServiceImpl.class);
     userService = Mockito.mock(UserServiceImpl.class);
