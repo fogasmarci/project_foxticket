@@ -25,4 +25,11 @@ public class OrderServiceImpl implements OrderService {
     List<OrderedItemDTO> purchases = cartService.mapOrdersIntoListOfOrderDTOs(user.getOrders());
     return new OrderListDTO(purchases);
   }
+
+  @Override
+  public OrderedItemDTO activateItemPurchased(Long orderId) {
+    User user = userService.getCurrentUser();
+    List<OrderedItemDTO> purchases = cartService.mapOrdersIntoListOfOrderDTOs(user.getOrders());
+    return null;
+  }
 }
