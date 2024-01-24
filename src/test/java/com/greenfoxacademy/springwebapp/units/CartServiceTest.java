@@ -25,7 +25,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ActiveProfiles("test")
 public class CartServiceTest {
@@ -100,8 +101,7 @@ public class CartServiceTest {
     cart.putProductInCart(product2, 1);
     cart.putProductInCart(product3, 5);
 
-    Mockito.when(cartRepository.findOne(any(Specification.class))).thenReturn(Optional.of(cart));
-
+    Mockito.when(cartRepository.findOne(Mockito.<Specification<Cart>>any())).thenReturn(Optional.of(cart));
     List<CartProductDTO> cartContent = cart.getProductsInCart().keySet().stream()
         .map(p -> new CartProductDTO(p, cart.getProductsInCart().get(p)))
         .toList();

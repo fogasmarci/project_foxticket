@@ -9,6 +9,7 @@ import com.greenfoxacademy.springwebapp.exceptions.login.LoginException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
 import com.greenfoxacademy.springwebapp.services.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,18 @@ public class UserRestController {
     this.userService = userService;
   }
 
-  @PostMapping(path = "/users")
+  @PostMapping(path = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDTO requestDTO) {
     try {
       return ResponseEntity.status(200).body(userService.createRegistrationDTO(userService.registerUser(requestDTO)));
     } catch (FieldsException | RegistrationException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
+  }
+
+  @GetMapping(path = "/login")
+  public String displayLoginForm() {
+    return "login";
   }
 
   @PostMapping(path = "/users/login")
