@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" type="image/png" href="/images/company-logo.png">
+    <title>Login page</title>
+    <script src="/js/Login.js" defer></script>
 </head>
 <body>
 <div class="container">
-    <form class="login">
-        <h2>Login</h2>
+    <form class="login" id="login-form">
+        <img src="/images/company-logo.png" alt="fox" class="logo">
+        <h2>Login to your account</h2>
+        <div class="error-message" id="messageError"></div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email">
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" minlength="3" maxlength="80" pattern=".+@.+" required>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" minlength="8" maxlength="50" required>
-
-        <button type="submit">Sign Up</button>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+        <button type="submit">Login</button>
     </form>
 </div>
+<a href="/register" id="register-link">Create a new account!</a>
 </body>
 </html>
