@@ -27,7 +27,7 @@ public class OrderController {
   public ResponseEntity<?> activatePurchasedItem(@PathVariable Long orderId) {
     try {
       return ResponseEntity.status(200).body(orderService.activateItem(orderId));
-    } catch (InvalidProductTypeException e) {
+    } catch (InvalidProductTypeException | NotMyOrderException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }

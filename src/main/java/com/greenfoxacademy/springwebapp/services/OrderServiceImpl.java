@@ -7,7 +7,6 @@ import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTyp
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,6 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  @Transactional
   public OrderedItemDTO activateItem(Long orderId) {
     User user = userService.getCurrentUser();
     List<OrderedItem> orderedItems = user.getOrders();

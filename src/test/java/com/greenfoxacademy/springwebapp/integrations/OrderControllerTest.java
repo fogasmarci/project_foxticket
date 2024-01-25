@@ -16,10 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
+import static com.greenfoxacademy.springwebapp.models.Status.Active;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,6 +60,21 @@ public class OrderControllerTest {
     assertTrue(response.contains("\"product_id\":1"));
     assertTrue(response.contains("\"product_id\":2"));
     assertTrue(response.contains("\"product_id\":3"));
+  }
+
+  @Test
+  void activatePurchasedItem_WithValidOrderItemId_ItemIsActivated() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("something@orderuser.xy", "rainbow1");
+    String jwt = login(loginUserDTO);
+
+    String response = mvc.perform(patch("/api/orders/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$['status']").value("Active"))
+        .andReturn()
+        .getResponse()
+        .getContentAsString();
+
+    assertTrue(response.contains("\"id\":1"));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {
