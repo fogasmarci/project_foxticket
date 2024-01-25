@@ -1,11 +1,10 @@
 document.getElementById("registrationForm").addEventListener("submit", function (event) {
     event.preventDefault();
-    submitForm();
+    submitForm(event.target);
 });
 
-function submitForm() {
-    const formData = new FormData(document.getElementById("registrationForm"));
-
+function submitForm(form) {
+    const formData = new FormData(form);
     const registrationRequest = {
         name: formData.get("name"),
         email: formData.get("email"),
@@ -39,9 +38,5 @@ async function postRequest(registrationRequest) {
 
 function displayErrorMessages(errorJson) {
     const errorField = document.getElementById('messageError');
-    if (errorJson && errorJson.error) {
-        errorField.textContent = errorJson.error;
-    } else {
-        errorField.textContent = "An unexpected error occurred.";
-    }
+    errorField.textContent = errorJson?.error ?? "An unexpected error occurred.";
 }
