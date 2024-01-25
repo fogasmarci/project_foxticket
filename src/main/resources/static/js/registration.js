@@ -11,31 +11,37 @@ function submitForm() {
         email: formData.get("email"),
         password: formData.get("password")
     };
-    const postRequest = req => {
-        const options = {
-            method: 'POST',
-            body: JSON.stringify(registrationRequest),
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        }
-
-        fetch(`/api/users`, options)
-            .then(res =>  res.json())
-            .then(jsonData => {
-                if (jsonData.id) {
-                    window.location.href = '/login';
-                } else {
-                    displayErrorMessages(jsonData)
-                }
-            })
-            .catch(error => console.error(`${error}`));
-    }
 
     postRequest(registrationRequest);
 }
 
-function displayErrorMessages(error) {
+async function postRequest(registrationRequest) {
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(registrationRequest),
+        headers: new Headers({
+            'Content-Type': 'application/json'
+        })
+    };
+
+    try {
+        const response = await fetch(`/api/users`, options);
+        if (response.ok) {
+            window.location.href = '/login';
+        } else {
+            const errorJson = await response.json();
+            displayErrorMessages(errorJson);
+        }
+    } catch (error) {
+        console.error(`${error}`);
+    }
+}
+
+function displayErrorMessages(errorJson) {
     const errorField = document.getElementById('messageError');
-    return errorField.textContent = error.error;
+    if (errorJson && errorJson.error) {
+        errorField.textContent = errorJson.error;
+    } else {
+        errorField.textContent = "An unexpected error occurred.";
+    }
 }
