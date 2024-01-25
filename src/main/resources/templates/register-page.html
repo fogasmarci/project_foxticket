@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/register.css">
+    <link rel="icon" type="image/png" href="/images/company-logo.png">
+    <title>Register to FoxTicket</title>
+    <script src="/js/registration.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <form class="registration" id="registrationForm">
+        <img src="/images/company-logo.png" alt="fox" class="logo">
+        <h2>Register</h2>
+        <div class="error-message" id="messageError"></div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+        <button type="submit">Sign In</button>
+    </form>
+
+</div>
+<a href="/login" id="login-link">Already have an account? Login!</a>
+</body>
+</html>

@@ -41,8 +41,14 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/product-types").hasRole("ADMIN")
             .requestMatchers(HttpMethod.PATCH, "/api/users").authenticated()
             .requestMatchers(HttpMethod.PATCH, "/api/products/{productId}").hasRole("ADMIN")
-            .requestMatchers("/api/users/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/news").permitAll()
+            .requestMatchers("/",
+                "/images/**",
+                "/css/**",
+                "/js/**",
+                "/register",
+                "/login",
+                "/api/users/**").permitAll()
             .anyRequest().authenticated())
         .exceptionHandling(exceptionHandling ->
             exceptionHandling
