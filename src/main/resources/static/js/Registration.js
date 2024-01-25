@@ -24,7 +24,7 @@ async function postRequest(registrationRequest) {
     };
 
     try {
-        const response = await fetch(`/api/users`, options);
+        const response = await fetch('/api/users', options);
         if (response.ok) {
             window.location.href = '/login';
         } else {

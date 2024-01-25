@@ -23,8 +23,10 @@ async function postRequest(loginRequest) {
     };
 
     try {
-        const response = await fetch(`/api/users/login`, options);
+        const response = await fetch('/api/users/login', options);
         if (response.ok) {
+            const okJson = await response.json();
+            handleSuccessfulLogin(okJson)
             window.location.href = '/';
         } else {
             const errorJson = await response.json();
@@ -33,6 +35,10 @@ async function postRequest(loginRequest) {
     } catch (error) {
         console.error(`${error}`);
     }
+}
+
+function handleSuccessfulLogin(okJson) {
+    localStorage.setItem('jwtToken', okJson.token);
 }
 
 function displayErrorMessages(errorJson) {
