@@ -4,6 +4,7 @@ import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.models.Status;
 import com.greenfoxacademy.springwebapp.models.User;
+import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import com.greenfoxacademy.springwebapp.services.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,12 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrderServiceTest {
   UserService userService;
   CartService cartService;
+  OrderRepository orderRepository;
   OrderServiceImpl orderService;
 
   public OrderServiceTest() {
     userService = Mockito.mock(UserServiceImpl.class);
     cartService = Mockito.mock(CartServiceImpl.class);
-    orderService = new OrderServiceImpl(userService, cartService);
+    orderRepository = Mockito.mock(OrderRepository.class);
+    orderService = new OrderServiceImpl(userService, cartService, orderRepository);
   }
 
   @Test

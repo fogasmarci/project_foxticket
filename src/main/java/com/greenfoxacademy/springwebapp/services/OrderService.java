@@ -6,5 +6,5 @@ import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 public interface OrderService {
   OrderListDTO listAllPurchases();
 
-  OrderedItemDTO activateItemPurchased(Long orderId);
+  OrderedItemDTO activateItem(Long orderId);
 }
