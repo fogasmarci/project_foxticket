@@ -28,7 +28,9 @@ public class User {
   private Set<Role> authorities;
   @OneToOne(cascade = CascadeType.ALL)
   private Cart cart;
+  @Column(columnDefinition = "boolean default false")
   private boolean isAdmin;
+  @Column(columnDefinition = "boolean default false")
   private boolean isVerified;
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   private List<OrderedItem> orderedItems;
