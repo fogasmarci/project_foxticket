@@ -16,7 +16,7 @@ CREATE TABLE PRODUCTS
     ID          int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     NAME        varchar(100) DEFAULT NULL,
     PRICE       int          DEFAULT NULL,
-    DURATION    int          DEFAULT NULL,
+    DURATION    bigint       DEFAULT NULL,
     DESCRIPTION varchar(100) DEFAULT NULL,
     TYPE_ID     int          DEFAULT NULL,
     CONSTRAINT FK_TYPE
@@ -25,9 +25,9 @@ CREATE TABLE PRODUCTS
 );
 
 INSERT INTO PRODUCTS (NAME, PRICE, DURATION, DESCRIPTION, TYPE_ID)
-VALUES ('teszt jegy 1', 480, 90, 'teszt1', 1),
-       ('teszt bérlet 1', 4000, 9000, 'teszt2', 2),
-       ('teszt bérlet 2', 9500, 9000, 'teszt3', 2);
+VALUES ('teszt jegy 1', 480, CAST(1 AS NUMERIC), 'teszt1', 1),
+       ('teszt bérlet 1', 4000, CAST(1 AS NUMERIC), 'teszt2', 2),
+       ('teszt bérlet 2', 9500, CAST(1 AS NUMERIC), 'teszt3', 2);
 
 CREATE TABLE NEWS
 (

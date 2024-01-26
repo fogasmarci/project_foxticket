@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
-import static com.greenfoxacademy.springwebapp.models.Status.Active;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,6 +74,16 @@ public class OrderControllerTest {
         .getContentAsString();
 
     assertTrue(response.contains("\"id\":1"));
+  }
+
+  @Test
+  void activatePurchasedItem_WithInValidOrderItemId_ThrowsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("something@orderuser.xy", "rainbow1");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(patch("/api/orders/111").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$['error']").value("This order does not belong to the user."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

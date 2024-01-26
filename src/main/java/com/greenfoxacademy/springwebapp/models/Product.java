@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.models;
 
 import jakarta.persistence.*;
 
+import java.time.Duration;
 import java.util.Objects;
 
 @Entity
@@ -12,7 +13,7 @@ public class Product {
   private Long id;
   private String name;
   private int price;
-  private int duration;
+  private Duration duration;
   private String description;
   @ManyToOne
   private ProductType type;
@@ -20,7 +21,7 @@ public class Product {
   public Product() {
   }
 
-  public Product(String name, int price, int duration, String description) {
+  public Product(String name, int price, Duration duration, String description) {
     this();
     this.name = name;
     this.price = price;
@@ -48,11 +49,11 @@ public class Product {
     this.price = price;
   }
 
-  public int getDuration() {
+  public Duration getDuration() {
     return duration;
   }
 
-  public void setDuration(int duration) {
+  public void setDuration(Duration duration) {
     this.duration = duration;
   }
 

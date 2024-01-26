@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class OrderServiceTest {
     OrderedItem orderedItem = new OrderedItem();
     orderedItem.setId(1L);
 
-    Product product = new Product();
+    Product product = new Product("vonaljegy", 100, Duration.ofHours(1), "String description");
     ProductType productType = new ProductType("jegy");
     product.setType(productType);
 

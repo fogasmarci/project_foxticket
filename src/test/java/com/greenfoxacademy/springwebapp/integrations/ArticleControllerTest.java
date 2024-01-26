@@ -41,7 +41,8 @@ public class ArticleControllerTest {
   ArticleService articleService;
   @Autowired
   JwtValidatorService jwtValidatorService;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
 
   @Test
   void listArticles_WithNoParam_ListsAllArticles() throws Exception {

@@ -1,9 +1,11 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class AddArticleDTO {
-  private final String title;
-  private final String content;
+  private String title;
+  private String content;
 
+  public AddArticleDTO() {
+  }
 
   public AddArticleDTO(String title, String content) {
     this.title = title;
@@ -16,5 +18,13 @@ public class AddArticleDTO {
 
   public String getContent() {
     return content;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setContent(String content) {
+    this.content = content;
   }
 }

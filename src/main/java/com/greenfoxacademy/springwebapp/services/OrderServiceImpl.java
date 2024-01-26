@@ -3,13 +3,13 @@ package com.greenfoxacademy.springwebapp.services;
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
-import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTypeException;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,24 +45,11 @@ public class OrderServiceImpl implements OrderService {
         .findFirst()
         .orElseThrow(NotMyOrderException::new);
 
+    Duration duration = orderedItemToActivate.getProduct().getDuration();
+    orderedItemToActivate.setExpiry(LocalDateTime.now().plus(duration));
     orderedItemToActivate.setStatus(Active);
-    adjustExpiryDate(orderedItemToActivate);
     orderRepository.save(orderedItemToActivate);
 
     return new OrderedItemDTO(orderedItemToActivate);
-  }
-
-  private void adjustExpiryDate(OrderedItem orderedItemToActivate){
-    String getTypeName = orderedItemToActivate.getProduct().getType().getName();
-    switch (getTypeName) {
-      case "bérlet":
-        orderedItemToActivate.setExpiry(LocalDateTime.now().plusDays(30));
-        break;
-      case "jegy":
-        orderedItemToActivate.setExpiry(LocalDateTime.now());
-        break;
-      default:
-        throw new InvalidProductTypeException();
-    }
   }
 }
