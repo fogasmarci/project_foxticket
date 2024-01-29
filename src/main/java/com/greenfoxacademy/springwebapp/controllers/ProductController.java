@@ -20,12 +20,12 @@ public class ProductController {
     this.productService = productService;
   }
 
-  @GetMapping(path = "/api/products")
+  @GetMapping("/api/products")
   public ResponseEntity<?> getProductDetails() {
     return ResponseEntity.status(200).body(productService.listProductDetails());
   }
 
-  @PostMapping(path = "/api/products")
+  @PostMapping("/api/products")
   public ResponseEntity<?> addNewProduct(@RequestBody ProductWithoutIdDTO productWithoutIdDTO) {
     try {
       return ResponseEntity.status(200).body(productService.createProduct(productWithoutIdDTO));
@@ -43,7 +43,7 @@ public class ProductController {
     }
   }
 
-  @RequestMapping(path = "/api/products/{productId}", method = RequestMethod.DELETE)
+  @DeleteMapping("/api/products/{productId}")
   public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
     try {
       return ResponseEntity.status(200).body(productService.deleteProduct(productId));

@@ -10,17 +10,17 @@ public class UserController {
 
   }
 
-  @GetMapping(path = "/")
+  @GetMapping("/")
   public String displayMainPage() {
     return "main-page";
   }
 
-  @GetMapping(path = "/register")
+  @GetMapping("/register")
   public String displayRegisterForm() {
     return "register-page";
   }
 
-  @GetMapping(path = "/login")
+  @GetMapping("/login")
   public String displayLoginForm() {
     return "login";
   }

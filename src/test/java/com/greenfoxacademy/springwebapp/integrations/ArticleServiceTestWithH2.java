@@ -20,12 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class ArticleServiceTestWithH2 {
 
-  ArticleService articleService;
-
   @Autowired
-  public ArticleServiceTestWithH2(ArticleService articleService) {
-    this.articleService = articleService;
-  }
+  ArticleService articleService;
 
   @Test
   void listArticles_WithNullParam_ReturnsArticleListDtoWithAllArticles() {

@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 public class ArticleServiceTest {
 
-  private ArticleRepository articleRepository;
-  private ArticleServiceImpl articleService;
+  ArticleRepository articleRepository;
+  ArticleServiceImpl articleService;
 
   public ArticleServiceTest() {
     articleRepository = Mockito.mock(ArticleRepository.class);

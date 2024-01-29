@@ -18,12 +18,12 @@ public class ArticleController {
     this.articleService = articleService;
   }
 
-  @GetMapping(path = "/api/news")
+  @GetMapping("/api/news")
   public ResponseEntity<ArticleListDTO> listArticles(@RequestParam(required = false) String search) {
     return ResponseEntity.status(200).body(articleService.listArticles(search));
   }
 
-  @PostMapping(path = "/api/news")
+  @PostMapping("/api/news")
   public ResponseEntity<?> addArticle(@RequestBody AddArticleDTO addArticleDTO) {
     try {
       return ResponseEntity.status(200).body(articleService.addArticle(addArticleDTO));
@@ -32,7 +32,7 @@ public class ArticleController {
     }
   }
 
-  @PutMapping(path = "/api/news/{articleId}")
+  @PutMapping("/api/news/{articleId}")
   public ResponseEntity<?> editArticle(@RequestBody AddArticleDTO addArticleDTO, @PathVariable Long articleId) {
     try {
       return ResponseEntity.status(200).body(articleService.editArticle(addArticleDTO, articleId));
@@ -41,7 +41,7 @@ public class ArticleController {
     }
   }
 
-  @DeleteMapping(path = "/api/news/{articleId}")
+  @DeleteMapping("/api/news/{articleId}")
   public ResponseEntity<?> deleteArticle(@PathVariable Long articleId) {
     try {
       return ResponseEntity.status(200).body(articleService.deleteArticle(articleId));

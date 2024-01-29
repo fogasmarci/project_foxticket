@@ -11,10 +11,12 @@ import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationExce
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api")
 public class UserRestController {
   private final UserService userService;
 
@@ -22,7 +24,7 @@ public class UserRestController {
     this.userService = userService;
   }
 
-  @PostMapping(path = "/users")
+  @PostMapping("/api/users")
   public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDTO requestDTO) {
     try {
       return ResponseEntity.status(200).body(userService.registerUser(requestDTO));
@@ -31,7 +33,7 @@ public class UserRestController {
     }
   }
 
-  @PostMapping(path = "/users/login")
+  @PostMapping("/api/users/login")
   public ResponseEntity<?> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
     try {
       return ResponseEntity.status(200).body(userService.loginUser(loginUserDTO));
@@ -40,7 +42,7 @@ public class UserRestController {
     }
   }
 
-  @PatchMapping(path = "/users")
+  @PatchMapping("/api/users")
   public ResponseEntity<?> updateUserInformation(@RequestBody UserInfoRequestDTO updateDTO) {
     try {
       return ResponseEntity.status(200).body(userService.updateUser(updateDTO));
