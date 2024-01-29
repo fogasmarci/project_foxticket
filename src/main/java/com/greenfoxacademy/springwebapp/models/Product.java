@@ -11,6 +11,7 @@ public class Product {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @Column(unique = true)
   private String name;
   private int price;
   @Convert(converter = DurationConverter.class)
@@ -83,11 +84,11 @@ public class Product {
       return false;
     }
     Product otherProduct = (Product) obj;
-    return Objects.equals(this.id, otherProduct.id);
+    return Objects.equals(this.name, otherProduct.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id);
+    return Objects.hash(name);
   }
 }

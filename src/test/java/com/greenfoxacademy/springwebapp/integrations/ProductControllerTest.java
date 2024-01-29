@@ -113,6 +113,15 @@ public class ProductControllerTest {
   }
 
   @Test
+  void deleteProduct_WithLoggedUser_ReturnsForbidden() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/products/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(403));
+  }
+
+  @Test
   void editProduct_WithValidRequest_ReturnsCorrectJson() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
@@ -145,12 +154,18 @@ public class ProductControllerTest {
   }
 
   @Test
-  void deleteProduct_WithLoggedUser_ReturnsForbidden() throws Exception {
-    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+  void editProduct_WithExistingProductName_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt jegy 1", 12000,
+        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
 
-    mvc.perform(delete("/api/products/1").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(403));
+    mvc.perform(patch("/api/products/2")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(newProductDetails)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Product name already exists."));
   }
 
   @Test
