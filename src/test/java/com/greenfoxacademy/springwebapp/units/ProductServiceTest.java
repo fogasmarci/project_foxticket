@@ -67,6 +67,7 @@ public class ProductServiceTest {
   @Test
   void createProduct_ProductIsSuccessfullySaved() {
     ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("new product", 480, "60 minutes", "teszt1", 2L);
+    productWithoutIdDTO.convertDuration();
     Product product = mapDTOToProduct(productWithoutIdDTO);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
@@ -138,6 +139,7 @@ public class ProductServiceTest {
   void editProduct_ProductNameIsNotChanged_ProductIsSuccessfullyEdited() {
     Long productToEditId = 2L;
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt bérlet 1", 480, "30 days", "teszt1", 2L);
+    newProductDetails.convertDuration();
 
     Product productToEdit = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductType berlet = new ProductType("bérlet");

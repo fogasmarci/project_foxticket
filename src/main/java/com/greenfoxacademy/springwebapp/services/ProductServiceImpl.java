@@ -88,6 +88,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDTO editProduct(ProductWithoutIdDTO productWithoutIdDTO, Long productId) {
+    productWithoutIdDTO.convertDuration();
     validateProductDTO(productWithoutIdDTO);
     Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
 

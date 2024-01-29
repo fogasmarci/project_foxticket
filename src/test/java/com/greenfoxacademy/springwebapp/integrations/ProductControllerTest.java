@@ -158,7 +158,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt jegy 1", 12000,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(patch("/api/products/2")
             .header("Authorization", "Bearer " + jwt)
