@@ -25,9 +25,9 @@ CREATE TABLE PRODUCTS
 );
 
 INSERT INTO PRODUCTS (NAME, PRICE, DURATION, DESCRIPTION, TYPE_ID)
-VALUES ('teszt jegy 1', 480, CAST(1 AS NUMERIC), 'teszt1', 1),
-       ('teszt bérlet 1', 4000, CAST(1 AS NUMERIC), 'teszt2', 2),
-       ('teszt bérlet 2', 9500, CAST(1 AS NUMERIC), 'teszt3', 2);
+VALUES ('teszt jegy 1', 480, '60 minutes', 'teszt1', 1),
+       ('teszt bérlet 1', 4000, '30 days', 'teszt2', 2),
+       ('teszt bérlet 2', 9500, '30 days', 'teszt3', 2);
 
 CREATE TABLE NEWS
 (

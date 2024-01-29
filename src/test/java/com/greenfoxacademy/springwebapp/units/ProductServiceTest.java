@@ -66,7 +66,7 @@ public class ProductServiceTest {
 
   @Test
   void createProduct_ProductIsSuccessfullySaved() {
-    ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("new product", 480, Duration.ofHours(1), "teszt1", 2L);
+    ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("new product", 480, "60 minutes", "teszt1", 2L);
     Product product = mapDTOToProduct(productWithoutIdDTO);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
@@ -86,7 +86,7 @@ public class ProductServiceTest {
   @Test
   void createProduct_WithEmptyNameField_ThrowsCorrectException() {
     ProductWithoutIdDTO productDTOWithoutID =
-        new ProductWithoutIdDTO("", 480, Duration.ofHours(1), "teszt1", 2L);
+        new ProductWithoutIdDTO("", 480, "60 minutes", "teszt1", 2L);
 
     Throwable exception = assertThrows(FieldsException.class, () -> productService.createProduct(productDTOWithoutID));
     assertEquals("Name is missing", exception.getMessage());
@@ -95,7 +95,7 @@ public class ProductServiceTest {
   @Test
   void createProduct_WithExistingProductName_ThrowsCorrectException() {
     ProductWithoutIdDTO productDTOWithoutID =
-        new ProductWithoutIdDTO("new product", 480, Duration.ofHours(1), "teszt1", 2L);
+        new ProductWithoutIdDTO("new product", 480, "60 minutes", "teszt1", 2L);
     Product product = mapDTOToProduct(productDTOWithoutID);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
@@ -137,7 +137,7 @@ public class ProductServiceTest {
   @Test
   void editProduct_ProductNameIsNotChanged_ProductIsSuccessfullyEdited() {
     Long productToEditId = 2L;
-    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt bérlet 1", 480, Duration.ofDays(30), "teszt1", 2L);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt bérlet 1", 480, "30 days", "teszt1", 2L);
 
     Product productToEdit = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductType berlet = new ProductType("bérlet");
@@ -165,7 +165,7 @@ public class ProductServiceTest {
   @Test
   void editProduct_ExistingProductNameIsGiven_ThrowsCorrectException() {
     Long productToEditId = 2L;
-    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt jegy 1", 480, Duration.ofHours(1), "teszt1", 2L);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt jegy 1", 480, "60 minutes", "teszt1", 2L);
 
     Product productToEdit = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductType berlet = new ProductType("bérlet");
@@ -183,7 +183,7 @@ public class ProductServiceTest {
   @Test
   void editProduct_ProductNameIsMissing_ThrowsCorrectException() {
     Long productToEditId = 2L;
-    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("", 480, Duration.ofHours(1), "teszt1", 2L);
+    ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("", 480, "60 minutes", "teszt1", 2L);
 
     Product productToEdit = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductType berlet = new ProductType("bérlet");

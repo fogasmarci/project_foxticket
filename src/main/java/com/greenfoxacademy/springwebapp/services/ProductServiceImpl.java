@@ -61,6 +61,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
+    productWithoutIdDTO.convertDuration();
     validateProductDTO(productWithoutIdDTO);
 
     ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
