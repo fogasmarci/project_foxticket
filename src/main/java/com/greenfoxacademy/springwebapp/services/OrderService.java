@@ -12,4 +12,6 @@ public interface OrderService {
   OrderedItem saveOrder(OrderedItem orderedItem);
 
   List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems);
+
+  OrderedItemDTO activateItem(Long orderId);
 }

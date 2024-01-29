@@ -59,4 +59,8 @@ public class OrderedItem {
     this.user = user;
     user.addOrder(this);
   }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 }

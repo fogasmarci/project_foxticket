@@ -1,4 +1,6 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-public record ProductDTO(Long id, String name, int price, int duration, String description, String type) {
+import java.time.Duration;
+
+public record ProductDTO(Long id, String name, int price, Duration duration, String description, String type) {
 }

@@ -2,9 +2,8 @@ package com.greenfoxacademy.springwebapp.units;
 
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
-import com.greenfoxacademy.springwebapp.models.OrderedItem;
-import com.greenfoxacademy.springwebapp.models.Product;
-import com.greenfoxacademy.springwebapp.models.User;
+import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
+import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import com.greenfoxacademy.springwebapp.services.OrderServiceImpl;
 import com.greenfoxacademy.springwebapp.services.UserService;
@@ -13,10 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.greenfoxacademy.springwebapp.models.Status.Active;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("test")
 public class OrderServiceTest {
@@ -62,5 +65,40 @@ public class OrderServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(user);
 
     assertThat(orderService.listAllPurchases()).usingRecursiveComparison().isEqualTo(new OrderListDTO(orderList));
+  }
+
+  @Test
+  void activateItem_WithCorrectOrderId_WorksCorrectly() {
+    Long orderId = 1L;
+    User user = new User();
+    OrderedItem orderedItem = new OrderedItem();
+    orderedItem.setId(1L);
+
+    Product product = new Product("vonaljegy", 100, Duration.ofHours(1), "String description");
+    ProductType productType = new ProductType("jegy");
+    product.setType(productType);
+
+    orderedItem.setProduct(product);
+    user.addOrder(orderedItem);
+
+    Mockito.when(userService.getCurrentUser()).thenReturn(user);
+    Mockito.when(orderRepository.save(Mockito.any(OrderedItem.class))).thenReturn(orderedItem);
+
+    OrderedItemDTO orderedItemToActivate = orderService.activateItem(orderId);
+    Status status = orderedItemToActivate.getStatus();
+    assertEquals(status, Active);
+  }
+
+  @Test
+  void activateItem_WithInvalidOrderId_ThrowsCorrectException() {
+    Long orderId = 2L;
+    User user = new User();
+    OrderedItem orderedItem = new OrderedItem();
+    orderedItem.setId(1L);
+
+    user.addOrder(orderedItem);
+    Mockito.when(userService.getCurrentUser()).thenReturn(user);
+
+    assertThrows(NotMyOrderException.class, () -> orderService.activateItem(orderId));
   }
 }
