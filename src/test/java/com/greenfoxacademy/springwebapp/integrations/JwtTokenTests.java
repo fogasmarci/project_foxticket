@@ -26,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class JwtTokenTests {
   @Autowired
   MockMvc mockMvc;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
 
   @Test
   public void callingAuthenticatedEndpoint_WithNoToken_ShouldFail() throws Exception {

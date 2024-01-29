@@ -40,7 +40,8 @@ public class CartControllerTest {
   MockMvc mvc;
   @Autowired
   CartService cartService;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
   @Autowired
   JwtValidatorService jwtValidatorService;
 

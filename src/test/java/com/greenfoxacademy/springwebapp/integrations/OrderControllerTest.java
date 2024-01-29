@@ -32,7 +32,8 @@ public class OrderControllerTest {
   MockMvc mvc;
   @Autowired
   OrderService orderService;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
 
   @Test
   void listAllPurchasedItems_WithNoItemsBought_ReturnsEmptyList() throws Exception {
