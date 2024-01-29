@@ -14,7 +14,6 @@ import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
-import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import com.greenfoxacademy.springwebapp.services.*;
 import io.jsonwebtoken.lang.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,15 +37,15 @@ public class CartServiceTest {
   CartRepository cartRepository;
   ProductService productService;
   UserService userService;
-  OrderRepository orderRepository;
+  OrderService orderService;
 
   @BeforeEach
   public void cartServiceTests() {
     cartRepository = Mockito.mock(CartRepository.class);
     productService = Mockito.mock(ProductServiceImpl.class);
     userService = Mockito.mock(UserServiceImpl.class);
-    orderRepository = Mockito.mock(OrderRepository.class);
-    cartService = new CartServiceImpl(cartRepository, productService, userService, orderRepository);
+    orderService = Mockito.mock(OrderServiceImpl.class);
+    cartService = new CartServiceImpl(cartRepository, productService, userService, orderService);
   }
 
   @Test
