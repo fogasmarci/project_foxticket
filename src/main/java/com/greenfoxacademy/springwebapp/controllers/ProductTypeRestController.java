@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductTypeRestController {
-
   private final ProductTypeService productTypeService;
 
   @Autowired
@@ -21,7 +20,7 @@ public class ProductTypeRestController {
     this.productTypeService = productTypeService;
   }
 
-  @PostMapping(path = "/api/product-types")
+  @PostMapping("/api/product-types")
   public ResponseEntity<?> addProductType(@RequestBody NameDTO nameDTO) {
     try {
       return ResponseEntity.status(200).body(productTypeService.addProductType(nameDTO));

@@ -54,6 +54,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.9'
 }
 
-tasks.named("test") {
+tasks.named('test') {
     useJUnitPlatform()
 }

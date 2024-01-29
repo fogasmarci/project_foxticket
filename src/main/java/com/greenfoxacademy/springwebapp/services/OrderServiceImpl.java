@@ -17,22 +17,32 @@ import static com.greenfoxacademy.springwebapp.models.Status.Active;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-  private final UserService userService;
-  private final CartService cartService;
   private final OrderRepository orderRepository;
+  private final UserService userService;
 
   @Autowired
-  public OrderServiceImpl(UserService userService, CartService cartService, OrderRepository orderRepository) {
-    this.userService = userService;
-    this.cartService = cartService;
+  public OrderServiceImpl(OrderRepository orderRepository, UserService userService) {
     this.orderRepository = orderRepository;
+    this.userService = userService;
   }
 
   @Override
   public OrderListDTO listAllPurchases() {
     User user = userService.getCurrentUser();
-    List<OrderedItemDTO> purchases = cartService.mapOrdersIntoListOfOrderDTOs(user.getOrders());
+    List<OrderedItemDTO> purchases = mapOrdersIntoListOfOrderDTOs(user.getOrders());
     return new OrderListDTO(purchases);
+  }
+
+  @Override
+  public OrderedItem saveOrder(OrderedItem orderedItem) {
+    return orderRepository.save(orderedItem);
+  }
+
+  @Override
+  public List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
+    return orderedItems.stream()
+        .map(OrderedItemDTO::new)
+        .toList();
   }
 
   @Override

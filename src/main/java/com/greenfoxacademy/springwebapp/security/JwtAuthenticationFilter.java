@@ -59,14 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private SecurityUser getUserDetailsFromJwt(String jwt) {
     Claims claims = jwtValidatorService.parseAndValidateJwtToken(jwt);
-
     final Long userId = ((Integer) claims.get("userId")).longValue();
     final boolean isAdmin = (boolean) claims.get("isAdmin");
     final boolean isVerified = (boolean) claims.get("isVerified");
     final String email = claims.getSubject();
 
     User user = new User(userId, email);
-
     if (isAdmin) {
       user.addRole(new Role(Authorities.ADMIN));
     }
@@ -77,6 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static String getJwtFromHeader(HttpServletRequest request) {
     final String authorizationHeader = request.getHeader("Authorization");
     String jwt = null;
+
     if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
       jwt = authorizationHeader.substring(7);
     }

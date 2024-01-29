@@ -10,7 +10,6 @@ import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.CartRepository;
-import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,17 +23,17 @@ import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUser
 
 @Service
 public class CartServiceImpl implements CartService {
-  private CartRepository cartRepository;
-  private ProductService productService;
-  private UserService userService;
-  private OrderRepository orderRepository;
+  private final CartRepository cartRepository;
+  private final ProductService productService;
+  private final UserService userService;
+  private final OrderService orderService;
 
   @Autowired
-  public CartServiceImpl(CartRepository cartRepository, ProductService productService, UserService userService, OrderRepository orderRepository) {
+  public CartServiceImpl(CartRepository cartRepository, ProductService productService, UserService userService, OrderService orderService) {
     this.cartRepository = cartRepository;
     this.productService = productService;
     this.userService = userService;
-    this.orderRepository = orderRepository;
+    this.orderService = orderService;
   }
 
   @Override
@@ -89,7 +88,7 @@ public class CartServiceImpl implements CartService {
         OrderedItem o = new OrderedItem();
         o.setProduct(e.getKey());
         o.setUser(user);
-        orderRepository.save(o);
+        orderService.saveOrder(o);
         orderedItems.add(o);
       }
     }
@@ -97,7 +96,7 @@ public class CartServiceImpl implements CartService {
     cart.clear();
     cartRepository.save(cart);
 
-    return new OrderListDTO(mapOrdersIntoListOfOrderDTOs(orderedItems));
+    return new OrderListDTO(orderService.mapOrdersIntoListOfOrderDTOs(orderedItems));
   }
 
   @Override
@@ -123,13 +122,6 @@ public class CartServiceImpl implements CartService {
 
     String okMessage = "All items are cleared from the cart.";
     return new MessageDTO(okMessage);
-  }
-
-  @Override
-  public List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems) {
-    return orderedItems.stream()
-        .map(OrderedItemDTO::new)
-        .toList();
   }
 
   private Cart getCart() {

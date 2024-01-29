@@ -19,4 +19,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
   Optional<Article> findByTitle(String title);
 
   Optional<Article> findById(Long id);
+
+  boolean existsByTitle(String title);
 }

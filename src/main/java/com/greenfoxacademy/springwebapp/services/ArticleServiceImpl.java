@@ -37,8 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
   public Article addArticle(AddArticleDTO addArticleDTO) {
     validateAddArticleDTO(addArticleDTO);
 
-    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
-    if (existingArticle != null) {
+    if (articleRepository.existsByTitle(addArticleDTO.title())) {
       throw new TitleAlreadyExistsException();
     }
 
@@ -52,13 +51,13 @@ public class ArticleServiceImpl implements ArticleService {
     Article articleToEdit = articleRepository.findById(articleId)
         .orElseThrow(ArticleNotExistsException::new);
 
-    Article existingArticle = articleRepository.findByTitle(addArticleDTO.getTitle()).orElse(null);
+    Article existingArticle = articleRepository.findByTitle(addArticleDTO.title()).orElse(null);
     if (existingArticle != null && !existingArticle.getTitle().equals(articleToEdit.getTitle())) {
       throw new TitleAlreadyExistsException();
     }
 
-    articleToEdit.setTitle(addArticleDTO.getTitle());
-    articleToEdit.setContent(addArticleDTO.getContent());
+    articleToEdit.setTitle(addArticleDTO.title());
+    articleToEdit.setContent(addArticleDTO.content());
 
     return articleRepository.save(articleToEdit);
   }
@@ -75,14 +74,14 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   public Article mapDTOToArticle(AddArticleDTO addArticleDTO) {
-    return new Article(addArticleDTO.getTitle(), addArticleDTO.getContent());
+    return new Article(addArticleDTO.title(), addArticleDTO.content());
   }
 
   private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {
-    if (addArticleDTO.getTitle() == null) {
+    if (addArticleDTO.title() == null) {
       throw new TitleRequiredException();
     }
-    if (addArticleDTO.getContent() == null) {
+    if (addArticleDTO.content() == null) {
       throw new ContentRequiredException();
     }
   }

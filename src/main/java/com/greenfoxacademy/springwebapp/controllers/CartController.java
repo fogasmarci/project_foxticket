@@ -10,7 +10,6 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.services.CartService;
-import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,12 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CartController {
   private final CartService cartService;
-  private final UserService userService;
 
   @Autowired
-  public CartController(CartService cartService, UserService userService) {
+  public CartController(CartService cartService) {
     this.cartService = cartService;
-    this.userService = userService;
   }
 
   @PostMapping("/api/cart")

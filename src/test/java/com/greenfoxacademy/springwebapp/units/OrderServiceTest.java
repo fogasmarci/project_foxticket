@@ -5,7 +5,9 @@ import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
 import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
-import com.greenfoxacademy.springwebapp.services.*;
+import com.greenfoxacademy.springwebapp.services.OrderServiceImpl;
+import com.greenfoxacademy.springwebapp.services.UserService;
+import com.greenfoxacademy.springwebapp.services.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,16 +23,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("test")
 public class OrderServiceTest {
-  UserService userService;
-  CartService cartService;
   OrderRepository orderRepository;
+  UserService userService;
   OrderServiceImpl orderService;
 
   public OrderServiceTest() {
-    userService = Mockito.mock(UserServiceImpl.class);
-    cartService = Mockito.mock(CartServiceImpl.class);
     orderRepository = Mockito.mock(OrderRepository.class);
-    orderService = new OrderServiceImpl(userService, cartService, orderRepository);
+    userService = Mockito.mock(UserServiceImpl.class);
+    orderService = new OrderServiceImpl(orderRepository, userService);
   }
 
   @Test
@@ -39,7 +39,6 @@ public class OrderServiceTest {
     List<OrderedItemDTO> emptyList = new ArrayList<>();
 
     Mockito.when(userService.getCurrentUser()).thenReturn(user);
-    Mockito.when(cartService.mapOrdersIntoListOfOrderDTOs(user.getOrders())).thenReturn(emptyList);
 
     assertThat(orderService.listAllPurchases()).usingRecursiveComparison().isEqualTo(new OrderListDTO(emptyList));
   }
@@ -47,14 +46,23 @@ public class OrderServiceTest {
   @Test
   void listAllPurchases_With4ItemsPurchased_ReturnsCorrectOrdersList() {
     User user = new User();
-    OrderedItemDTO item1 = new OrderedItemDTO(1L, Status.Not_active, null, 1L);
-    OrderedItemDTO item2 = new OrderedItemDTO(2L, Status.Not_active, null, 2L);
-    OrderedItemDTO item3 = new OrderedItemDTO(3L, Status.Not_active, null, 2L);
-    OrderedItemDTO item4 = new OrderedItemDTO(4L, Status.Not_active, null, 3L);
-    List<OrderedItemDTO> orderList = new ArrayList<>(List.of(item1, item2, item3, item4));
+    Product productMock1 = Mockito.mock(Product.class);
+    Mockito.when(productMock1.getId()).thenReturn(1L);
+    OrderedItem orderedItem1 = new OrderedItem();
+    orderedItem1.setProduct(productMock1);
+    user.addOrder(orderedItem1);
+
+    Product productMock2 = Mockito.mock(Product.class);
+    Mockito.when(productMock2.getId()).thenReturn(2L);
+    OrderedItem orderedItem2 = new OrderedItem();
+    orderedItem2.setProduct(productMock2);
+    user.addOrder(orderedItem2);
+
+    List<OrderedItemDTO> orderList = new ArrayList<>();
+    orderList.add(new OrderedItemDTO(orderedItem1));
+    orderList.add(new OrderedItemDTO(orderedItem2));
 
     Mockito.when(userService.getCurrentUser()).thenReturn(user);
-    Mockito.when(cartService.mapOrdersIntoListOfOrderDTOs(user.getOrders())).thenReturn(orderList);
 
     assertThat(orderService.listAllPurchases()).usingRecursiveComparison().isEqualTo(new OrderListDTO(orderList));
   }
@@ -89,7 +97,6 @@ public class OrderServiceTest {
     orderedItem.setId(1L);
 
     user.addOrder(orderedItem);
-
     Mockito.when(userService.getCurrentUser()).thenReturn(user);
 
     assertThrows(NotMyOrderException.class, () -> orderService.activateItem(orderId));

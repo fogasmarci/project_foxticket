@@ -11,17 +11,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LogInterceptor implements HandlerInterceptor {
-  private Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
+  private final Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
 
   @Override
-  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
     Map<String, String[]> params = request.getParameterMap();
-    StringBuilder sb = new StringBuilder("Params: " + (params.isEmpty() ? "none" :
+    String content = "Params: " + (params.isEmpty() ? "none" :
         params.entrySet().stream()
             .map(entry -> entry.getKey() + "=" + Arrays.toString(entry.getValue()).replaceAll("[\\[\\]]", ""))
-            .collect(Collectors.joining(", "))));
+            .collect(Collectors.joining(", ")));
 
-    String logMessage = String.format("%s %s %s Status: %d", request.getMethod(), request.getServletPath(), sb, response.getStatus());
+    String logMessage = String.format("%s %s %s Status: %d", request.getMethod(), request.getServletPath(), content, response.getStatus());
     if (response.getStatus() >= 400) {
       logger.atError().log(logMessage);
     } else {
