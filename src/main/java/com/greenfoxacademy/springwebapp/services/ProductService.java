@@ -9,8 +9,6 @@ import com.greenfoxacademy.springwebapp.models.Product;
 import java.util.Optional;
 
 public interface ProductService {
-  Product findProductByName(String name);
-
   ProductListDTO listProductDetails();
 
   ProductDTO createProductDTO(Product product);

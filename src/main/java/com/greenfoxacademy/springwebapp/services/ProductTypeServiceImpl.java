@@ -9,6 +9,8 @@ import com.greenfoxacademy.springwebapp.repositories.ProductTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProductTypeServiceImpl implements ProductTypeService {
 
@@ -33,5 +35,10 @@ public class ProductTypeServiceImpl implements ProductTypeService {
     ProductType newProductType = new ProductType(nameDTO.getName());
     productTypeRepository.save(newProductType);
     return new ProductTypeResponseDTO(newProductType.getId(), newProductType.getName());
+  }
+
+  @Override
+  public Optional<ProductType> findProductTypeById(Long id) {
+    return productTypeRepository.findById(id);
   }
 }

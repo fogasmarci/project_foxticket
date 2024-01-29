@@ -11,7 +11,6 @@ import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTyp
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
-import com.greenfoxacademy.springwebapp.repositories.ProductTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,26 +21,17 @@ import java.util.Optional;
 @Service
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
-  private final ProductTypeRepository productTypeRepository;
+  private final ProductTypeService productTypeService;
 
   @Autowired
-  public ProductServiceImpl(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
+  public ProductServiceImpl(ProductRepository productRepository, ProductTypeService productTypeService) {
     this.productRepository = productRepository;
-    this.productTypeRepository = productTypeRepository;
-  }
-
-  @Override
-  public Product findProductByName(String name) {
-    return productRepository.findByName(name).orElse(null);
+    this.productTypeService = productTypeService;
   }
 
   @Override
   public Optional<Product> findProductById(Long productId) {
     return productRepository.findById(productId);
-  }
-
-  public ProductType findProductTypeById(Long id) {
-    return productTypeRepository.findById(id).orElse(null);
   }
 
   @Override
@@ -61,11 +51,8 @@ public class ProductServiceImpl implements ProductService {
   public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
     validateProductDTO(productWithoutIdDTO);
 
-    ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
-    if (productType == null) {
-      throw new InvalidProductTypeException();
-    }
-    if (findProductByName(productWithoutIdDTO.getName()) != null) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.getName())) {
       throw new ProductNameAlreadyTakenException();
     }
 
@@ -88,11 +75,8 @@ public class ProductServiceImpl implements ProductService {
     validateProductDTO(productWithoutIdDTO);
     Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
 
-    ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
-    if (productType == null) {
-      throw new InvalidProductTypeException();
-    }
-    if (findProductByName(productWithoutIdDTO.getName()) != null && !productToEdit.getName().equals(productWithoutIdDTO.getName())) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.getName()) && !productToEdit.getName().equals(productWithoutIdDTO.getName())) {
       throw new ProductNameAlreadyTakenException();
     }
 
