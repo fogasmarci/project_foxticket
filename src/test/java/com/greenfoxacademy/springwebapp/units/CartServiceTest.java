@@ -216,7 +216,7 @@ public class CartServiceTest {
     Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(null);
 
     MessageDTO messageDTO = cartService.removeProductFromCart(itemToRemove.getId());
-    assertEquals("Teszt bérlet 1 is deleted from the cart.", messageDTO.getMessage());
+    assertEquals("Teszt bérlet 1 is deleted from the cart.", messageDTO.message());
   }
 
   @Test
@@ -249,7 +249,7 @@ public class CartServiceTest {
     Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(cart);
 
     MessageDTO messageDTO = cartService.removeAllProductsFromCart();
-    assertEquals("All items are cleared from the cart.", messageDTO.getMessage());
+    assertEquals("All items are cleared from the cart.", messageDTO.message());
     Assert.isTrue(cart.getProductsInCart().keySet().isEmpty());
   }
 

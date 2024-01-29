@@ -21,8 +21,8 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-  private ProductRepository productRepository;
-  private ProductTypeRepository productTypeRepository;
+  private final ProductRepository productRepository;
+  private final ProductTypeRepository productTypeRepository;
 
   @Autowired
   public ProductServiceImpl(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
@@ -54,9 +54,7 @@ public class ProductServiceImpl implements ProductService {
           product.getDescription(), product.getType().getName()));
     }
 
-    ProductListDTO productListDTO = new ProductListDTO(productsDTOList);
-
-    return productListDTO;
+    return new ProductListDTO(productsDTOList);
   }
 
   @Override

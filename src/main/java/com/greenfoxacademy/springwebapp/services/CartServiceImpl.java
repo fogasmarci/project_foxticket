@@ -24,10 +24,10 @@ import static com.greenfoxacademy.springwebapp.models.CartSpecifications.hasUser
 
 @Service
 public class CartServiceImpl implements CartService {
-  private CartRepository cartRepository;
-  private ProductService productService;
-  private UserService userService;
-  private OrderRepository orderRepository;
+  private final CartRepository cartRepository;
+  private final ProductService productService;
+  private final UserService userService;
+  private final OrderRepository orderRepository;
 
   @Autowired
   public CartServiceImpl(CartRepository cartRepository, ProductService productService, UserService userService, OrderRepository orderRepository) {

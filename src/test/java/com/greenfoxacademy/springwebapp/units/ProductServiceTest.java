@@ -119,7 +119,7 @@ public class ProductServiceTest {
 
     MessageDTO result = productService.deleteProduct(productId);
 
-    assertEquals("Product vonaljegy is deleted.", result.getMessage());
+    assertEquals("Product vonaljegy is deleted.", result.message());
   }
 
   @Test

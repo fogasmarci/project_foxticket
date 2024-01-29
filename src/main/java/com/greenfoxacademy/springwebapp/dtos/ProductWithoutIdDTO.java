@@ -3,10 +3,10 @@ package com.greenfoxacademy.springwebapp.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductWithoutIdDTO {
-  private String name;
-  private Integer price;
-  private Integer duration;
-  private String description;
+  private final String name;
+  private final Integer price;
+  private final Integer duration;
+  private final String description;
   @JsonProperty("item_id")
   private Long typeId;
 

@@ -7,9 +7,9 @@ import com.greenfoxacademy.springwebapp.models.Status;
 import java.time.LocalDateTime;
 
 public class OrderedItemDTO {
-  private Long id;
-  private Status status;
-  private LocalDateTime expiry;
+  private final Long id;
+  private final Status status;
+  private final LocalDateTime expiry;
   @JsonProperty("product_id")
   private Long productId;
 

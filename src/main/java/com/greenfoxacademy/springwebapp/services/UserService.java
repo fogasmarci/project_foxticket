@@ -7,13 +7,9 @@ public interface UserService {
 
   User createUser(String name, String email, String password);
 
-  RegistrationResponseDTO createRegistrationDTO(User user);
-
-  User registerUser(RegistrationRequestDTO requestDTO);
+  RegistrationResponseDTO registerUser(RegistrationRequestDTO requestDTO);
 
   LoginResponseDTO loginUser(LoginUserDTO loginUserDTO);
-
-  User findLoggedInUser();
 
   Long findLoggedInUsersId();
 

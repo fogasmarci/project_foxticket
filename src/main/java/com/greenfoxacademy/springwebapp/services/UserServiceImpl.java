@@ -52,49 +52,37 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public RegistrationResponseDTO createRegistrationDTO(User user) {
-    boolean isAdmin = user.getIsAdminByRoles();
-    return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin);
-  }
-
-  @Override
-  public User registerUser(RegistrationRequestDTO requestDTO) {
-    if (requestDTO.getPassword() == null && requestDTO.getName() == null && requestDTO.getEmail() == null) {
+  public RegistrationResponseDTO registerUser(RegistrationRequestDTO requestDTO) {
+    if (requestDTO.password() == null && requestDTO.name() == null && requestDTO.email() == null) {
       throw new AllFieldsMissingException();
     }
-    validateField(requestDTO.getName(), nameMinLength, new ShortNameException(), new NameRequiredException());
-    validateField(requestDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
-    validateField(requestDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
-    if (userRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
+    validateField(requestDTO.name(), nameMinLength, new ShortNameException(), new NameRequiredException());
+    validateField(requestDTO.email(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(requestDTO.password(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
+    if (userRepository.existsByEmail(requestDTO.email())) {
       throw new EmailAlreadyTakenException();
     }
-    return createUser(requestDTO.getName(), requestDTO.getEmail(), requestDTO.getPassword());
+    User newUser = createUser(requestDTO.name(), requestDTO.email(), requestDTO.password());
+    return createRegistrationDTO(newUser);
   }
 
   @Override
   public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO) {
-    if (loginUserDTO.getEmail() == null && loginUserDTO.getPassword() == null) {
+    if (loginUserDTO.email() == null && loginUserDTO.password() == null) {
       throw new AllFieldsMissingException();
     }
-    validateField(loginUserDTO.getEmail(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
-    validateField(loginUserDTO.getPassword(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
+    validateField(loginUserDTO.email(), emailMinLength, new InvalidEmailException(), new EmailRequiredException());
+    validateField(loginUserDTO.password(), passwordMinLength, new ShortPasswordException(), new PasswordRequiredException());
     try {
-      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.getEmail(), loginUserDTO.getPassword()));
+      authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserDTO.email(), loginUserDTO.password()));
     } catch (BadCredentialsException e) {
       throw new IncorrectCredentialsException(e);
     }
 
-    final SecurityUser userDetails = userDetailsService.loadUserByUsername(loginUserDTO.getEmail());
+    final SecurityUser userDetails = userDetailsService.loadUserByUsername(loginUserDTO.email());
     String token = jwtBuilder.generateToken(userDetails);
 
     return new LoginResponseDTO(token);
-  }
-
-  @Override
-  public User findLoggedInUser() {
-    SecurityContext context = SecurityContextHolder.getContext();
-    SecurityUser securityUser = (SecurityUser) context.getAuthentication().getPrincipal();
-    return securityUser.getUser();
   }
 
   @Override
@@ -106,9 +94,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO) {
-    String name = updateDTO.getName();
-    String email = updateDTO.getEmail();
-    String password = updateDTO.getPassword();
+    String name = updateDTO.name();
+    String email = updateDTO.email();
+    String password = updateDTO.password();
 
     if (name == null && email == null && password == null) {
       throw new FieldsException("Name, email or Password is required");
@@ -144,6 +132,11 @@ public class UserServiceImpl implements UserService {
 
   private String encodePassword(String password) {
     return passwordEncoder.encode(password);
+  }
+
+  private RegistrationResponseDTO createRegistrationDTO(User user) {
+    boolean isAdmin = user.getIsAdminByRoles();
+    return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin);
   }
 
   private UserInfoResponseDTO updateUserInfoResponse(User user) {

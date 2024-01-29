@@ -156,8 +156,8 @@ public class ArticleControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
-        .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
+        .andExpect(jsonPath("$.title").value(addArticleDTO.title()))
+        .andExpect(jsonPath("$.content").value(addArticleDTO.content()));
   }
 
   @Test
@@ -235,8 +235,8 @@ public class ArticleControllerTest {
             .content(objectMapper.writeValueAsString(addArticleDTO)))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
-        .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
+        .andExpect(jsonPath("$.title").value(addArticleDTO.title()))
+        .andExpect(jsonPath("$.content").value(addArticleDTO.content()));
   }
 
   @Test

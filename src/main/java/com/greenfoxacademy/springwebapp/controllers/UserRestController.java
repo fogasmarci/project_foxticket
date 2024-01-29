@@ -25,7 +25,7 @@ public class UserRestController {
   @PostMapping(path = "/users")
   public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDTO requestDTO) {
     try {
-      return ResponseEntity.status(200).body(userService.createRegistrationDTO(userService.registerUser(requestDTO)));
+      return ResponseEntity.status(200).body(userService.registerUser(requestDTO));
     } catch (FieldsException | RegistrationException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
