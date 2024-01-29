@@ -16,32 +16,10 @@ INSERT INTO PRODUCT_TYPES (NAME)
 VALUES ('jegy'),
        ('bérlet');
 
-CREATE TABLE PRODUCTS
-(
-    ID          int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    NAME        varchar(100) DEFAULT NULL,
-    PRICE       int          DEFAULT NULL,
-    DURATION    bigint       DEFAULT NULL,
-    DESCRIPTION varchar(100) DEFAULT NULL,
-    TYPE_ID     int          DEFAULT NULL,
-    CONSTRAINT FK_TYPE
-        FOREIGN KEY (TYPE_ID)
-            REFERENCES PRODUCT_TYPES (ID)
-);
-
 INSERT INTO PRODUCTS (NAME, PRICE, DURATION, DESCRIPTION, TYPE_ID)
-VALUES ('teszt jegy 1', 480, CAST(1 AS NUMERIC), 'teszt1', 1),
-       ('teszt bérlet 1', 4000, CAST(1 AS NUMERIC), 'teszt2', 2),
-       ('teszt bérlet 2', 9500, CAST(1 AS NUMERIC), 'teszt3', 2);
-
-CREATE TABLE NEWS
-(
-    ID          INT NOT NULL AUTO_INCREMENT,
-    TITLE       VARCHAR(100) DEFAULT NULL,
-    CONTENT     VARCHAR(100) DEFAULT NULL,
-    PUBLISHDATE DATE         DEFAULT NULL,
-    PRIMARY KEY (ID)
-);
+VALUES ('teszt jegy 1', 480, 90, 'teszt1', (SELECT id from PRODUCT_TYPES WHERE name LIKE 'jegy')),
+       ('teszt bérlet 1', 4000, 9000, 'teszt2', (SELECT id from PRODUCT_TYPES WHERE name LIKE 'bérlet')),
+       ('teszt bérlet 2', 9500, 9000, 'teszt3', (SELECT id from PRODUCT_TYPES WHERE name LIKE 'bérlet'));
 
 INSERT INTO NEWS (TITLE, CONTENT, PUBLISHDATE)
 VALUES ('News about tickets', 'Ipsum Lorum', '2023-12-11');

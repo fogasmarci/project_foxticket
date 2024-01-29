@@ -33,7 +33,8 @@ public class ProductControllerTest {
   MockMvc mvc;
   @Autowired
   ProductService productService;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
 
   @Test
   void getProductDetails_ListsAllProducts() throws Exception {
