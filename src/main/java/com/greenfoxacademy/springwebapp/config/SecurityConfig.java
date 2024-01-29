@@ -47,7 +47,8 @@ public class SecurityConfig {
                 "/js/**",
                 "/register",
                 "/login",
-                "/api/users/**").permitAll()
+                "/api/users/**",
+                "/error").permitAll()
             .anyRequest().authenticated())
         .exceptionHandling(exceptionHandling ->
             exceptionHandling
@@ -71,8 +72,7 @@ public class SecurityConfig {
   public AuthenticationEntryPoint authenticationEntryPoint() {
     return (request, response, authException) -> {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
-      response.getWriter().write("Unauthorized: " + authException.getMessage());
-      response.getWriter().flush();
+      response.sendRedirect("/error");
     };
   }
 
