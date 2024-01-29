@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class ArticleControllerTest {
+public class ArticleRestControllerTest {
   @Autowired
   MockMvc mvc;
   @Autowired
