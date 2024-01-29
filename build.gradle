@@ -30,17 +30,20 @@ checkstyleTest {
     source = 'src/test/java'
 }
 
-/*jacocoTestReport {
+jacoco {
+    toolVersion "0.8.9"
+}
+jacocoTestReport {
     reports {
-        xml.required
-        html.required
-        html.destination file("${buildDir}/jacoco")    }
-}*/
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
@@ -51,6 +54,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.9'
 }
 
-tasks.named('test') {
+tasks.named("test") {
     useJUnitPlatform()
 }

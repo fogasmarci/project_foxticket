@@ -1,11 +1,16 @@
-DROP
-ALL OBJECTS;
-
-CREATE TABLE PRODUCT_TYPES
-(
-    ID   int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    NAME varchar(100) DEFAULT NULL
-);
+SET
+REFERENTIAL_INTEGRITY FALSE;
+TRUNCATE TABLE CART_PRODUCTS;
+TRUNCATE TABLE CARTS;
+TRUNCATE TABLE NEWS;
+TRUNCATE TABLE ORDERED_ITEMS;
+TRUNCATE TABLE PRODUCTS;
+TRUNCATE TABLE PRODUCT_TYPES;
+TRUNCATE TABLE ROLES;
+TRUNCATE TABLE USER_ROLE;
+TRUNCATE TABLE USERS;
+SET
+REFERENTIAL_INTEGRITY TRUE;
 
 INSERT INTO PRODUCT_TYPES (NAME)
 VALUES ('jegy'),
@@ -43,51 +48,20 @@ VALUES ('News about tickets', 'Ipsum Lorum', '2023-12-11');
 INSERT INTO NEWS (TITLE, CONTENT, PUBLISHDATE)
 VALUES ('Test Title', 'Test Content', '2023-12-11');
 
-CREATE TABLE CARTS
-(
-    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY
-);
-
 INSERT INTO CARTS (ID)
 VALUES (default),
        (default),
        (default),
        (default);
 
-CREATE TABLE CART_PRODUCTS
-(
-    CART_ID    int NOT NULL,
-    PRODUCT_ID int NOT NULL,
-    QUANTITY   int NOT NULL
-);
-
 INSERT INTO CART_PRODUCTS(CART_ID, PRODUCT_ID, QUANTITY)
-VALUES ((SELECT ID FROM CARTS LIMIT 1 OFFSET 2), 2, 2),
-       ((SELECT ID FROM CARTS LIMIT 1 OFFSET 2), 1, 1);
-
-CREATE TABLE ROLES
-(
-    ROLE_ID   int          NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    AUTHORITY varchar(100) NOT NULL
-);
+VALUES ((SELECT ID FROM CARTS LIMIT 1 OFFSET 2),
+       (SELECT id FROM PRODUCTS WHERE name LIKE 'teszt bérlet 1'), 2),
+       ((SELECT ID FROM CARTS LIMIT 1 OFFSET 2), (SELECT id FROM PRODUCTS WHERE name LIKE 'teszt jegy 1'), 1);
 
 INSERT INTO ROLES (AUTHORITY)
 VALUES ('USER'),
        ('ADMIN');
-
-CREATE TABLE USERS
-(
-    ID         int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    NAME       varchar(100) DEFAULT NULL,
-    PASSWORD   varchar(100) DEFAULT NULL,
-    EMAIL      varchar(100) DEFAULT NULL UNIQUE,
-    ISADMIN    BOOLEAN      DEFAULT false,
-    ISVERIFIED BOOLEAN      DEFAULT false,
-    CART_ID    int NOT NULL,
-    CONSTRAINT FK_CART
-        FOREIGN KEY (CART_ID)
-            REFERENCES CARTS (ID)
-);
 
 INSERT INTO USERS (NAME, EMAIL, PASSWORD, CART_ID, ISADMIN, ISVERIFIED)
 VALUES ('TestUser', 'user@user.user', '$2a$10$n.AMx5SrMrlOnJSmsTrgU.rvT4GFKsBFFaGJ8W3JjB8JNcroGx5ga',
@@ -105,35 +79,26 @@ INSERT INTO USERS (NAME, EMAIL, PASSWORD, CART_ID)
 VALUES ('OrderTestUser', 'something@orderuser.xy', '$2a$12$6MLSdozTf7Bddnyrd9tMIekHsbeS.YlkxH//wbRoc8T8wiNTl3Sru',
         (SELECT ID FROM CARTS LIMIT 1 OFFSET 3) );
 
-CREATE TABLE USER_ROLE
-(
-    ROLE_ID int NOT NULL,
-    USER_ID int NOT NULL
-);
-
 INSERT INTO USER_ROLE (USER_ID, ROLE_ID)
-VALUES (1, 1),
-       (2, 2),
-       (3, 1),
-       (4, 1);
-
-CREATE TABLE ORDERED_ITEMS
-(
-    ID         int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    EXPIRY     timestamp(6) DEFAULT NULL,
-    STATUS     varchar(50) check (STATUS in ('Not_active', 'Active', 'Expired')),
-    PRODUCT_ID int NOT NULL,
-    USER_ID    int NOT NULL,
-    CONSTRAINT FK_PROD
-        FOREIGN KEY (PRODUCT_ID)
-            REFERENCES PRODUCTS (ID),
-    CONSTRAINT FK_USER
-        FOREIGN KEY (USER_ID)
-            REFERENCES USERS (ID)
-);
+SELECT u.id, r.role_id
+FROM USERS u,
+     ROLES r
+WHERE u.name = 'TestUser' AND r.authority = 'USER'
+   OR u.name = 'TestAdmin' AND r.authority = 'ADMIN'
+   OR u.name = 'CartTestUser' AND r.authority = 'USER'
+   OR u.name = 'OrderTestUser' AND r.authority = 'USER';
 
 INSERT INTO ORDERED_ITEMS (STATUS, PRODUCT_ID, USER_ID)
-VALUES ('Not_active', 2, 4),
-       ('Not_active', 2, 4),
-       ('Not_active', 1, 4),
-       ('Not_active', 3, 4);
+SELECT 'Not_active', p.id, u.id
+FROM PRODUCTS p,
+     USERS u
+WHERE p.name = 'teszt bérlet 1'
+  AND u.name = 'OrderTestUser';
+
+INSERT INTO ORDERED_ITEMS (STATUS, PRODUCT_ID, USER_ID)
+SELECT 'Not_active', p.id, u.id
+FROM PRODUCTS p,
+     USERS u
+WHERE p.name = 'teszt bérlet 1' AND u.name = 'OrderTestUser'
+   OR p.name = 'teszt jegy 1' AND u.name = 'OrderTestUser'
+   OR p.name = 'teszt bérlet 2' AND u.name = 'OrderTestUser';

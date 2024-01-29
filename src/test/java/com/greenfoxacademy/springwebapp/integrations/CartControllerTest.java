@@ -3,10 +3,7 @@ package com.greenfoxacademy.springwebapp.integrations;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
-import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
-import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
-import com.greenfoxacademy.springwebapp.models.Status;
 import com.greenfoxacademy.springwebapp.security.JwtValidatorService;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import jakarta.transaction.Transactional;
@@ -19,14 +16,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -194,12 +188,6 @@ public class CartControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
     String jwt = login(loginUserDTO);
 
-    List<OrderedItemDTO> orderedItems = new ArrayList<>();
-    orderedItems.add(new OrderedItemDTO(1L, Status.Not_active, null, 2L));
-    orderedItems.add(new OrderedItemDTO(2L, Status.Not_active, null, 2L));
-    orderedItems.add(new OrderedItemDTO(3L, Status.Not_active, null, 1L));
-    OrderListDTO orders = new OrderListDTO(orderedItems);
-
     String response = mvc.perform(post("/api/orders").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.orders").value(hasSize(3)))
@@ -209,6 +197,46 @@ public class CartControllerTest {
 
     assertTrue(response.contains("\"product_id\":2"));
     assertTrue(response.contains("\"product_id\":1"));
+  }
+
+  @Test
+  void removeItemFromCart_ProductNotInCart_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/cart/3").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("There is no item with the given id in the cart."));
+  }
+
+  @Test
+  void removeItemFromCart_WithInvalidProductId_ReturnsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/cart/111").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Product doesn't exist."));
+  }
+
+  @Test
+  void removeItemFromCart_WithValidProductId_AndProductInCart_ReturnsCartContentCorrectly() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/cart/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.message").value("Teszt jegy 1 is deleted from the cart."));
+  }
+
+  @Test
+  void removeAllItemsFromCart_WithValidProductId_AndProductInCart_ReturnsCartContentCorrectly() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("cica@cartuser.ab", "cica1234");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(delete("/api/cart").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.message").value("All items are cleared from the cart."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

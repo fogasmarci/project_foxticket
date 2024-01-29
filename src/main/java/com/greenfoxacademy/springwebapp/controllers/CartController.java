@@ -9,8 +9,6 @@ import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundExceptio
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
-import com.greenfoxacademy.springwebapp.models.Cart;
-import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +29,9 @@ public class CartController {
 
   @PostMapping("/api/cart")
   public ResponseEntity<?> addProductToCart(@RequestBody ProductIdDTO productIdDTO) {
-    User user = userService.findLoggedInUser();
-    Cart cart = cartService.findCartByUser(user);
-
     try {
-      cartService.putProductsInCart(cart, productIdDTO);
-      CartListDTO productsInUsersCart = cartService.createPutProductsInCartResponse(user.getId());
+      cartService.putProductsInCart(productIdDTO);
+      CartListDTO productsInUsersCart = cartService.createPutProductsInCartResponse();
       return ResponseEntity.status(200).body(productsInUsersCart);
     } catch (ProductException | FieldsException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
@@ -45,8 +40,7 @@ public class CartController {
 
   @GetMapping("/api/cart")
   public ResponseEntity<CartListDTO> listCartContents() {
-    Long userId = userService.findLoggedInUsersId();
-    CartListDTO productsInUsersCart = cartService.getCartWithProducts(userId);
+    CartListDTO productsInUsersCart = cartService.getCartWithProducts();
     return ResponseEntity.status(200).body(productsInUsersCart);
   }
 
