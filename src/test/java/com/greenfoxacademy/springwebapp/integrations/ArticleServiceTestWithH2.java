@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class ArticleServiceTestWithH2 {
-
   @Autowired
   ArticleService articleService;
 

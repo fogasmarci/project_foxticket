@@ -4,7 +4,6 @@ import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.models.User;
 
 public interface UserService {
-
   User createUser(String name, String email, String password);
 
   RegistrationResponseDTO registerUser(RegistrationRequestDTO requestDTO);
