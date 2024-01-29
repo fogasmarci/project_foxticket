@@ -1,9 +1,12 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class RegistrationRequestDTO {
-  private final String name;
-  private final String email;
-  private final String password;
+  private String name;
+  private String email;
+  private String password;
+
+  public RegistrationRequestDTO() {
+  }
 
   public RegistrationRequestDTO(String name, String email, String password) {
     this.name = name;
@@ -21,5 +24,17 @@ public class RegistrationRequestDTO {
 
   public String getPassword() {
     return password;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 }

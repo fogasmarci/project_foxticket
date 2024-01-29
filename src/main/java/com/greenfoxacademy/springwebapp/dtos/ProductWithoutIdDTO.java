@@ -2,15 +2,20 @@ package com.greenfoxacademy.springwebapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.Duration;
+
 public class ProductWithoutIdDTO {
   private String name;
   private Integer price;
-  private Integer duration;
+  private Duration duration;
   private String description;
   @JsonProperty("item_id")
   private Long typeId;
 
-  public ProductWithoutIdDTO(String name, Integer price, Integer duration, String description, Long typeId) {
+  public ProductWithoutIdDTO() {
+  }
+
+  public ProductWithoutIdDTO(String name, Integer price, Duration duration, String description, Long typeId) {
     this.name = name;
     this.price = price;
     this.duration = duration;
@@ -26,7 +31,7 @@ public class ProductWithoutIdDTO {
     return price;
   }
 
-  public Integer getDuration() {
+  public Duration getDuration() {
     return duration;
   }
 
@@ -36,5 +41,25 @@ public class ProductWithoutIdDTO {
 
   public Long getTypeId() {
     return typeId;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setPrice(Integer price) {
+    this.price = price;
+  }
+
+  public void setDuration(Duration duration) {
+    this.duration = duration;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setTypeId(Long typeId) {
+    this.typeId = typeId;
   }
 }

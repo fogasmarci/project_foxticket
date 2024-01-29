@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 
 @ActiveProfiles("test")
 public class CartServiceTest {
@@ -78,7 +80,7 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithValidProductId_WorksCorrectly() {
-    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    Product product = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
 
@@ -117,7 +119,7 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithValidProductId_AndAmount_WorksCorrectly() {
-    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    Product product = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 3);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
 
@@ -133,7 +135,7 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithValidProductId_AndNegativeAmount_ThrowsCorrectException() {
-    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    Product product = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, -5);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
 
@@ -149,7 +151,7 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithValidProductId_AndZeroAmount_ThrowsCorrectException() {
-    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    Product product = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 0);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
 
@@ -193,7 +195,7 @@ public class CartServiceTest {
 
   @Test
   void putProductsInCart_WithValidProductId_AndAmountOverLimit_ThrowsException() {
-    Product product = new Product("teszt bérlet 1", 4000, 9000, "teszt2");
+    Product product = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductIdDTO productIdDTO = new ProductIdDTO(2L, 52);
     Mockito.when(productService.findProductById(2L)).thenReturn(Optional.of(product));
 
@@ -207,10 +209,11 @@ public class CartServiceTest {
         "Selected items cannot be added to cart. Cart limit is 50.");
   }
 
+
   @Test
   void removeProductFromCart_ItemIsSuccessfullyRemoved() {
     Cart cart = returnCartWithProducts();
-    Product itemToRemove = new Product("teszt bérlet 1", 10000, 9000, "havi teljes aru berlet");
+    Product itemToRemove = new Product("teszt bérlet 1", 10000, Duration.ofDays(30), "havi teljes aru berlet");
 
     Mockito.when(productService.findProductById(itemToRemove.getId())).thenReturn(Optional.of(itemToRemove));
     Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(null);
@@ -222,7 +225,7 @@ public class CartServiceTest {
   @Test
   void removeProductFromCart_ItemIdInCartNotFound_ThrowsCorrectException() {
     Cart cart = returnCartWithProducts();
-    Product itemToRemove = new Product("teszt bérlet 111", 10000, 9000, "havi teljes aru berlet");
+    Product itemToRemove = new Product("teszt bérlet 111", 10000, Duration.ofDays(30), "havi teljes aru berlet");
 
     Mockito.when(productService.findProductById(itemToRemove.getId())).thenReturn(Optional.of(itemToRemove));
 
@@ -264,11 +267,11 @@ public class CartServiceTest {
     ProductType type1 = new ProductType("bérlet");
     ProductType type2 = new ProductType("jegy");
 
-    Product product1 = new Product("teszt bérlet 1", 10000, 9000, "havi teljes aru berlet");
+    Product product1 = new Product("teszt bérlet 1", 10000, Duration.ofDays(30), "havi teljes aru berlet");
     product1.setType(type1);
-    Product product2 = new Product("teszt bérlet 2", 4000, 9000, "havi diakberlet");
+    Product product2 = new Product("teszt bérlet 2", 4000, Duration.ofDays(30), "havi diakberlet");
     product2.setType(type1);
-    Product product3 = new Product("teszt vonaljegy", 400, 90, "egyszer hasznalhato");
+    Product product3 = new Product("teszt vonaljegy", 400, Duration.ofHours(1), "egyszer hasznalhato");
     product3.setType(type2);
 
     cart.putProductInCart(product1, 3);

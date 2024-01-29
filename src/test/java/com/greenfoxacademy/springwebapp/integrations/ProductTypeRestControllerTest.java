@@ -26,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProductTypeRestControllerTest {
   @Autowired
   MockMvc mockMvc;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
 
   @Test
   void addProductType_NotLoggedIn_ReturnsUnauthorized() throws Exception {

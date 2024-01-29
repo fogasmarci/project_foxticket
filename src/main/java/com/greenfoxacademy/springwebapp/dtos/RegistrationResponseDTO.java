@@ -1,9 +1,12 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
 public class RegistrationResponseDTO {
-  private final long id;
-  private final String email;
-  private final boolean isAdmin;
+  private long id;
+  private String email;
+  private boolean isAdmin;
+
+  public RegistrationResponseDTO() {
+  }
 
   public RegistrationResponseDTO(long id, String email, boolean isAdmin) {
     this.id = id;
@@ -21,5 +24,17 @@ public class RegistrationResponseDTO {
 
   public boolean getIsAdmin() {
     return isAdmin;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public void setAdmin(boolean admin) {
+    isAdmin = admin;
   }
 }

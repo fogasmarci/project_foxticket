@@ -1,14 +1,16 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
+import java.time.Duration;
+
 public class ProductDTO {
   private Long id;
   private String name;
   private int price;
-  private int duration;
+  private Duration duration;
   private String description;
   private String type;
 
-  public ProductDTO(Long id, String name, int price, int duration, String description, String type) {
+  public ProductDTO(Long id, String name, int price, Duration duration, String description, String type) {
     this.id = id;
     this.name = name;
     this.price = price;
@@ -29,7 +31,7 @@ public class ProductDTO {
     return price;
   }
 
-  public int getDuration() {
+  public Duration getDuration() {
     return duration;
   }
 

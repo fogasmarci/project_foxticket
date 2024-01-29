@@ -51,8 +51,9 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.9'
 }
 
-tasks.named('test') {
+tasks.named("test") {
     useJUnitPlatform()
 }
