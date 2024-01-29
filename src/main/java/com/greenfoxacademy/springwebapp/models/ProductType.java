@@ -11,6 +11,7 @@ public class ProductType {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  @Column(unique = true)
   private String name;
 
   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "type", fetch = FetchType.LAZY)
