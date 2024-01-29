@@ -4,7 +4,6 @@ import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Product;
-import com.greenfoxacademy.springwebapp.models.Status;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import com.greenfoxacademy.springwebapp.services.OrderServiceImpl;
