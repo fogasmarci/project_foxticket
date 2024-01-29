@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -53,7 +52,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("1 week pass", 12000,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(post("/api/products")
             .header("Authorization", "Bearer " + jwt)
@@ -70,7 +69,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("1 week pass", null,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(post("/api/products")
             .header("Authorization", "Bearer " + jwt)
@@ -85,7 +84,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("1 week pass", 12000,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(post("/api/products").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
@@ -127,7 +126,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", 12000,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(patch("/api/products/1")
             .header("Authorization", "Bearer " + jwt)
@@ -144,7 +143,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", 12000,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(patch("/api/products/11")
             .header("Authorization", "Bearer " + jwt)
@@ -159,7 +158,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt jegy 1", 12000,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(patch("/api/products/2")
             .header("Authorization", "Bearer " + jwt)
@@ -174,7 +173,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", null,
-        Duration.ofDays(7), "Use this pass for a whole week!", 1L);
+        "7 days", "Use this pass for a whole week!", 1L);
 
     mvc.perform(patch("/api/products/1")
             .header("Authorization", "Bearer " + jwt)
@@ -189,7 +188,7 @@ public class ProductControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("1 week pass", 9999,
-        Duration.ofDays(7), "Use this pass for a whole week!", 99L);
+        "7 days", "Use this pass for a whole week!", 99L);
 
     mvc.perform(patch("/api/products/1")
             .header("Authorization", "Bearer " + jwt)

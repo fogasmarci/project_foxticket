@@ -17,9 +17,9 @@ VALUES ('jegy'),
        ('bérlet');
 
 INSERT INTO PRODUCTS (NAME, PRICE, DURATION, DESCRIPTION, TYPE_ID)
-VALUES ('teszt jegy 1', 480, 90, 'teszt1', (SELECT id from PRODUCT_TYPES WHERE name LIKE 'jegy')),
-       ('teszt bérlet 1', 4000, 9000, 'teszt2', (SELECT id from PRODUCT_TYPES WHERE name LIKE 'bérlet')),
-       ('teszt bérlet 2', 9500, 9000, 'teszt3', (SELECT id from PRODUCT_TYPES WHERE name LIKE 'bérlet'));
+VALUES ('teszt jegy 1', 480, '60 minutes', 'teszt1', 1),
+       ('teszt bérlet 1', 4000, '30 days', 'teszt2', 2),
+       ('teszt bérlet 2', 9500, '30 days', 'teszt3', 2);
 
 INSERT INTO NEWS (TITLE, CONTENT, PUBLISHDATE)
 VALUES ('News about tickets', 'Ipsum Lorum', '2023-12-11');

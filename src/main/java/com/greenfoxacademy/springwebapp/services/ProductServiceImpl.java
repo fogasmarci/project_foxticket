@@ -49,15 +49,16 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
+    productWithoutIdDTO.convertDuration();
     validateProductDTO(productWithoutIdDTO);
 
-    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.typeId()).orElseThrow(InvalidProductTypeException::new);
-    if (productRepository.existsByName(productWithoutIdDTO.name())) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.getName())) {
       throw new ProductNameAlreadyTakenException();
     }
 
-    Product productToSave = new Product(productWithoutIdDTO.name(),
-        productWithoutIdDTO.price(), productWithoutIdDTO.duration(), productWithoutIdDTO.description());
+    Product productToSave = new Product(productWithoutIdDTO.getName(),
+        productWithoutIdDTO.getPrice(), productWithoutIdDTO.getDuration(), productWithoutIdDTO.getDescription());
     productToSave.setType(productType);
     productRepository.save(productToSave);
 
@@ -72,18 +73,19 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDTO editProduct(ProductWithoutIdDTO productWithoutIdDTO, Long productId) {
+    productWithoutIdDTO.convertDuration();
     validateProductDTO(productWithoutIdDTO);
     Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
 
-    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.typeId()).orElseThrow(InvalidProductTypeException::new);
-    if (productRepository.existsByName(productWithoutIdDTO.name()) && !productToEdit.getName().equals(productWithoutIdDTO.name())) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.getName()) && !productToEdit.getName().equals(productWithoutIdDTO.getName())) {
       throw new ProductNameAlreadyTakenException();
     }
 
-    productToEdit.setName(productWithoutIdDTO.name());
-    productToEdit.setPrice(productWithoutIdDTO.price());
-    productToEdit.setDuration(productWithoutIdDTO.duration());
-    productToEdit.setDescription(productWithoutIdDTO.description());
+    productToEdit.setName(productWithoutIdDTO.getName());
+    productToEdit.setPrice(productWithoutIdDTO.getPrice());
+    productToEdit.setDuration(productWithoutIdDTO.getDuration());
+    productToEdit.setDescription(productWithoutIdDTO.getDescription());
     productToEdit.setType(productType);
 
     productRepository.save(productToEdit);
@@ -103,19 +105,19 @@ public class ProductServiceImpl implements ProductService {
   }
 
   private void validateProductDTO(ProductWithoutIdDTO productWithoutIdDTO) {
-    if (productWithoutIdDTO.name().isEmpty()) {
+    if (productWithoutIdDTO.getName().isEmpty()) {
       throw new FieldsException("Name is missing");
     }
-    if (productWithoutIdDTO.description().isEmpty()) {
+    if (productWithoutIdDTO.getDescription().isEmpty()) {
       throw new FieldsException("Description is missing");
     }
-    if (productWithoutIdDTO.price() == null) {
+    if (productWithoutIdDTO.getPrice() == null) {
       throw new FieldsException("Price is missing");
     }
-    if (productWithoutIdDTO.duration() == null) {
+    if (productWithoutIdDTO.getDurationInString() == null) {
       throw new FieldsException("Duration is missing");
     }
-    if (productWithoutIdDTO.typeId() == null) {
+    if (productWithoutIdDTO.getTypeId() == null) {
       throw new FieldsException("Type ID is missing");
     }
   }
