@@ -3,8 +3,8 @@ package com.greenfoxacademy.springwebapp.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductIdDTO {
-  private Long productId;
-  private int amount;
+  private final Long productId;
+  private final int amount;
 
   public ProductIdDTO(@JsonProperty("productId") Long productId) {
     this.productId = productId;

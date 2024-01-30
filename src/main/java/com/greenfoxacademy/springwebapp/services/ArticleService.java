@@ -6,7 +6,6 @@ import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.models.Article;
 
 public interface ArticleService {
-
   ArticleListDTO listArticles(String keyword);
 
   Article addArticle(AddArticleDTO addArticleDTO);

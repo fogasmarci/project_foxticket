@@ -21,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Autowired
@@ -47,6 +46,7 @@ public class SecurityConfig {
                 "/js/**",
                 "/register",
                 "/login",
+                "/news",
                 "/api/news",
                 "/api/users/**").permitAll()
             .anyRequest().authenticated())

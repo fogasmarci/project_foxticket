@@ -11,7 +11,6 @@ import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTyp
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
-import com.greenfoxacademy.springwebapp.repositories.ProductTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,27 +20,18 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-  private ProductRepository productRepository;
-  private ProductTypeRepository productTypeRepository;
+  private final ProductRepository productRepository;
+  private final ProductTypeService productTypeService;
 
   @Autowired
-  public ProductServiceImpl(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
+  public ProductServiceImpl(ProductRepository productRepository, ProductTypeService productTypeService) {
     this.productRepository = productRepository;
-    this.productTypeRepository = productTypeRepository;
-  }
-
-  @Override
-  public Product findProductByName(String name) {
-    return productRepository.findByName(name).orElse(null);
+    this.productTypeService = productTypeService;
   }
 
   @Override
   public Optional<Product> findProductById(Long productId) {
     return productRepository.findById(productId);
-  }
-
-  public ProductType findProductTypeById(Long id) {
-    return productTypeRepository.findById(id).orElse(null);
   }
 
   @Override
@@ -54,25 +44,20 @@ public class ProductServiceImpl implements ProductService {
           product.getDescription(), product.getType().getName()));
     }
 
-    ProductListDTO productListDTO = new ProductListDTO(productsDTOList);
-
-    return productListDTO;
+    return new ProductListDTO(productsDTOList);
   }
 
   @Override
   public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
     validateProductDTO(productWithoutIdDTO);
 
-    ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
-    if (productType == null) {
-      throw new InvalidProductTypeException();
-    }
-    if (findProductByName(productWithoutIdDTO.getName()) != null) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.typeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.name())) {
       throw new ProductNameAlreadyTakenException();
     }
 
-    Product productToSave = new Product(productWithoutIdDTO.getName(),
-        productWithoutIdDTO.getPrice(), productWithoutIdDTO.getDuration(), productWithoutIdDTO.getDescription());
+    Product productToSave = new Product(productWithoutIdDTO.name(),
+        productWithoutIdDTO.price(), productWithoutIdDTO.duration(), productWithoutIdDTO.description());
     productToSave.setType(productType);
     productRepository.save(productToSave);
 
@@ -90,18 +75,15 @@ public class ProductServiceImpl implements ProductService {
     validateProductDTO(productWithoutIdDTO);
     Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
 
-    ProductType productType = findProductTypeById(productWithoutIdDTO.getTypeId());
-    if (productType == null) {
-      throw new InvalidProductTypeException();
-    }
-    if (findProductByName(productWithoutIdDTO.getName()) != null && !productToEdit.getName().equals(productWithoutIdDTO.getName())) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.typeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.name()) && !productToEdit.getName().equals(productWithoutIdDTO.name())) {
       throw new ProductNameAlreadyTakenException();
     }
 
-    productToEdit.setName(productWithoutIdDTO.getName());
-    productToEdit.setPrice(productWithoutIdDTO.getPrice());
-    productToEdit.setDuration(productWithoutIdDTO.getDuration());
-    productToEdit.setDescription(productWithoutIdDTO.getDescription());
+    productToEdit.setName(productWithoutIdDTO.name());
+    productToEdit.setPrice(productWithoutIdDTO.price());
+    productToEdit.setDuration(productWithoutIdDTO.duration());
+    productToEdit.setDescription(productWithoutIdDTO.description());
     productToEdit.setType(productType);
 
     productRepository.save(productToEdit);
@@ -121,19 +103,19 @@ public class ProductServiceImpl implements ProductService {
   }
 
   private void validateProductDTO(ProductWithoutIdDTO productWithoutIdDTO) {
-    if (productWithoutIdDTO.getName().isEmpty()) {
+    if (productWithoutIdDTO.name().isEmpty()) {
       throw new FieldsException("Name is missing");
     }
-    if (productWithoutIdDTO.getDescription().isEmpty()) {
+    if (productWithoutIdDTO.description().isEmpty()) {
       throw new FieldsException("Description is missing");
     }
-    if (productWithoutIdDTO.getPrice() == null) {
+    if (productWithoutIdDTO.price() == null) {
       throw new FieldsException("Price is missing");
     }
-    if (productWithoutIdDTO.getDuration() == null) {
+    if (productWithoutIdDTO.duration() == null) {
       throw new FieldsException("Duration is missing");
     }
-    if (productWithoutIdDTO.getTypeId() == null) {
+    if (productWithoutIdDTO.typeId() == null) {
       throw new FieldsException("Type ID is missing");
     }
   }

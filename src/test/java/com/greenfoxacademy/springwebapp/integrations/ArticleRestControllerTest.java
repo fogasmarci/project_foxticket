@@ -41,7 +41,8 @@ public class ArticleRestControllerTest {
   ArticleService articleService;
   @Autowired
   JwtValidatorService jwtValidatorService;
-  ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired
+  ObjectMapper objectMapper;
 
   @Test
   void listArticles_WithNoParam_ListsAllArticles() throws Exception {
@@ -156,8 +157,8 @@ public class ArticleRestControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
-        .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
+        .andExpect(jsonPath("$.title").value(addArticleDTO.title()))
+        .andExpect(jsonPath("$.content").value(addArticleDTO.content()));
   }
 
   @Test
@@ -235,8 +236,8 @@ public class ArticleRestControllerTest {
             .content(objectMapper.writeValueAsString(addArticleDTO)))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.title").value(addArticleDTO.getTitle()))
-        .andExpect(jsonPath("$.content").value(addArticleDTO.getContent()));
+        .andExpect(jsonPath("$.title").value(addArticleDTO.title()))
+        .andExpect(jsonPath("$.content").value(addArticleDTO.content()));
   }
 
   @Test

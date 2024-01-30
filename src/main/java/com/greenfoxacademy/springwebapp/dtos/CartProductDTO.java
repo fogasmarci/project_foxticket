@@ -5,17 +5,11 @@ import com.greenfoxacademy.springwebapp.models.Product;
 
 public class CartProductDTO {
   @JsonProperty("product_id")
-  private Long productId;
-  private String name;
-  private int price;
-  private int quantity;
+  private final Long productId;
+  private final String name;
+  private final int price;
+  private final int quantity;
 
-  public CartProductDTO(Long productId, String name, int price, int quantity) {
-    this.productId = productId;
-    this.name = name;
-    this.price = price;
-    this.quantity = quantity;
-  }
 
   public CartProductDTO(Product product, int quantity) {
     productId = product.getId();

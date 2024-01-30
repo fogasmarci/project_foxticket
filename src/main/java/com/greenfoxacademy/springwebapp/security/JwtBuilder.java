@@ -15,7 +15,6 @@ import java.util.Map;
 
 @Service
 public class JwtBuilder {
-
   private final Key SECRET_KEY;
 
   public JwtBuilder(@Value("${jwt-secret}") String encodedSecretKey) {
