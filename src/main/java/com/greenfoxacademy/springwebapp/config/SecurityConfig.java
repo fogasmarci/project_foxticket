@@ -65,7 +65,6 @@ public class SecurityConfig {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write("Unauthorized: " + authException.getMessage());
       } else {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.sendRedirect("/error");
       }
     });
