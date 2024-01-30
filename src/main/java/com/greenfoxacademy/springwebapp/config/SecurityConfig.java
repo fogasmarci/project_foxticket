@@ -1,6 +1,7 @@
 package com.greenfoxacademy.springwebapp.config;
 
 import com.greenfoxacademy.springwebapp.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -52,28 +52,23 @@ public class SecurityConfig {
             .anyRequest().authenticated())
         .exceptionHandling(exceptionHandling ->
             exceptionHandling
-                .accessDeniedHandler(accessDeniedHandler())
-                .authenticationEntryPoint(authenticationEntryPoint())
-        )
+                .authenticationEntryPoint(authenticationEntryPoint()))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
   @Bean
-  public AccessDeniedHandler accessDeniedHandler() {
-    return (request, response, accessDeniedException) -> {
-      response.setStatus(HttpStatus.FORBIDDEN.value());
-      response.getWriter().write("Access Denied: " + accessDeniedException.getMessage());
-      response.getWriter().flush();
-    };
-  }
-
-  @Bean
   public AuthenticationEntryPoint authenticationEntryPoint() {
-    return (request, response, authException) -> {
-      response.setStatus(HttpStatus.UNAUTHORIZED.value());
-      response.sendRedirect("/error");
-    };
+    return ((request, response, authException) -> {
+      String path = request.getRequestURI();
+      if (path.contains("/api")) {
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getWriter().write("Unauthorized: " + authException.getMessage());
+      } else {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set status code to 403 Forbidden
+        response.sendRedirect("/error");
+      }
+    });
   }
 
   @Bean

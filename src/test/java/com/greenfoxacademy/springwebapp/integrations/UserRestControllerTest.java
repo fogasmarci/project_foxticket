@@ -170,7 +170,7 @@ public class UserRestControllerTest {
     mockMvc.perform(patch("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
-        .andExpect(status().is(302));
+        .andExpect(status().is(401));
   }
 
   @Test

@@ -32,7 +32,7 @@ public class JwtTokenTests {
   @Test
   public void callingAuthenticatedEndpoint_WithNoToken_ShouldFail() throws Exception {
     mockMvc.perform(get("/api/products"))
-        .andExpect(status().is(302));
+        .andExpect(status().is(401));
   }
 
   @Test

@@ -93,7 +93,7 @@ public class ArticleControllerTest {
     mvc.perform(post("/api/news")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
-        .andExpect(status().is(302));
+        .andExpect(status().is(401));
   }
 
   @Test
