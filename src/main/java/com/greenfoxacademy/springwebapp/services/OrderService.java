@@ -14,4 +14,6 @@ public interface OrderService {
   List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems);
 
   OrderedItemDTO activateItem(Long orderId);
+
+
 }

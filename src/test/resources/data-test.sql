@@ -67,10 +67,10 @@ WHERE u.name = 'TestUser' AND r.authority = 'USER'
    OR u.name = 'OrderTestUser' AND r.authority = 'USER';
 
 INSERT INTO ORDERED_ITEMS (STATUS, PRODUCT_ID, USER_ID)
-SELECT 'Not_active', p.id, u.id
+SELECT 'Active', p.id, u.id
 FROM PRODUCTS p,
      USERS u
-WHERE p.name = 'teszt bérlet 1'
+WHERE p.name = 'teszt bérlet 2'
   AND u.name = 'OrderTestUser';
 
 INSERT INTO ORDERED_ITEMS (STATUS, PRODUCT_ID, USER_ID)
@@ -78,5 +78,4 @@ SELECT 'Not_active', p.id, u.id
 FROM PRODUCTS p,
      USERS u
 WHERE p.name = 'teszt bérlet 1' AND u.name = 'OrderTestUser'
-   OR p.name = 'teszt jegy 1' AND u.name = 'OrderTestUser'
-   OR p.name = 'teszt bérlet 2' AND u.name = 'OrderTestUser';
+   OR p.name = 'teszt jegy 1' AND u.name = 'OrderTestUser';

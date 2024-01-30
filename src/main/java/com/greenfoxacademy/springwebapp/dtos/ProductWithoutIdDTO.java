@@ -56,6 +56,9 @@ public class ProductWithoutIdDTO {
       duration = Duration.ofHours(Integer.parseInt(data[0]));
     } else if (data[1].contains("min")) {
       duration = Duration.ofMinutes(Integer.parseInt(data[0]));
+    } else {
+      duration = Duration.ZERO;
     }
+
   }
 }
