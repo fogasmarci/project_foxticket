@@ -15,4 +15,8 @@ public interface UserService {
   UserInfoResponseDTO updateUser(UserInfoRequestDTO updateDTO);
 
   User getCurrentUser();
+
+  User getUserById(Long userId);
+
+  void saveUser(User user);
 }

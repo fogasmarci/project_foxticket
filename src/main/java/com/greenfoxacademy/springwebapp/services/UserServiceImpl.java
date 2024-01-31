@@ -4,9 +4,11 @@ import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
+import com.greenfoxacademy.springwebapp.exceptions.user.InvalidUserIdException;
 import com.greenfoxacademy.springwebapp.models.Authorities;
 import com.greenfoxacademy.springwebapp.models.SecurityUser;
 import com.greenfoxacademy.springwebapp.models.User;
+import com.greenfoxacademy.springwebapp.models.VerificationEmail;
 import com.greenfoxacademy.springwebapp.repositories.RoleRepository;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
 import com.greenfoxacademy.springwebapp.security.JwtBuilder;
@@ -33,15 +35,17 @@ public class UserServiceImpl implements UserService {
   private final JwtBuilder jwtBuilder;
   private final JpaUserDetailsService userDetailsService;
   private final RoleRepository roleRepository;
+  private final EmailService emailService;
 
   @Autowired
-  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtBuilder jwtBuilder, JpaUserDetailsService userDetailsService, RoleRepository roleRepository) {
+  public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtBuilder jwtBuilder, JpaUserDetailsService userDetailsService, RoleRepository roleRepository, EmailService emailService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.jwtBuilder = jwtBuilder;
     this.userDetailsService = userDetailsService;
     this.roleRepository = roleRepository;
+    this.emailService = emailService;
   }
 
   @Override
@@ -63,6 +67,7 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyTakenException();
     }
     User newUser = createUser(requestDTO.name(), requestDTO.email(), requestDTO.password());
+    sendVerificationEmail(requestDTO.email());
     return createRegistrationDTO(newUser);
   }
 
@@ -130,13 +135,23 @@ public class UserServiceImpl implements UserService {
     return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
+  @Override
+  public User getUserById(Long userId) {
+    return userRepository.findById(userId).orElseThrow(InvalidUserIdException::new);
+  }
+
+  @Override
+  public void saveUser(User user) {
+    userRepository.save(user);
+  }
+
   private String encodePassword(String password) {
     return passwordEncoder.encode(password);
   }
 
   private RegistrationResponseDTO createRegistrationDTO(User user) {
     boolean isAdmin = user.getIsAdminByRoles();
-    return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin);
+    return new RegistrationResponseDTO(user.getId(), user.getEmail(), isAdmin, "Verification e-mail sent.");
   }
 
   private UserInfoResponseDTO updateUserInfoResponse(User user) {
@@ -160,5 +175,12 @@ public class UserServiceImpl implements UserService {
     if (value != null) {
       setter.accept(value);
     }
+  }
+
+  private void sendVerificationEmail(String email) {
+    User registeredUser = userRepository.findByEmail(email).orElseThrow(InvalidEmailException::new);
+    String verificationLink = String.format("http://localhost:8080/email-verification/%s?token=%s",
+        registeredUser.getId(), registeredUser.getVerificationToken().getToken());
+    emailService.sendSimpleMail(new VerificationEmail(email, verificationLink, registeredUser.getName()));
   }
 }
