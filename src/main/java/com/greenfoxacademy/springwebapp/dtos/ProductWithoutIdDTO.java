@@ -50,15 +50,19 @@ public class ProductWithoutIdDTO {
 
   public void convertDuration() {
     String[] data = durationInString.split(" ");
-    if (data[1].contains("days")) {
-      duration = Duration.ofDays(Integer.parseInt(data[0]));
-    } else if (data[1].contains("hours")) {
-      duration = Duration.ofHours(Integer.parseInt(data[0]));
-    } else if (data[1].contains("min")) {
-      duration = Duration.ofMinutes(Integer.parseInt(data[0]));
-    } else {
-      duration = Duration.ZERO;
+    switch (data[1]) {
+      case "days":
+        duration = Duration.ofDays(Integer.parseInt(data[0]));
+        break;
+      case "hours":
+        duration = Duration.ofHours(Integer.parseInt(data[0]));
+        break;
+      case "min":
+        duration = Duration.ofMinutes(Integer.parseInt(data[0]));
+        break;
+      default:
+        duration = Duration.ZERO;
+        break;
     }
-
   }
 }

@@ -22,13 +22,15 @@ public class DurationConverter implements AttributeConverter<Duration, String> {
   @Override
   public Duration convertToEntityAttribute(String dbData) {
     String[] data = dbData.split(" ");
-    if (data[1].contains("days")) {
-      return Duration.ofDays(Integer.parseInt(data[0]));
-    } else if (data[1].contains("hours")) {
-      return Duration.ofHours(Integer.parseInt(data[0]));
-    } else if (data[1].contains("min")) {
-      return Duration.ofMinutes(Integer.parseInt(data[0]));
+    switch (data[1]) {
+      case "days":
+        return Duration.ofDays(Integer.parseInt(data[0]));
+      case "hours":
+        return Duration.ofHours(Integer.parseInt(data[0]));
+      case "min":
+        return Duration.ofMinutes(Integer.parseInt(data[0]));
+      default:
+        return Duration.ZERO;
     }
-    return Duration.ZERO;
   }
 }
