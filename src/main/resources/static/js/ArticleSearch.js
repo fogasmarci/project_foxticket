@@ -1,18 +1,21 @@
-document.getElementById("refresh").addEventListener("submit", function (event) {
+
+document.getElementById("search").addEventListener("submit", function (event) {
     event.preventDefault();
-    getRequest();
+    submitForm(event.target);
 });
 
-async function getRequest() {
-    const options = {
-        method: 'GET',
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        })
+function submitForm(form) {
+    const formData = new FormData(form);
+    const searchArticlesRequest = {
+        searchKeyword: formData.get("q"),
     };
 
+    getRequest(searchArticlesRequest);
+}
+
+async function getRequest(searchArticlesRequest) {
     try {
-        const response = await fetch('/api/news', options);
+        const response = await fetch('/api/news');
         if (response.ok) {
             const articleListDTO = await response.json();
             updateTable(articleListDTO);

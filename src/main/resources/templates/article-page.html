@@ -4,11 +4,16 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/article.css">
     <title>Article page</title>
-    <script src="/js/Article.js" defer></script>
+    <script src="/js/ArticleRefresh.js" defer></script>
+    <script src="/js/ArticleSearch.js" defer></script>
 </head>
 <body>
 <h1>Articles</h1>
 <div>
+    <form id="search">
+        <input id="searchInput" name="q">
+        <button type="submit">Search</button>
+    </form>
     <table>
         <thead>
         <tr>
@@ -20,17 +25,15 @@
         </thead>
         <tbody id="articlesTableData">
         <tr th:each="article : ${articles.articles}">
-            <td th:text="${article.id}"></td>
-            <td th:text="${article.title}"></td>
-            <td th:text="${article.content}"></td>
-            <td th:text="${article.publishDate}"></td>
+            <td th:text="${article.id}">60</td>
+            <td th:text="${article.title}">teszt</td>
+            <td th:text="${article.content}">teeeeeeeszt</td>
+            <td th:text="${article.publishDate}">2032</td>
         </tr>
         </tbody>
     </table>
 
-    <form id="refresh">
-        <button type="submit">Refresh articles</button>
-    </form>
+        <button id="refresh">Refresh</button>
 </div>
 </body>
 </html>
