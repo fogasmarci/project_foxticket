@@ -23,4 +23,9 @@ public class UserController {
   public String displayLoginForm() {
     return "login";
   }
+
+  @GetMapping("/error")
+  public String displayErrorPage() {
+    return "error";
+  }
 }
