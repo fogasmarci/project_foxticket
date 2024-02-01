@@ -14,21 +14,20 @@ async function getRequest() {
     try {
         const response = await fetch('/api/news', options);
         if (response.ok) {
-            const articles = await response.json();
-            updateTable(articles);
+            const articleListDTO = await response.json();
+            updateTable(articleListDTO);
         }
     } catch (error) {
         console.error(`${error}`);
     }
 }
 
-function updateTable(articles) {
-    const table = document.getElementById("articlesTable");
+function updateTable(articleListDTO) {
+    const tableData = document.getElementById("articlesTableData");
+    tableData.innerHTML = "";
 
-    table.innerHTML = "";
-
-    articles.articles.forEach(article => {
-        const row = table.insertRow();
+    articleListDTO.articles.forEach(article => {
+        const row = tableData.insertRow();
         row.insertCell(0).textContent = article.id;
         row.insertCell(1).textContent = article.title;
         row.insertCell(2).textContent = article.content;
