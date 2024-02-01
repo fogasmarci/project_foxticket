@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.greenfoxacademy.springwebapp.models.DurationConverter;
 
 import java.time.Duration;
 
@@ -51,13 +52,13 @@ public class ProductWithoutIdDTO {
   public void convertDuration() {
     String[] data = durationInString.split(" ");
     switch (data[1]) {
-      case "days":
+      case DurationConverter.days:
         duration = Duration.ofDays(Integer.parseInt(data[0]));
         break;
-      case "hours":
+      case DurationConverter.hours:
         duration = Duration.ofHours(Integer.parseInt(data[0]));
         break;
-      case "min":
+      case DurationConverter.minutes:
         duration = Duration.ofMinutes(Integer.parseInt(data[0]));
         break;
       default:
