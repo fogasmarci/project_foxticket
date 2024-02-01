@@ -9,6 +9,7 @@ TRUNCATE TABLE PRODUCT_TYPES;
 TRUNCATE TABLE ROLES;
 TRUNCATE TABLE USER_ROLE;
 TRUNCATE TABLE USERS;
+TRUNCATE TABLE VERIFICATION_TOKENS;
 SET
 REFERENTIAL_INTEGRITY TRUE;
 
@@ -80,3 +81,9 @@ FROM PRODUCTS p,
 WHERE p.name = 'teszt bérlet 1' AND u.name = 'OrderTestUser'
    OR p.name = 'teszt jegy 1' AND u.name = 'OrderTestUser'
    OR p.name = 'teszt bérlet 2' AND u.name = 'OrderTestUser';
+
+INSERT INTO VERIFICATION_TOKENS(TOKEN, USER_ID)
+VALUES (UUID(), SELECT u.id FROM USERS u WHERE u.name = 'TestUser'),
+       (UUID(), SELECT u.id FROM USERS u WHERE u.name = 'TestAdmin'),
+       (UUID(), SELECT u.id FROM USERS u WHERE u.name = 'CartTestUser'),
+       (UUID(), SELECT u.id FROM USERS u WHERE u.name = 'OrderTestUser');

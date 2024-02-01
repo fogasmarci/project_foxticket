@@ -16,19 +16,6 @@ public class VerificationEmail {
         username, url);
   }
 
-//  public VerificationEmail(String recipient, String msgBody, String subject) {
-//    this.recipient = recipient;
-//    this.msgBody = msgBody;
-//    this.subject = subject;
-//  }
-//
-//  public VerificationEmail(String recipient, String msgBody, String subject, String attachment) {
-//    this.recipient = recipient;
-//    this.msgBody = msgBody;
-//    this.subject = subject;
-//    this.attachment = attachment;
-//  }
-
   public String getRecipient() {
     return recipient;
   }

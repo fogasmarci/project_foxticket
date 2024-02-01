@@ -9,7 +9,6 @@ public class VerificationToken {
   @Id
   @GeneratedValue(generator = "uuid2")
   @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-  @Column(name = "value")
   private String token;
   @OneToOne
   private User user;
@@ -33,8 +32,4 @@ public class VerificationToken {
   public void setUser(User user) {
     this.user = user;
   }
-
-//  private String generateRandomToken() {
-//    return RandomStringUtils.randomAlphanumeric(15);
-//  }
 }
