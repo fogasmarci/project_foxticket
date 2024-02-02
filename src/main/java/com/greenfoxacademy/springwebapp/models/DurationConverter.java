@@ -3,9 +3,11 @@ package com.greenfoxacademy.springwebapp.models;
 import com.greenfoxacademy.springwebapp.exceptions.durationconverter.DurationIsMalformedException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
+@Component
 @Converter
 public class DurationConverter implements AttributeConverter<Duration, String> {
   public static final String DAYS = "days";
