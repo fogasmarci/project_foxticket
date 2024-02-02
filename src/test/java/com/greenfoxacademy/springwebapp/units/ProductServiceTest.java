@@ -4,9 +4,11 @@ import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
+import com.greenfoxacademy.springwebapp.exceptions.durationconverter.DurationIsMalformedException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
+import com.greenfoxacademy.springwebapp.models.DurationConverter;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
@@ -66,22 +68,33 @@ public class ProductServiceTest {
   }
 
   @Test
+  void createProduct_DateIsNotFormattedCorrectly_ThrowsCorrectException() {
+    ProductWithoutIdDTO productDTOWithoutID =
+        new ProductWithoutIdDTO("jegy", 480, "60 years", "teszt1", 2L);
+
+    ProductType berlet = new ProductType("bérlet");
+    Mockito.when(productTypeService.findProductTypeById(productDTOWithoutID.typeId())).thenReturn(Optional.of(berlet));
+
+    Throwable exception = assertThrows(DurationIsMalformedException.class, () -> productService.createProduct(productDTOWithoutID));
+    assertEquals("Duration format is not valid.", exception.getMessage());
+  }
+
+  @Test
   void createProduct_ProductIsSuccessfullySaved() {
     ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("new product", 480, "60 minutes", "teszt1", 2L);
-    productWithoutIdDTO.convertDuration();
     Product product = mapDTOToProduct(productWithoutIdDTO);
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
 
-    Mockito.when(productRepository.findByName(productWithoutIdDTO.getName())).thenReturn(Optional.empty());
-    Mockito.when(productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.findByName(productWithoutIdDTO.name())).thenReturn(Optional.empty());
+    Mockito.when(productTypeService.findProductTypeById(productWithoutIdDTO.typeId())).thenReturn(Optional.of(berlet));
     Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(product);
 
     ProductDTO productDTO = new ProductDTO(product.getId(), product.getName(), product.getPrice(),
         product.getDuration(), product.getDescription(), product.getType().getName());
     assertThat(productService.createProduct(productWithoutIdDTO)).usingRecursiveComparison().isEqualTo(productDTO);
 
-    verify(productRepository, times(1)).existsByName(productWithoutIdDTO.getName());
+    verify(productRepository, times(1)).existsByName(productWithoutIdDTO.name());
     verify(productRepository, times(1)).save(Mockito.any(Product.class));
   }
 
@@ -102,8 +115,8 @@ public class ProductServiceTest {
     ProductType berlet = new ProductType("bérlet");
     product.setType(berlet);
 
-    Mockito.when(productRepository.existsByName(productDTOWithoutID.getName())).thenReturn(true);
-    Mockito.when(productTypeService.findProductTypeById(productDTOWithoutID.getTypeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.existsByName(productDTOWithoutID.name())).thenReturn(true);
+    Mockito.when(productTypeService.findProductTypeById(productDTOWithoutID.typeId())).thenReturn(Optional.of(berlet));
 
     Throwable exception =
         assertThrows(ProductNameAlreadyTakenException.class, () -> productService.createProduct(productDTOWithoutID));
@@ -140,28 +153,28 @@ public class ProductServiceTest {
   void editProduct_ProductNameIsNotChanged_ProductIsSuccessfullyEdited() {
     Long productToEditId = 2L;
     ProductWithoutIdDTO newProductDetails = new ProductWithoutIdDTO("teszt bérlet 1", 480, "30 days", "teszt1", 2L);
-    newProductDetails.convertDuration();
 
     Product productToEdit = new Product("teszt bérlet 1", 4000, Duration.ofDays(30), "teszt2");
     ProductType berlet = new ProductType("bérlet");
     productToEdit.setType(berlet);
 
     Mockito.when(productRepository.findById(productToEditId)).thenReturn(Optional.of(productToEdit));
-    Mockito.when(productTypeService.findProductTypeById(newProductDetails.getTypeId())).thenReturn(Optional.of(berlet));
-    Mockito.when(productRepository.existsByName(newProductDetails.getName())).thenReturn(true);
+    Mockito.when(productTypeService.findProductTypeById(newProductDetails.typeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.existsByName(newProductDetails.name())).thenReturn(true);
     Mockito.when(productRepository.save(Mockito.any(Product.class))).thenReturn(productToEdit);
 
-    productToEdit.setName(newProductDetails.getName());
-    productToEdit.setPrice(newProductDetails.getPrice());
-    productToEdit.setDuration(newProductDetails.getDuration());
-    productToEdit.setDescription(newProductDetails.getDescription());
+    productToEdit.setName(newProductDetails.name());
+    productToEdit.setPrice(newProductDetails.price());
+    Duration duration = DurationConverter.convertDateToDuration(newProductDetails.durationInString());
+    productToEdit.setDuration(duration);
+    productToEdit.setDescription(newProductDetails.description());
     productToEdit.setType(berlet);
 
     ProductDTO productDTO = new ProductDTO(productToEdit.getId(), productToEdit.getName(), productToEdit.getPrice(),
         productToEdit.getDuration(), productToEdit.getDescription(), productToEdit.getType().getName());
     assertThat(productService.editProduct(newProductDetails, productToEditId)).usingRecursiveComparison().isEqualTo(productDTO);
 
-    verify(productRepository, times(1)).existsByName(newProductDetails.getName());
+    verify(productRepository, times(1)).existsByName(newProductDetails.name());
     verify(productRepository, times(1)).save(Mockito.any(Product.class));
   }
 
@@ -175,8 +188,8 @@ public class ProductServiceTest {
     productToEdit.setType(berlet);
 
     Mockito.when(productRepository.findById(productToEditId)).thenReturn(Optional.of(productToEdit));
-    Mockito.when(productTypeService.findProductTypeById(newProductDetails.getTypeId())).thenReturn(Optional.of(berlet));
-    Mockito.when(productRepository.existsByName(newProductDetails.getName())).thenReturn(true);
+    Mockito.when(productTypeService.findProductTypeById(newProductDetails.typeId())).thenReturn(Optional.of(berlet));
+    Mockito.when(productRepository.existsByName(newProductDetails.name())).thenReturn(true);
 
     Throwable exception =
         assertThrows(ProductNameAlreadyTakenException.class, () -> productService.editProduct(newProductDetails, productToEditId));
@@ -198,7 +211,8 @@ public class ProductServiceTest {
   }
 
   private Product mapDTOToProduct(ProductWithoutIdDTO productDTOWithoutID) {
-    return new Product(productDTOWithoutID.getName(),
-        productDTOWithoutID.getPrice(), productDTOWithoutID.getDuration(), productDTOWithoutID.getDescription());
+    Duration duration = DurationConverter.convertDateToDuration(productDTOWithoutID.durationInString());
+    return new Product(productDTOWithoutID.name(),
+        productDTOWithoutID.price(), duration, productDTOWithoutID.description());
   }
 }

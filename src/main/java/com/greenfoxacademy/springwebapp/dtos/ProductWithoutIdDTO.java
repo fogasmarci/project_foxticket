@@ -1,21 +1,7 @@
 package com.greenfoxacademy.springwebapp.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.greenfoxacademy.springwebapp.models.DurationConverter;
-
-import java.time.Duration;
-
-public class ProductWithoutIdDTO {
-  private String name;
-  private Integer price;
-  @JsonIgnore
-  private Duration duration;
-  @JsonProperty("testing")
-  private String durationInString;
-  private String description;
-  @JsonProperty("item_id")
-  private Long typeId;
+public record ProductWithoutIdDTO(String name, Integer price, String durationInString,
+                                  String description, Long typeId) {
 
   public ProductWithoutIdDTO(String name, Integer price, String durationInString, String description, Long typeId) {
     this.name = name;
@@ -25,45 +11,28 @@ public class ProductWithoutIdDTO {
     this.typeId = typeId;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public Integer getPrice() {
-    return price;
-  }
-
-  public Duration getDuration() {
-    return duration;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public Long getTypeId() {
+  @Override
+  public Long typeId() {
     return typeId;
   }
 
-  public String getDurationInString() {
+  @Override
+  public String durationInString() {
     return durationInString;
   }
 
-  public void convertDuration() {
-    String[] data = durationInString.split(" ");
-    switch (data[1]) {
-      case DurationConverter.days:
-        duration = Duration.ofDays(Integer.parseInt(data[0]));
-        break;
-      case DurationConverter.hours:
-        duration = Duration.ofHours(Integer.parseInt(data[0]));
-        break;
-      case DurationConverter.minutes:
-        duration = Duration.ofMinutes(Integer.parseInt(data[0]));
-        break;
-      default:
-        duration = Duration.ZERO;
-        break;
-    }
+  @Override
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public Integer price() {
+    return price;
+  }
+
+  @Override
+  public String description() {
+    return description;
   }
 }

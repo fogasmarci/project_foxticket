@@ -8,12 +8,14 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTypeException;
+import com.greenfoxacademy.springwebapp.models.DurationConverter;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,16 +51,16 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDTO createProduct(ProductWithoutIdDTO productWithoutIdDTO) {
-    productWithoutIdDTO.convertDuration();
     validateProductDTO(productWithoutIdDTO);
 
-    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId()).orElseThrow(InvalidProductTypeException::new);
-    if (productRepository.existsByName(productWithoutIdDTO.getName())) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.typeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.name())) {
       throw new ProductNameAlreadyTakenException();
     }
 
-    Product productToSave = new Product(productWithoutIdDTO.getName(),
-        productWithoutIdDTO.getPrice(), productWithoutIdDTO.getDuration(), productWithoutIdDTO.getDescription());
+    Duration duration = DurationConverter.convertDateToDuration(productWithoutIdDTO.durationInString());
+    Product productToSave = new Product(productWithoutIdDTO.name(),
+        productWithoutIdDTO.price(), duration, productWithoutIdDTO.description());
     productToSave.setType(productType);
     productRepository.save(productToSave);
 
@@ -73,19 +75,19 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDTO editProduct(ProductWithoutIdDTO productWithoutIdDTO, Long productId) {
-    productWithoutIdDTO.convertDuration();
     validateProductDTO(productWithoutIdDTO);
     Product productToEdit = findProductById(productId).orElseThrow(ProductIdInvalidException::new);
 
-    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.getTypeId()).orElseThrow(InvalidProductTypeException::new);
-    if (productRepository.existsByName(productWithoutIdDTO.getName()) && !productToEdit.getName().equals(productWithoutIdDTO.getName())) {
+    ProductType productType = productTypeService.findProductTypeById(productWithoutIdDTO.typeId()).orElseThrow(InvalidProductTypeException::new);
+    if (productRepository.existsByName(productWithoutIdDTO.name()) && !productToEdit.getName().equals(productWithoutIdDTO.name())) {
       throw new ProductNameAlreadyTakenException();
     }
 
-    productToEdit.setName(productWithoutIdDTO.getName());
-    productToEdit.setPrice(productWithoutIdDTO.getPrice());
-    productToEdit.setDuration(productWithoutIdDTO.getDuration());
-    productToEdit.setDescription(productWithoutIdDTO.getDescription());
+    productToEdit.setName(productWithoutIdDTO.name());
+    productToEdit.setPrice(productWithoutIdDTO.price());
+    Duration duration = DurationConverter.convertDateToDuration(productWithoutIdDTO.durationInString());
+    productToEdit.setDuration(duration);
+    productToEdit.setDescription(productWithoutIdDTO.description());
     productToEdit.setType(productType);
 
     productRepository.save(productToEdit);
@@ -105,19 +107,19 @@ public class ProductServiceImpl implements ProductService {
   }
 
   private void validateProductDTO(ProductWithoutIdDTO productWithoutIdDTO) {
-    if (productWithoutIdDTO.getName().isEmpty()) {
+    if (productWithoutIdDTO.name().isEmpty()) {
       throw new FieldsException("Name is missing");
     }
-    if (productWithoutIdDTO.getDescription().isEmpty()) {
+    if (productWithoutIdDTO.description().isEmpty()) {
       throw new FieldsException("Description is missing");
     }
-    if (productWithoutIdDTO.getPrice() == null) {
+    if (productWithoutIdDTO.price() == null) {
       throw new FieldsException("Price is missing");
     }
-    if (productWithoutIdDTO.getDurationInString() == null) {
+    if (productWithoutIdDTO.durationInString() == null) {
       throw new FieldsException("Duration is missing");
     }
-    if (productWithoutIdDTO.getTypeId() == null) {
+    if (productWithoutIdDTO.typeId() == null) {
       throw new FieldsException("Type ID is missing");
     }
   }
