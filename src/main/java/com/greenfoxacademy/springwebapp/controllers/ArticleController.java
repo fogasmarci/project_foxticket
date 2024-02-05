@@ -17,7 +17,7 @@ public class ArticleController {
   }
 
   @GetMapping("/news")
-  public String displayAllArticlesPage(Model model, @RequestParam(required = false, name = "q") String searchKeyword) {
+  public String displayAllArticlesPage(Model model, @RequestParam(required = false, name = "searchKeyword") String searchKeyword) {
     model.addAttribute("articles", articleService.listArticles(searchKeyword));
     return "article-page";
   }

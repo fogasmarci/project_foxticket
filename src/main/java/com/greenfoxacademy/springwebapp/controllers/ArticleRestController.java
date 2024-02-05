@@ -19,7 +19,7 @@ public class ArticleRestController {
   }
 
   @GetMapping("/api/news")
-  public ResponseEntity<ArticleListDTO> listArticles(@RequestParam(required = false, name = "q") String search) {
+  public ResponseEntity<ArticleListDTO> listArticles(@RequestParam(required = false, name = "searchKeyword") String search) {
     return ResponseEntity.status(200).body(articleService.listArticles(search));
   }
 
