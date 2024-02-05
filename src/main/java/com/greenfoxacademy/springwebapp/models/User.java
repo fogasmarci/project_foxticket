@@ -33,6 +33,8 @@ public class User {
   private boolean isVerified;
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   private List<OrderedItem> orderedItems;
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+  private VerificationToken verificationToken;
 
   public User() {
     authorities = new HashSet<>();
@@ -41,6 +43,7 @@ public class User {
     isAdmin = false;
     isVerified = false;
     orderedItems = new ArrayList<>();
+    verificationToken = new VerificationToken(this);
   }
 
   public User(Long userId, String email) {
@@ -96,6 +99,10 @@ public class User {
     return isVerified;
   }
 
+  public void setIsVerified(boolean isVerified) {
+    this.isVerified = isVerified;
+  }
+
   public void addRole(Role role) {
     authorities.add(role);
   }
@@ -114,5 +121,13 @@ public class User {
 
   public boolean getIsAdminByRoles() {
     return this.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals(Authorities.ADMIN.toString()));
+  }
+
+  public VerificationToken getVerificationToken() {
+    return verificationToken;
+  }
+
+  public void setVerificationToken(VerificationToken verificationToken) {
+    this.verificationToken = verificationToken;
   }
 }
