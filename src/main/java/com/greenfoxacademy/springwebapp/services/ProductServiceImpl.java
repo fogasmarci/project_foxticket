@@ -24,13 +24,11 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final ProductTypeService productTypeService;
-  private final DurationConverter durationConverter;
 
   @Autowired
-  public ProductServiceImpl(ProductRepository productRepository, ProductTypeService productTypeService, DurationConverter durationConverter) {
+  public ProductServiceImpl(ProductRepository productRepository, ProductTypeService productTypeService) {
     this.productRepository = productRepository;
     this.productTypeService = productTypeService;
-    this.durationConverter = durationConverter;
   }
 
   @Override

@@ -16,15 +16,6 @@ public class DurationConverter implements AttributeConverter<Duration, String> {
 
   @Override
   public String convertToDatabaseColumn(Duration duration) {
-    return convertDateToString(duration);
-  }
-
-  @Override
-  public Duration convertToEntityAttribute(String dbData) {
-    return convertDateToDuration(dbData);
-  }
-
-  public static String convertDateToString(Duration duration) {
     if (duration.toDays() > 1) {
       return String.format("%s %s", duration.toDays(), DAYS);
     } else if (duration.toHours() > 1) {
@@ -33,6 +24,11 @@ public class DurationConverter implements AttributeConverter<Duration, String> {
       return String.format("%s %s", duration.toMinutes(), MINUTES);
     }
     throw new DurationIsMalformedException();
+  }
+
+  @Override
+  public Duration convertToEntityAttribute(String dbData) {
+    return convertDateToDuration(dbData);
   }
 
   public static Duration convertDateToDuration(String dbData) {

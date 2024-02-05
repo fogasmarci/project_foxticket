@@ -35,14 +35,12 @@ public class ProductServiceTest {
   ProductRepository productRepository;
   ProductTypeService productTypeService;
   ProductServiceImpl productService;
-  DurationConverter durationConverter;
 
   @BeforeEach
   public void productServiceTests() {
     productRepository = Mockito.mock(ProductRepository.class);
     productTypeService = Mockito.mock(ProductTypeServiceImpl.class);
-    durationConverter = Mockito.mock(DurationConverter.class);
-    productService = new ProductServiceImpl(productRepository, productTypeService, durationConverter);
+    productService = new ProductServiceImpl(productRepository, productTypeService);
   }
 
   @Test
