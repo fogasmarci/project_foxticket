@@ -78,7 +78,7 @@ public class ProductServiceTest {
     Mockito.when(productTypeService.findProductTypeById(productDTOWithoutID.typeId())).thenReturn(Optional.of(berlet));
 
     Throwable exception = assertThrows(DurationIsMalformedException.class, () -> productService.createProduct(productDTOWithoutID));
-    assertEquals("Duration format is not valid.", exception.getMessage());
+    assertEquals("Duration is not valid.", exception.getMessage());
   }
 
   @Test

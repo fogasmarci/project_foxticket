@@ -48,7 +48,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  void addNewProduct_DateIsNotFormattedCorrectly_ThrowsCorrectException() throws Exception {
+  void addNewProduct_YearsAsDurationIsNotValid_ThrowsCorrectException() throws Exception {
     LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
     String jwt = login(loginUserDTO);
     ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("1 week pass", 12000,
@@ -59,7 +59,22 @@ public class ProductControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productWithoutIdDTO)))
         .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Duration format is not valid."));
+        .andExpect(jsonPath("$.error").value("Duration is not valid."));
+  }
+
+  @Test
+  void addNewProduct_DateIsMisspelled_ThrowsCorrectException() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("admin@admin.admin", "password");
+    String jwt = login(loginUserDTO);
+    ProductWithoutIdDTO productWithoutIdDTO = new ProductWithoutIdDTO("1 week pass", 12000,
+        "7 daaays", "Use this pass for a whole week!", 1L);
+
+    mvc.perform(post("/api/products")
+            .header("Authorization", "Bearer " + jwt)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(productWithoutIdDTO)))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Duration is not valid."));
   }
 
   @Test
