@@ -5,10 +5,7 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.user.InvalidUserIdException;
-import com.greenfoxacademy.springwebapp.models.Authorities;
-import com.greenfoxacademy.springwebapp.models.SecurityUser;
-import com.greenfoxacademy.springwebapp.models.User;
-import com.greenfoxacademy.springwebapp.models.VerificationEmail;
+import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.RoleRepository;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
 import com.greenfoxacademy.springwebapp.security.JwtBuilder;
@@ -67,7 +64,7 @@ public class UserServiceImpl implements UserService {
       throw new EmailAlreadyTakenException();
     }
     User newUser = createUser(requestDTO.name(), requestDTO.email(), requestDTO.password());
-    sendVerificationEmail(requestDTO.email());
+    sendVerificationEmail(newUser);
     return createRegistrationDTO(newUser);
   }
 
@@ -112,7 +109,7 @@ public class UserServiceImpl implements UserService {
     if (email != null && !email.contains("@")) {
       throw new InvalidEmailException();
     }
-    if (userRepository.findByEmail(email).orElse(null) != null) {
+    if (userRepository.existsByEmail(email)) {
       throw new EmailAlreadyTakenException();
     }
     validateMinLength(name, nameMinLength, new ShortNameException());
@@ -121,12 +118,22 @@ public class UserServiceImpl implements UserService {
     if (password != null) {
       password = encodePassword(password);
     }
+
     User user = getCurrentUser();
     setField(name, user::setName);
     setField(email, user::setEmail);
     setField(password, user::setPassword);
-    userRepository.save(user);
+    if (email != null) {
+      if (user.getIsVerified()) {
+        VerificationToken token = new VerificationToken(user);
+        user.setVerificationToken(token);
+        user.setIsVerified(false);
+      }
 
+      sendVerificationEmail(user);
+    }
+
+    userRepository.save(user);
     return updateUserInfoResponse(user);
   }
 
@@ -177,10 +184,9 @@ public class UserServiceImpl implements UserService {
     }
   }
 
-  private void sendVerificationEmail(String email) {
-    User registeredUser = userRepository.findByEmail(email).orElseThrow(InvalidEmailException::new);
+  private void sendVerificationEmail(User registeredUser) {
     String verificationLink = String.format("http://localhost:8080/email-verification/%s?token=%s",
         registeredUser.getId(), registeredUser.getVerificationToken().getToken());
-    emailService.sendSimpleMail(new VerificationEmail(email, verificationLink, registeredUser.getName()));
+    emailService.sendSimpleMail(new VerificationEmail(registeredUser.getEmail(), verificationLink, registeredUser.getName()));
   }
 }

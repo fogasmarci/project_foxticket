@@ -51,7 +51,6 @@ public class EmailServiceImpl implements EmailService {
 
   @Override
   public MessageDTO resendVerificationMail(Long userId) {
-    //User user =userService.getCurrentUser(); ha be van jelentkezve és authenticated endpointon hívjuk, nem kell userid
     User user = userService.getUserById(userId);
     String verificationLink = String.format("http://localhost:8080/email-verification/%s?token=%s",
         userId, user.getVerificationToken().getToken());
