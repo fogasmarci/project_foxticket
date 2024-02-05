@@ -5,11 +5,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
 import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
 import com.greenfoxacademy.springwebapp.dtos.UserInfoRequestDTO;
+import com.greenfoxacademy.springwebapp.models.VerificationEmail;
+import com.greenfoxacademy.springwebapp.services.EmailServiceImpl;
+import com.greenfoxacademy.springwebapp.services.UserServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -32,6 +38,11 @@ public class UserRestControllerTest {
   MockMvc mockMvc;
   @Autowired
   ObjectMapper objectMapper;
+  @MockBean
+  EmailServiceImpl emailService;
+  @Autowired
+  @InjectMocks
+  UserServiceImpl userService;
 
   @Test
   public void manageRegistrationRequests_WithAlreadyTakenEmail_ReturnsCorrectErrorMessage() throws Exception {
@@ -56,6 +67,7 @@ public class UserRestControllerTest {
   @Test
   public void manageRegistrationRequests_WithGoodInput_ReturnsResponseJson() throws Exception {
     RegistrationRequestDTO requestDTO = new RegistrationRequestDTO("ExampleUser", "user@example.com", "password");
+    Mockito.when(emailService.sendSimpleMail(Mockito.any(VerificationEmail.class))).thenReturn(null);
     mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
