@@ -6,6 +6,7 @@ import com.greenfoxacademy.springwebapp.services.ArticleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ArticleServiceTestWithH2 {
   @Autowired
   ArticleService articleService;
