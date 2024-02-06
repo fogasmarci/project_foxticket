@@ -8,14 +8,12 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTypeException;
-import com.greenfoxacademy.springwebapp.models.DurationConverter;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,9 +56,8 @@ public class ProductServiceImpl implements ProductService {
       throw new ProductNameAlreadyTakenException();
     }
 
-    Duration duration = DurationConverter.convertDateToDuration(productWithoutIdDTO.durationInString());
     Product productToSave = new Product(productWithoutIdDTO.name(),
-        productWithoutIdDTO.price(), duration, productWithoutIdDTO.description());
+        productWithoutIdDTO.price(), productWithoutIdDTO.convertStringToDuration(), productWithoutIdDTO.description());
     productToSave.setType(productType);
     productRepository.save(productToSave);
 
@@ -85,8 +82,7 @@ public class ProductServiceImpl implements ProductService {
 
     productToEdit.setName(productWithoutIdDTO.name());
     productToEdit.setPrice(productWithoutIdDTO.price());
-    Duration duration = DurationConverter.convertDateToDuration(productWithoutIdDTO.durationInString());
-    productToEdit.setDuration(duration);
+    productToEdit.setDuration(productWithoutIdDTO.convertStringToDuration());
     productToEdit.setDescription(productWithoutIdDTO.description());
     productToEdit.setType(productType);
 

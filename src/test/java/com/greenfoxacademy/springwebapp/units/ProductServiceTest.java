@@ -8,7 +8,6 @@ import com.greenfoxacademy.springwebapp.exceptions.durationconverter.DurationIsM
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductNameAlreadyTakenException;
-import com.greenfoxacademy.springwebapp.models.DurationConverter;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductRepository;
@@ -165,8 +164,7 @@ public class ProductServiceTest {
 
     productToEdit.setName(newProductDetails.name());
     productToEdit.setPrice(newProductDetails.price());
-    Duration duration = DurationConverter.convertDateToDuration(newProductDetails.durationInString());
-    productToEdit.setDuration(duration);
+    productToEdit.setDuration(newProductDetails.convertStringToDuration());
     productToEdit.setDescription(newProductDetails.description());
     productToEdit.setType(berlet);
 
@@ -211,8 +209,7 @@ public class ProductServiceTest {
   }
 
   private Product mapDTOToProduct(ProductWithoutIdDTO productDTOWithoutID) {
-    Duration duration = DurationConverter.convertDateToDuration(productDTOWithoutID.durationInString());
     return new Product(productDTOWithoutID.name(),
-        productDTOWithoutID.price(), duration, productDTOWithoutID.description());
+        productDTOWithoutID.price(), productDTOWithoutID.convertStringToDuration(), productDTOWithoutID.description());
   }
 }
