@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.controllers;
 
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductWithoutIdDTO;
+import com.greenfoxacademy.springwebapp.exceptions.durationconverter.DurationIsMalformedException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
 import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
@@ -29,7 +30,7 @@ public class ProductController {
   public ResponseEntity<?> addNewProduct(@RequestBody ProductWithoutIdDTO productWithoutIdDTO) {
     try {
       return ResponseEntity.status(200).body(productService.createProduct(productWithoutIdDTO));
-    } catch (FieldsException | ProductException | ProductTypeException e) {
+    } catch (FieldsException | ProductException | ProductTypeException | DurationIsMalformedException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
