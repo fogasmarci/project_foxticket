@@ -59,7 +59,6 @@ public class UserServiceImpl implements UserService {
     return createRegistrationDTO(newUser);
   }
 
-
   @Override
   public LoginResponseDTO loginUser(LoginUserDTO loginUserDTO) {
     validateLoginDto(loginUserDTO);
