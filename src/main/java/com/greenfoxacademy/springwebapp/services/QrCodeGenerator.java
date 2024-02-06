@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @Component
 public class QrCodeGenerator {
-  public static final String BASE_PATH = "src/main/resources/static/images/qrcode/";
+  public static final String BASE_PATH = "src/main/resources/static/images/";
 
   public static File createQrCode(String qrCodeText, int size, String fileType) throws WriterException, IOException {
     String qrCodeFilePath = String.format("%s%s.%s", BASE_PATH, "qrcode", fileType);
