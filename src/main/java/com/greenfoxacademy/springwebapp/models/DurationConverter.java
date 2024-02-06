@@ -16,14 +16,7 @@ public class DurationConverter implements AttributeConverter<Duration, String> {
 
   @Override
   public String convertToDatabaseColumn(Duration duration) {
-    if (duration.toDays() > 1) {
-      return String.format("%s %s", duration.toDays(), DAYS);
-    } else if (duration.toHours() > 1) {
-      return String.format("%s %s", duration.toHours(), HOURS);
-    } else if (duration.toMinutes() >= 1) {
-      return String.format("%s %s", duration.toMinutes(), MINUTES);
-    }
-    throw new DurationIsMalformedException();
+    return convertDurationtoString(duration);
   }
 
   @Override
@@ -37,15 +30,22 @@ public class DurationConverter implements AttributeConverter<Duration, String> {
     }
 
     String[] data = dbData.split(" ");
-    switch (data[1]) {
-      case DAYS:
-        return Duration.ofDays(Integer.parseInt(data[0]));
-      case HOURS:
-        return Duration.ofHours(Integer.parseInt(data[0]));
-      case MINUTES:
-        return Duration.ofMinutes(Integer.parseInt(data[0]));
-      default:
-        throw new DurationIsMalformedException();
+    return switch (data[1]) {
+      case DAYS -> Duration.ofDays(Integer.parseInt(data[0]));
+      case HOURS -> Duration.ofHours(Integer.parseInt(data[0]));
+      case MINUTES -> Duration.ofMinutes(Integer.parseInt(data[0]));
+      default -> throw new DurationIsMalformedException();
+    };
+  }
+
+  public static String convertDurationtoString(Duration duration) {
+    if (duration.toDays() > 1) {
+      return String.format("%s %s", duration.toDays(), DAYS);
+    } else if (duration.toHours() > 1) {
+      return String.format("%s %s", duration.toHours(), HOURS);
+    } else if (duration.toMinutes() >= 1) {
+      return String.format("%s %s", duration.toMinutes(), MINUTES);
     }
+    throw new DurationIsMalformedException();
   }
 }

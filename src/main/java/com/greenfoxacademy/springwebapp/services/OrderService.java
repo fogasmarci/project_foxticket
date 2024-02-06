@@ -1,9 +1,12 @@
 package com.greenfoxacademy.springwebapp.services;
 
+import com.google.zxing.WriterException;
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface OrderService {
@@ -14,4 +17,8 @@ public interface OrderService {
   List<OrderedItemDTO> mapOrdersIntoListOfOrderDTOs(List<OrderedItem> orderedItems);
 
   OrderedItemDTO activateItem(Long orderId);
+
+  File getQrCode(Long orderId) throws IOException, WriterException;
+
+  void createQrCode(File qrFile, String qrCodeText, int size, String fileType) throws WriterException, IOException;
 }
