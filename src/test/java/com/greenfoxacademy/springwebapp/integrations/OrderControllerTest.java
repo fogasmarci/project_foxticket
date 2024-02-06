@@ -52,7 +52,7 @@ public class OrderControllerTest {
 
     String response = mvc.perform(get("/api/orders").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$['orders']").value(hasSize(4)))
+        .andExpect(jsonPath("$['orders']").value(hasSize(3)))
         .andReturn()
         .getResponse()
         .getContentAsString();
@@ -67,14 +67,14 @@ public class OrderControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("something@orderuser.xy", "rainbow1");
     String jwt = login(loginUserDTO);
 
-    String response = mvc.perform(patch("/api/orders/1").header("Authorization", "Bearer " + jwt))
+    String response = mvc.perform(patch("/api/orders/2").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$['status']").value("Active"))
         .andReturn()
         .getResponse()
         .getContentAsString();
 
-    assertTrue(response.contains("\"id\":1"));
+    assertTrue(response.contains("\"id\":2"));
   }
 
   @Test
@@ -85,6 +85,16 @@ public class OrderControllerTest {
     mvc.perform(patch("/api/orders/111").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(400))
         .andExpect(jsonPath("$['error']").value("This order does not belong to the user."));
+  }
+
+  @Test
+  void activatePurchasedItem_OrderItemIsAlreadyActive_ThrowsCorrectErrorMessage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("something@orderuser.xy", "rainbow1");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(patch("/api/orders/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$['error']").value("This item is already active."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

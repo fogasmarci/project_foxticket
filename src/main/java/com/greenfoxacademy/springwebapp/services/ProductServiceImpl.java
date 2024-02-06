@@ -112,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
     if (productWithoutIdDTO.price() == null) {
       throw new FieldsException("Price is missing");
     }
-    if (productWithoutIdDTO.duration() == null) {
+    if (productWithoutIdDTO.durationInString() == null) {
       throw new FieldsException("Duration is missing");
     }
     if (productWithoutIdDTO.typeId() == null) {
