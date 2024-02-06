@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.units;
 
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
+import com.greenfoxacademy.springwebapp.exceptions.order.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
 import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
@@ -100,5 +101,21 @@ public class OrderServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(user);
 
     assertThrows(NotMyOrderException.class, () -> orderService.activateItem(orderId));
+  }
+
+  @Test
+  void activateItem_ItemAlreadyActive_ThrowsCorrectException() {
+    Long orderId = 1L;
+    User user = new User();
+
+    OrderedItem orderedItem = new OrderedItem();
+    orderedItem.setId(1L);
+    orderedItem.setStatus(Active);
+    user.addOrder(orderedItem);
+
+    Mockito.when(userService.getCurrentUser()).thenReturn(user);
+
+    Throwable exception = assertThrows(AlreadyActiveException.class, () -> orderService.activateItem(orderId));
+    assertEquals("This item is already active.", exception.getMessage());
   }
 }

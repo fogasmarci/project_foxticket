@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.controllers;
 
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
+import com.greenfoxacademy.springwebapp.exceptions.order.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
 import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTypeException;
 import com.greenfoxacademy.springwebapp.services.OrderService;
@@ -30,7 +31,7 @@ public class OrderController {
   public ResponseEntity<?> activatePurchasedItem(@PathVariable Long orderId) {
     try {
       return ResponseEntity.status(200).body(orderService.activateItem(orderId));
-    } catch (InvalidProductTypeException | NotMyOrderException e) {
+    } catch (InvalidProductTypeException | NotMyOrderException | AlreadyActiveException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }

@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
+import com.greenfoxacademy.springwebapp.exceptions.order.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.User;
@@ -54,6 +55,10 @@ public class OrderServiceImpl implements OrderService {
         .filter(orderedItem -> orderedItem.getId().equals(orderId))
         .findFirst()
         .orElseThrow(NotMyOrderException::new);
+
+    if (orderedItemToActivate.getStatus().equals(Active)) {
+      throw new AlreadyActiveException();
+    }
 
     Duration duration = orderedItemToActivate.getProduct().getDuration();
     orderedItemToActivate.setExpiry(LocalDateTime.now().plus(duration));
