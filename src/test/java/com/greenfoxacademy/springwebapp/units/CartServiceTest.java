@@ -7,8 +7,8 @@ import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdMissingException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.ProductIdRequiredException;
+import com.greenfoxacademy.springwebapp.exceptions.unfound.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.Product;
 import com.greenfoxacademy.springwebapp.models.ProductType;
@@ -62,7 +62,7 @@ public class CartServiceTest {
     void putProductsInCart_WithNullProductId_ThrowsCorrectException() {
       ProductIdDTO productIdDTO = new ProductIdDTO(null);
 
-      Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.putProductsInCart(productIdDTO));
+      Throwable exception = assertThrows(ProductIdRequiredException.class, () -> cartService.putProductsInCart(productIdDTO));
       assertEquals("Product ID is required.", exception.getMessage());
     }
 
@@ -121,7 +121,7 @@ public class CartServiceTest {
     void putProductsInCart_WithNullProductId_AndValidAmount_ThrowsCorrectException() {
       ProductIdDTO productIdDTO = new ProductIdDTO(null, 3);
 
-      Throwable exception = assertThrows(ProductIdMissingException.class, () -> cartService.putProductsInCart(productIdDTO));
+      Throwable exception = assertThrows(ProductIdRequiredException.class, () -> cartService.putProductsInCart(productIdDTO));
       assertEquals("Product ID is required.", exception.getMessage());
     }
 

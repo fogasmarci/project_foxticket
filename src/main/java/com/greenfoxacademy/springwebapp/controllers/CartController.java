@@ -7,8 +7,8 @@ import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
 import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
+import com.greenfoxacademy.springwebapp.exceptions.unfound.ProductIdInvalidException;
+import com.greenfoxacademy.springwebapp.exceptions.unfound.ResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class CartController {
       cartService.putProductsInCart(productIdDTO);
       CartListDTO productsInUsersCart = cartService.createPutProductsInCartResponse();
       return ResponseEntity.status(200).body(productsInUsersCart);
-    } catch (ProductException | FieldsException e) {
+    } catch (ResourceNotFoundException | FieldsException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
     }
   }

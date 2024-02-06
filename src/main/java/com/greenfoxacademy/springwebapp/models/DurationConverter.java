@@ -1,6 +1,6 @@
 package com.greenfoxacademy.springwebapp.models;
 
-import com.greenfoxacademy.springwebapp.exceptions.durationconverter.DurationIsMalformedException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.DurationIsMalformedException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import org.springframework.stereotype.Component;

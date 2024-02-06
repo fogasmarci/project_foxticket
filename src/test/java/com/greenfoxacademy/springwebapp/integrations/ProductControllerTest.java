@@ -138,7 +138,7 @@ public class ProductControllerTest {
     String jwt = login(loginUserDTO);
 
     mvc.perform(delete("/api/products/111").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("Product doesn't exist."));
   }
 
@@ -179,7 +179,7 @@ public class ProductControllerTest {
             .header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(newProductDetails)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("Product doesn't exist."));
   }
 
@@ -194,7 +194,7 @@ public class ProductControllerTest {
             .header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(newProductDetails)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$.error").value("Product name already exists."));
   }
 
@@ -224,7 +224,7 @@ public class ProductControllerTest {
             .header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(newProductDetails)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("Product type is wrong."));
   }
 
