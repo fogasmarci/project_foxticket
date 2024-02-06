@@ -164,7 +164,7 @@ public class ProductServiceTest {
 
     productToEdit.setName(newProductDetails.name());
     productToEdit.setPrice(newProductDetails.price());
-    productToEdit.setDuration(newProductDetails.convertStringToDuration());
+    productToEdit.setDuration(newProductDetails.duration());
     productToEdit.setDescription(newProductDetails.description());
     productToEdit.setType(berlet);
 
@@ -210,6 +210,6 @@ public class ProductServiceTest {
 
   private Product mapDTOToProduct(ProductWithoutIdDTO productDTOWithoutID) {
     return new Product(productDTOWithoutID.name(),
-        productDTOWithoutID.price(), productDTOWithoutID.convertStringToDuration(), productDTOWithoutID.description());
+        productDTOWithoutID.price(), productDTOWithoutID.duration(), productDTOWithoutID.description());
   }
 }

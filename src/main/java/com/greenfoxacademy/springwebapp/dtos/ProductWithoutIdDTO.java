@@ -9,7 +9,7 @@ public record ProductWithoutIdDTO(String name, Integer price, String durationInS
                                   @JsonProperty("item_id")
                                   Long typeId) {
 
-  public Duration convertStringToDuration() {
+  public Duration duration() {
     return DurationConverter.convertDateToDuration(durationInString);
   }
 }

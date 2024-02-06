@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     Product productToSave = new Product(productWithoutIdDTO.name(),
-        productWithoutIdDTO.price(), productWithoutIdDTO.convertStringToDuration(), productWithoutIdDTO.description());
+        productWithoutIdDTO.price(), productWithoutIdDTO.duration(), productWithoutIdDTO.description());
     productToSave.setType(productType);
     productRepository.save(productToSave);
 
@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
 
     productToEdit.setName(productWithoutIdDTO.name());
     productToEdit.setPrice(productWithoutIdDTO.price());
-    productToEdit.setDuration(productWithoutIdDTO.convertStringToDuration());
+    productToEdit.setDuration(productWithoutIdDTO.duration());
     productToEdit.setDescription(productWithoutIdDTO.description());
     productToEdit.setType(productType);
 
