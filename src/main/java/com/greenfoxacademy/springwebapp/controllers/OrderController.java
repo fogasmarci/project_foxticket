@@ -9,9 +9,9 @@ import com.greenfoxacademy.springwebapp.exceptions.producttype.InvalidProductTyp
 import com.greenfoxacademy.springwebapp.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,13 +54,11 @@ public class OrderController {
       headers.setContentType(MediaType.IMAGE_PNG);
       headers.setContentLength(qrCodeBytes.length);
 
-      return ResponseEntity.status(HttpStatus.OK).headers(headers).body(qrCodeBytes);
-    } catch (InvalidProductTypeException |
-             NotMyOrderException |
-             AlreadyActiveException |
-             IOException |
-             WriterException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+      return ResponseEntity.status(200).headers(headers).body(qrCodeBytes);
+    } catch (IOException | WriterException e) {
+      return ResponseEntity.status(500).body(new ErrorMessageDTO("QR code creation failed"));
+    } catch (UsernameNotFoundException | NotMyOrderException e) {
+      return ResponseEntity.status(404).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
 }

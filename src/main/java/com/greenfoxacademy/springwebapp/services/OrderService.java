@@ -19,6 +19,4 @@ public interface OrderService {
   OrderedItemDTO activateItem(Long orderId);
 
   File getQrCode(Long orderId) throws IOException, WriterException;
-
-  void createQrCode(File qrFile, String qrCodeText, int size, String fileType) throws WriterException, IOException;
 }
