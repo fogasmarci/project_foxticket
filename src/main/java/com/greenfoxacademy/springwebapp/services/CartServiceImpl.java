@@ -1,10 +1,10 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.*;
-import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
-import com.greenfoxacademy.springwebapp.exceptions.cart.InvalidAmountException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.InvalidAmountException;
 import com.greenfoxacademy.springwebapp.exceptions.fields.ProductIdRequiredException;
-import com.greenfoxacademy.springwebapp.exceptions.unfound.ProductIdInvalidException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.CartNotFoundException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.models.Cart;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Product;

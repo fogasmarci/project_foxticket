@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.exceptions.unfound;
+package com.greenfoxacademy.springwebapp.exceptions.notfound;
 
 public class ProductIdInvalidException extends ResourceNotFoundException {
   public ProductIdInvalidException() {

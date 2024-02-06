@@ -1,6 +1,4 @@
-package com.greenfoxacademy.springwebapp.exceptions.cart;
-
-import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
+package com.greenfoxacademy.springwebapp.exceptions.fields;
 
 public class InvalidAmountException extends FieldsException {
   public InvalidAmountException() {

@@ -1,7 +1,7 @@
 package com.greenfoxacademy.springwebapp.models;
 
-import com.greenfoxacademy.springwebapp.exceptions.cart.ExceedLimitException;
-import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.ExceedLimitException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.IdInCartNotFoundException;
 import jakarta.persistence.*;
 
 import java.util.HashMap;

@@ -2,10 +2,11 @@ package com.greenfoxacademy.springwebapp.globalexceptionhandling;
 
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.ResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.taken.AlreadyTakenException;
-import com.greenfoxacademy.springwebapp.exceptions.unfound.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,6 +30,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(AlreadyTakenException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorMessageDTO> handleAlreadyTakenException(AlreadyTakenException e) {
+    return ResponseEntity.status(409).body(new ErrorMessageDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(UsernameNotFoundException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  public ResponseEntity<ErrorMessageDTO> handleAuthenticationException(UsernameNotFoundException e) {
     return ResponseEntity.status(409).body(new ErrorMessageDTO(e.getMessage()));
   }
 }
