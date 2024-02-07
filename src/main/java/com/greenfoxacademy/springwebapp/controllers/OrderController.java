@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 @RestController
 public class OrderController {
@@ -47,8 +45,7 @@ public class OrderController {
   @GetMapping("/api/orders/{orderId}")
   public ResponseEntity<?> getQrCode(@PathVariable Long orderId) {
     try {
-      File qrFile = orderService.getQrCode(orderId);
-      byte[] qrCodeBytes = Files.readAllBytes(qrFile.toPath());
+      byte[] qrCodeBytes = orderService.getQrCode(orderId);
 
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.IMAGE_PNG);

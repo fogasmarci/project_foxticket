@@ -5,7 +5,6 @@ import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,5 +17,5 @@ public interface OrderService {
 
   OrderedItemDTO activateItem(Long orderId);
 
-  File getQrCode(Long orderId) throws IOException, WriterException;
+  byte[] getQrCode(Long orderId) throws IOException, WriterException;
 }

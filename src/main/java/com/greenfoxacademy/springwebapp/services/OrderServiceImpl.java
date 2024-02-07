@@ -13,7 +13,6 @@ import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -72,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public File getQrCode(Long orderId) throws IOException, WriterException {
+  public byte[] getQrCode(Long orderId) throws IOException, WriterException {
     User user = userService.getCurrentUser();
     OrderedItem orderedItem = user.getOrders().stream()
         .filter(item -> orderId.equals(item.getId()))
@@ -84,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonAsString = objectMapper.writeValueAsString(json);
 
-    return QrCodeGenerator.createQrCode(jsonAsString, 200, "png");
+    return QrCodeGenerator.createQrCode(jsonAsString, 250, "png");
   }
 
   private OrderQrCodeDTO mapEntitiesToQrCodeDto(User user, OrderedItem item) {

@@ -9,16 +9,15 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Component
 public class QrCodeGenerator {
-  public static final String BASE_PATH = "src/main/resources/static/images/";
 
-  public static File createQrCode(String qrCodeText, int size, String fileType) throws WriterException, IOException {
-    String qrCodeFilePath = String.format("%s%s.%s", BASE_PATH, "qrcode", fileType);
-    File qrFile = new File(qrCodeFilePath);
+  public static byte[] createQrCode(String qrCodeText, int size, String fileType) throws WriterException, IOException {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
     QRCodeWriter qrCodeWriter = new QRCodeWriter();
     BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, size, size);
 
@@ -37,8 +36,9 @@ public class QrCodeGenerator {
         }
       }
     }
-    ImageIO.write(bufferedImage, fileType, qrFile);
 
-    return qrFile;
+    ImageIO.write(bufferedImage, fileType, outputStream);
+
+    return outputStream.toByteArray();
   }
 }
