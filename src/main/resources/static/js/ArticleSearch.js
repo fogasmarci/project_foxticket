@@ -1,3 +1,9 @@
+window.addEventListener('popstate', handlePopState);
+
+function handlePopState() {
+    getRequest();
+}
+
 document.getElementById("refresh").addEventListener("click", function (event) {
     event.preventDefault();
     getRequest();
@@ -20,6 +26,9 @@ function submitForm(form) {
 
 async function getRequest() {
     const urlSearchParams = new URLSearchParams(window.location.search);
+        const searchInput = document.getElementById("searchInput");
+        searchInput.value = urlSearchParams.get("searchKeyword");
+
     try {
         const response = await fetch('/api/news?' + urlSearchParams.toString());
         if (response.ok) {
@@ -33,6 +42,9 @@ async function getRequest() {
 
 async function searchRequest(searchArticlesRequest) {
     const url = `/api/news?searchKeyword=` + searchArticlesRequest.searchKeyword;
+
+    const searchInput = document.getElementById("searchInput");
+    searchInput.value = searchArticlesRequest.searchKeyword;
 
     try {
         const response = await fetch(url);
@@ -65,3 +77,4 @@ function updateQuaryString(searchArticlesRequest) {
     url.searchParams.set("searchKeyword", searchArticlesRequest.searchKeyword);
     history.pushState({}, document.title, url.toString())
 }
+

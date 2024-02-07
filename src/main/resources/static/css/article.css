@@ -37,11 +37,11 @@ tr:hover {
 }
 
 #refresh {
-    margin-top: 10px; /* Add some space above the button */
+    margin-top: 10px;
 }
 
 button {
-    background-color: #3498db; /* Blue color */
+    background-color: #4caf50;
     color: #fff;
     padding: 10px 20px;
     border: none;
@@ -50,10 +50,9 @@ button {
 }
 
 button:hover {
-    background-color: #2980b9; /* Darker blue on hover */
+    background-color: #45a049;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
     table {
         width: 100%;
