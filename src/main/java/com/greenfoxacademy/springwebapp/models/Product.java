@@ -14,6 +14,7 @@ public class Product {
   @Column(unique = true)
   private String name;
   private int price;
+  @Convert(converter = DurationConverter.class)
   private Duration duration;
   private String description;
   @ManyToOne
