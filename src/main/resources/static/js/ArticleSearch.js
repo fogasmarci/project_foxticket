@@ -1,4 +1,4 @@
-document.getElementById("refresh").addEventListener("click", function (event) g{
+document.getElementById("refresh").addEventListener("click", function (event) {
     event.preventDefault();
     getRequest();
 });
