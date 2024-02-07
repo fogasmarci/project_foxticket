@@ -1,6 +1,12 @@
+document.getElementById("refresh").addEventListener("click", function (event) g{
+    event.preventDefault();
+    getRequest();
+});
+
 document.getElementById("search").addEventListener("submit", function (event) {
     event.preventDefault();
     submitForm(event.target);
+
 });
 
 function submitForm(form) {
@@ -9,10 +15,23 @@ function submitForm(form) {
         searchKeyword: formData.get("searchKeyword"),
     };
 
-    getRequest(searchArticlesRequest);
+    searchRequest(searchArticlesRequest);
 }
 
-async function getRequest(searchArticlesRequest) {
+async function getRequest() {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    try {
+        const response = await fetch('/api/news?' + urlSearchParams.toString());
+        if (response.ok) {
+            const articleListDTO = await response.json();
+            updateTable(articleListDTO);
+        }
+    } catch (error) {
+        console.error(`${error}`);
+    }
+}
+
+async function searchRequest(searchArticlesRequest) {
     const url = `/api/news?searchKeyword=` + searchArticlesRequest.searchKeyword;
 
     try {
@@ -44,5 +63,5 @@ function updateQuaryString(searchArticlesRequest) {
     var currentUrl = window.location.href;
     var url = new URL(currentUrl);
     url.searchParams.set("searchKeyword", searchArticlesRequest.searchKeyword);
-    window.history.replaceState({}, document.title, url.toString());
+    history.pushState({}, document.title, url.toString())
 }

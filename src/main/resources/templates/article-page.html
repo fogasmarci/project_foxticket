@@ -4,14 +4,13 @@
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/article.css">
     <title>Article page</title>
-    <script src="/js/ArticleRefresh.js" defer></script>
     <script src="/js/ArticleSearch.js" defer></script>
 </head>
 <body>
 <h1>Articles</h1>
 <div>
     <form id="search">
-        <input id="searchInput" name="searchKeyword">
+        <input id="searchInput" name="searchKeyword" th:value="${searchKeyword}">
         <button type="submit">Search</button>
     </form>
     <table>
