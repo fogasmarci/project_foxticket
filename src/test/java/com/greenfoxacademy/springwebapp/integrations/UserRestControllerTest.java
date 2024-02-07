@@ -11,14 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -299,6 +299,19 @@ public class UserRestControllerTest {
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.name").value("TestUser"))
         .andExpect(jsonPath("$.email").value("new@new.com"));
+  }
+
+  @Test
+  public void uploadPhoto_WithGoodInputAndLoggedIn_ReturnsOk() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    MockMultipartFile file = new MockMultipartFile("file", "test.jpeg", MediaType.IMAGE_JPEG_VALUE, "picture data".getBytes());
+
+    mockMvc.perform(multipart("/api/users/photo")
+            .file(file).header("Authorization", "Bearer " + jwt))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Picture is uploaded."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

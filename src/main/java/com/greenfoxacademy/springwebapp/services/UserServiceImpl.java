@@ -19,7 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 @Service
@@ -128,6 +130,16 @@ public class UserServiceImpl implements UserService {
   @Override
   public User getCurrentUser() {
     return userRepository.findById(findLoggedInUsersId()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  @Override
+  public MessageDTO uploadPhoto(MultipartFile file) throws IOException {
+    byte[] photoBytes = file.getBytes();
+    User user = getCurrentUser();
+    user.setPhoto(photoBytes);
+    userRepository.save(user);
+
+    return new MessageDTO("Picture is uploaded.");
   }
 
   private String encodePassword(String password) {

@@ -33,6 +33,10 @@ public class User {
   private boolean isVerified;
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
   private List<OrderedItem> orderedItems;
+  @Lob
+  @Basic(fetch = FetchType.LAZY)
+  @Column(name = "photo", columnDefinition = "BLOB")
+  private byte[] photo;
 
   public User() {
     authorities = new HashSet<>();
@@ -114,5 +118,13 @@ public class User {
 
   public boolean getIsAdminByRoles() {
     return this.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals(Authorities.ADMIN.toString()));
+  }
+
+  public byte[] getPhoto() {
+    return photo;
+  }
+
+  public void setPhoto(byte[] photo) {
+    this.photo = photo;
   }
 }

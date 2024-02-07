@@ -11,10 +11,10 @@ import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationExce
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 public class UserRestController {
@@ -48,6 +48,17 @@ public class UserRestController {
       return ResponseEntity.status(200).body(userService.updateUser(updateDTO));
     } catch (FieldsException | EmailAlreadyTakenException | UsernameNotFoundException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+    }
+  }
+
+  @PostMapping("/api/users/photo")
+  public ResponseEntity<?> uploadPhoto(@RequestParam("file") MultipartFile file) {
+    try {
+      return ResponseEntity.status(200).body(userService.uploadPhoto(file));
+    } catch (IOException e) {
+      return ResponseEntity.status(500).body(new ErrorMessageDTO(e.getMessage()));
+    } catch (UsernameNotFoundException e) {
+      return ResponseEntity.status(404).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
 }
