@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/article.css">
+    <title>Article page</title>
+    <script src="/js/ArticleSearch.js" defer></script>
+</head>
+<body>
+<h1>Articles</h1>
+<div>
+    <form id="search">
+        <input id="searchInput" name="searchKeyword" th:value="${searchKeyword}">
+        <button type="submit">Search</button>
+    </form>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Publish Date</th>
+        </tr>
+        </thead>
+        <tbody id="articlesTableData">
+        <tr th:each="article : ${articles.articles}">
+            <td th:text="${article.id}">60</td>
+            <td th:text="${article.title}">teszt</td>
+            <td th:text="${article.content}">teeeeeeeszt</td>
+            <td th:text="${article.publishDate}">2032</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button id="refresh">Refresh</button>
+</div>
+</body>
+</html>

@@ -37,6 +37,8 @@ public class User {
   @Basic(fetch = FetchType.LAZY)
   @Column(name = "photo", columnDefinition = "BLOB")
   private byte[] photo;
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+  private VerificationToken verificationToken;
 
   public User() {
     authorities = new HashSet<>();
@@ -45,6 +47,7 @@ public class User {
     isAdmin = false;
     isVerified = false;
     orderedItems = new ArrayList<>();
+    verificationToken = new VerificationToken(this);
   }
 
   public User(Long userId, String email) {
@@ -100,6 +103,10 @@ public class User {
     return isVerified;
   }
 
+  public void setIsVerified(boolean isVerified) {
+    this.isVerified = isVerified;
+  }
+
   public void addRole(Role role) {
     authorities.add(role);
   }
@@ -126,5 +133,13 @@ public class User {
 
   public void setPhoto(byte[] photo) {
     this.photo = photo;
+  }
+
+  public VerificationToken getVerificationToken() {
+    return verificationToken;
+  }
+
+  public void setVerificationToken(VerificationToken verificationToken) {
+    this.verificationToken = verificationToken;
   }
 }

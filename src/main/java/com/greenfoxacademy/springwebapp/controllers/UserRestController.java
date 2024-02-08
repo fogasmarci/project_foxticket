@@ -8,6 +8,7 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.login.LoginException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
+import com.greenfoxacademy.springwebapp.exceptions.verificationemail.FailedToSendEmailException;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +31,8 @@ public class UserRestController {
       return ResponseEntity.status(200).body(userService.registerUser(requestDTO));
     } catch (FieldsException | RegistrationException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
+    } catch (FailedToSendEmailException e) {
+      return ResponseEntity.status(500).body(new ErrorMessageDTO(e.getMessage()));
     }
   }
 

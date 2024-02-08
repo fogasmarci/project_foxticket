@@ -20,4 +20,8 @@ public interface UserService {
   User getCurrentUser();
 
   MessageDTO uploadPhoto(MultipartFile file) throws IOException;
+
+  User getUserById(Long userId);
+
+  void saveUser(User user);
 }
