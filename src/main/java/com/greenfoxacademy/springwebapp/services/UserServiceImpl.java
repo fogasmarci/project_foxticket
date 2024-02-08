@@ -133,16 +133,12 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public MessageDTO uploadPhoto(MultipartFile file) throws IOException {
-    byte[] photoBytes = file.getBytes();
-    if (photoBytes.length > MAX_SIZE_UPLOAD_IN_BYTES) {
-      throw new MaxUploadSizeException();
-    }
-    String mimeType = file.getContentType();
-    if (!SUPPORTED_FILE_UPLOAD_MIME_TYPES.contains(mimeType)) {
-      throw new NotSupportedFileUploadException();
-    }
+    validateUploadFile(file);
+
     User user = getCurrentUser();
+    byte[] photoBytes = file.getBytes();
     user.setPhoto(photoBytes);
+
     userRepository.save(user);
 
     return new MessageDTO("Picture is uploaded.");
@@ -203,6 +199,16 @@ public class UserServiceImpl implements UserService {
     validateEmail(email);
     if (userRepository.existsByEmail(email)) {
       throw new EmailAlreadyTakenException();
+    }
+  }
+
+  private void validateUploadFile(MultipartFile file) {
+    if (file.getSize() > MAX_SIZE_UPLOAD_IN_BYTES) {
+      throw new MaxUploadSizeException();
+    }
+    String mimeType = file.getContentType();
+    if (!SUPPORTED_FILE_UPLOAD_MIME_TYPES.contains(mimeType)) {
+      throw new NotSupportedFileUploadException();
     }
   }
 

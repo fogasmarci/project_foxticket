@@ -318,7 +318,7 @@ public class UserRestControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
 
-    final MockMultipartFile file = new MockMultipartFile("file", "testPicture.jpg", MediaType.IMAGE_JPEG_VALUE, "randomdata".getBytes());
+    final MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "random data".getBytes());
 
     mockMvc.perform(multipart("/api/users/photo")
             .file(file).header("Authorization", "Bearer " + jwt))
@@ -331,12 +331,12 @@ public class UserRestControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
 
-    final MockMultipartFile file = new MockMultipartFile("file", "testGif.gif", MediaType.IMAGE_GIF_VALUE, "randomdata".getBytes());
+    final MockMultipartFile file = new MockMultipartFile("file", "test.gif", MediaType.IMAGE_GIF_VALUE, "random data".getBytes());
 
     mockMvc.perform(multipart("/api/users/photo")
             .file(file).header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Uploaded images must adhere to the file formats .jpg, .jpeg, or .png.")); // Adjust the expected error message
+        .andExpect(jsonPath("$.error").value("Uploaded images must adhere to the file formats .jpg, .jpeg, or .png."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {
