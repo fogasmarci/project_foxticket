@@ -43,7 +43,7 @@ public class CartController {
   }
 
   @DeleteMapping("/api/cart")
-  public ResponseEntity<?> removeAllItemsFromCart() {
+  public ResponseEntity<MessageDTO> removeAllItemsFromCart() {
     return ResponseEntity.status(200).body(cartService.removeAllProductsFromCart());
   }
 }

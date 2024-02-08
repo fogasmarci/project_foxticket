@@ -82,7 +82,7 @@ public class OrderControllerTest {
     String jwt = login(loginUserDTO);
 
     mvc.perform(patch("/api/orders/111").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$['error']").value("This order does not belong to the user."));
   }
 
@@ -92,7 +92,7 @@ public class OrderControllerTest {
     String jwt = login(loginUserDTO);
 
     mvc.perform(patch("/api/orders/1").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$['error']").value("This item is already active."));
   }
 
