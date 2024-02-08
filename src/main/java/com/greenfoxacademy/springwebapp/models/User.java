@@ -35,7 +35,7 @@ public class User {
   private List<OrderedItem> orderedItems;
   @Lob
   @Basic(fetch = FetchType.LAZY)
-  @Column(name = "photo", columnDefinition = "BLOB")
+  @Column(name = "photo", columnDefinition = "LONGBLOB")
   private byte[] photo;
   @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
   private VerificationToken verificationToken;

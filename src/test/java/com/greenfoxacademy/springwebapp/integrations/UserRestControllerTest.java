@@ -318,12 +318,25 @@ public class UserRestControllerTest {
     LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
     String jwt = login(loginUserDTO);
 
-    MockMultipartFile file = new MockMultipartFile("file", "test.jpeg", MediaType.IMAGE_JPEG_VALUE, "picture data".getBytes());
+    final MockMultipartFile file = new MockMultipartFile("file", "testPicture.jpg", MediaType.IMAGE_JPEG_VALUE, "randomdata".getBytes());
 
     mockMvc.perform(multipart("/api/users/photo")
             .file(file).header("Authorization", "Bearer " + jwt))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.message").value("Picture is uploaded."));
+  }
+
+  @Test
+  public void uploadPhoto_WithUnsupportedMimeType_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    final MockMultipartFile file = new MockMultipartFile("file", "testGif.gif", MediaType.IMAGE_GIF_VALUE, "randomdata".getBytes());
+
+    mockMvc.perform(multipart("/api/users/photo")
+            .file(file).header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Uploaded images must adhere to the file formats .jpg, .jpeg, or .png.")); // Adjust the expected error message
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

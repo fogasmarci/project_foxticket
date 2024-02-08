@@ -5,11 +5,14 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.*;
 import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.user.InvalidUserIdException;
+import com.greenfoxacademy.springwebapp.exceptions.user.MaxUploadSizeException;
+import com.greenfoxacademy.springwebapp.exceptions.user.NotSupportedFileUploadException;
 import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.RoleRepository;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
 import com.greenfoxacademy.springwebapp.security.JwtBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
   private static final int NAME_MIN_LENGTH = 3;
   private static final int PASSWORD_MIN_LENGTH = 8;
   private static final int MAX_LENGTH = 50;
+  private static final Set<String> SUPPORTED_FILE_UPLOAD_MIME_TYPES = Set.of(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE);
+  private static final int MAX_SIZE_UPLOAD_IN_BYTES = 1024 * 1024;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
@@ -128,6 +134,13 @@ public class UserServiceImpl implements UserService {
   @Override
   public MessageDTO uploadPhoto(MultipartFile file) throws IOException {
     byte[] photoBytes = file.getBytes();
+    if (photoBytes.length > MAX_SIZE_UPLOAD_IN_BYTES) {
+      throw new MaxUploadSizeException();
+    }
+    String mimeType = file.getContentType();
+    if (!SUPPORTED_FILE_UPLOAD_MIME_TYPES.contains(mimeType)) {
+      throw new NotSupportedFileUploadException();
+    }
     User user = getCurrentUser();
     user.setPhoto(photoBytes);
     userRepository.save(user);
