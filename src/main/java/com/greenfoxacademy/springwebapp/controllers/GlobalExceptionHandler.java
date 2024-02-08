@@ -1,10 +1,11 @@
-package com.greenfoxacademy.springwebapp.globalexceptionhandling;
+package com.greenfoxacademy.springwebapp.controllers;
 
 import com.google.zxing.WriterException;
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.exceptions.notfound.ResourceNotFoundException;
-import com.greenfoxacademy.springwebapp.exceptions.other.AlreadyActiveException;
+import com.greenfoxacademy.springwebapp.exceptions.order.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.exceptions.taken.AlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.user.InvalidVerificationTokenException;
 import com.greenfoxacademy.springwebapp.exceptions.verificationemail.FailedToSendEmailException;
@@ -27,9 +28,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
   }
 
+  @ExceptionHandler(InvalidVerificationTokenException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<ErrorMessageDTO> handleInvalidVerificationTokenException(InvalidVerificationTokenException e) {
+    return ResponseEntity.status(401).body(new ErrorMessageDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(IncorrectCredentialsException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<ErrorMessageDTO> handleIncorrectCredentialsException(IncorrectCredentialsException e) {
+    return ResponseEntity.status(401).body(new ErrorMessageDTO(e.getMessage()));
+  }
+
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ResponseEntity<ErrorMessageDTO> handleResourceNotFoundException(ResourceNotFoundException e) {
+    return ResponseEntity.status(404).body(new ErrorMessageDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(UsernameNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ResponseEntity<ErrorMessageDTO> handleUsernameNotFoundException(UsernameNotFoundException e) {
     return ResponseEntity.status(404).body(new ErrorMessageDTO(e.getMessage()));
   }
 
@@ -39,40 +58,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(409).body(new ErrorMessageDTO(e.getMessage()));
   }
 
-  @ExceptionHandler(UsernameNotFoundException.class)
-  @ResponseStatus(HttpStatus.CONFLICT)
-  public ResponseEntity<ErrorMessageDTO> handleAuthenticationException(UsernameNotFoundException e) {
-    return ResponseEntity.status(404).body(new ErrorMessageDTO(e.getMessage()));
-  }
-
   @ExceptionHandler(AlreadyActiveException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   public ResponseEntity<ErrorMessageDTO> handleAlreadyActiveException(AlreadyActiveException e) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
+    return ResponseEntity.status(409).body(new ErrorMessageDTO(e.getMessage()));
   }
 
   @ExceptionHandler(WriterException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorMessageDTO> handleWriterException() {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO("QR code creation failed"));
+    return ResponseEntity.status(500).body(new ErrorMessageDTO("QR code creation failed"));
   }
 
   @ExceptionHandler(IOException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorMessageDTO> handleIOException() {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO("QR code creation failed"));
+    return ResponseEntity.status(500).body(new ErrorMessageDTO("QR code creation failed"));
   }
 
   @ExceptionHandler(FailedToSendEmailException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ResponseEntity<ErrorMessageDTO> handleFailedToSendEmailException(FailedToSendEmailException e) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
-  }
-
-  @ExceptionHandler(InvalidVerificationTokenException.class)
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ResponseEntity<ErrorMessageDTO> handleInvalidVerificationTokenException(InvalidVerificationTokenException e) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
+    return ResponseEntity.status(500).body(new ErrorMessageDTO(e.getMessage()));
   }
 }
 

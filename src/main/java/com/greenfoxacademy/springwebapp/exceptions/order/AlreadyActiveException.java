@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.exceptions.other;
+package com.greenfoxacademy.springwebapp.exceptions.order;
 
 public class AlreadyActiveException extends RuntimeException {
   public AlreadyActiveException() {

@@ -1,17 +1,8 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
-import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.springwebapp.dtos.LoginUserDTO;
-import com.greenfoxacademy.springwebapp.dtos.RegistrationRequestDTO;
-import com.greenfoxacademy.springwebapp.dtos.UserInfoRequestDTO;
-import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
-import com.greenfoxacademy.springwebapp.exceptions.login.LoginException;
-import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
-import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
-import com.greenfoxacademy.springwebapp.exceptions.verificationemail.FailedToSendEmailException;
+import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,31 +17,17 @@ public class UserRestController {
   }
 
   @PostMapping("/api/users")
-  public ResponseEntity<?> registerUser(@RequestBody RegistrationRequestDTO requestDTO) {
-    try {
-      return ResponseEntity.status(200).body(userService.registerUser(requestDTO));
-    } catch (FieldsException | RegistrationException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    } catch (FailedToSendEmailException e) {
-      return ResponseEntity.status(500).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<RegistrationResponseDTO> registerUser(@RequestBody RegistrationRequestDTO requestDTO) {
+    return ResponseEntity.status(200).body(userService.registerUser(requestDTO));
   }
 
   @PostMapping("/api/users/login")
-  public ResponseEntity<?> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
-    try {
-      return ResponseEntity.status(200).body(userService.loginUser(loginUserDTO));
-    } catch (FieldsException | LoginException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody LoginUserDTO loginUserDTO) {
+    return ResponseEntity.status(200).body(userService.loginUser(loginUserDTO));
   }
 
   @PatchMapping("/api/users")
-  public ResponseEntity<?> updateUserInformation(@RequestBody UserInfoRequestDTO updateDTO) {
-    try {
-      return ResponseEntity.status(200).body(userService.updateUser(updateDTO));
-    } catch (FieldsException | EmailAlreadyTakenException | UsernameNotFoundException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<UserInfoResponseDTO> updateUserInformation(@RequestBody UserInfoRequestDTO updateDTO) {
+    return ResponseEntity.status(200).body(userService.updateUser(updateDTO));
   }
 }
