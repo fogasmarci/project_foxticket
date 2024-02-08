@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class ArticleControllerTest {
+public class ArticleRestControllerTest {
   @Autowired
   MockMvc mvc;
   @Autowired
@@ -69,21 +69,10 @@ public class ArticleControllerTest {
 
   @Test
   void listArticles_WithSearchParam_ListsSearchedArticlesOnly() throws Exception {
-    List<Article> articles = new ArrayList<>();
-    Article article1 = new Article("Test Title", "Test Content");
-    article1.setPublishDate(LocalDate.of(2023, 12, 11));
-    article1.setId(2L);
-    articles.add(article1);
-
-    ArticleListDTO articleListDTO = new ArticleListDTO();
-    articleListDTO.setArticles(articles);
-
-    mvc.perform(get("/api/news").queryParam("search", "Test"))
+    mvc.perform(get("/api/news").queryParam("searchKeyword", "Test"))
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.articles").value(hasSize(1)))
         .andExpect(jsonPath("$.articles[0].title").value("Test Title"));
-
-    assertThat(articleService.listArticles("Test")).usingRecursiveComparison().isEqualTo(articleListDTO);
   }
 
   @Test

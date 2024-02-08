@@ -47,6 +47,8 @@ public class SecurityConfig {
                 "/js/**",
                 "/register",
                 "/login",
+                "/news",
+                "/api/news",
                 "/api/users/**",
                 "/error").permitAll()
             .anyRequest().authenticated())
