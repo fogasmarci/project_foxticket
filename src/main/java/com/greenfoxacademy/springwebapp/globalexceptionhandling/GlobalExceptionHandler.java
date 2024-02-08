@@ -6,6 +6,8 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.notfound.ResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.other.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.exceptions.taken.AlreadyTakenException;
+import com.greenfoxacademy.springwebapp.exceptions.user.InvalidVerificationTokenException;
+import com.greenfoxacademy.springwebapp.exceptions.verificationemail.FailedToSendEmailException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -51,14 +53,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(WriterException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ResponseEntity<ErrorMessageDTO> handleWriterException(WriterException e) {
+  public ResponseEntity<ErrorMessageDTO> handleWriterException() {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO("QR code creation failed"));
   }
 
   @ExceptionHandler(IOException.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ResponseEntity<ErrorMessageDTO> handleIOException(IOException e) {
+  public ResponseEntity<ErrorMessageDTO> handleIOException() {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO("QR code creation failed"));
+  }
+
+  @ExceptionHandler(FailedToSendEmailException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ResponseEntity<ErrorMessageDTO> handleFailedToSendEmailException(FailedToSendEmailException e) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
+  }
+
+  @ExceptionHandler(InvalidVerificationTokenException.class)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<ErrorMessageDTO> handleInvalidVerificationTokenException(InvalidVerificationTokenException e) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDTO(e.getMessage()));
   }
 }
 
