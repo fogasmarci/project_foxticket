@@ -19,8 +19,7 @@ import java.util.Map;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @Transactional
@@ -95,6 +94,32 @@ public class OrderControllerTest {
     mvc.perform(patch("/api/orders/1").header("Authorization", "Bearer " + jwt))
         .andExpect(status().is(400))
         .andExpect(jsonPath("$['error']").value("This item is already active."));
+  }
+
+  @Test
+  public void getQrCode_NotLoggedIn_ReturnsUnauthorized() throws Exception {
+    mvc.perform(get("/api/orders/1"))
+        .andExpect(status().is(401));
+  }
+
+  @Test
+  public void getQrCode_WithGoodInput_ReturnsQrCodeImage() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("something@orderuser.xy", "rainbow1");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(get("/api/orders/1").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(200))
+        .andExpect(content().contentType(MediaType.IMAGE_PNG));
+  }
+
+  @Test
+  public void getQrCode_WithInValidOrderItemId_ReturnsError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("something@orderuser.xy", "rainbow1");
+    String jwt = login(loginUserDTO);
+
+    mvc.perform(get("/api/orders/999").header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$.error").value("This order does not belong to the user."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

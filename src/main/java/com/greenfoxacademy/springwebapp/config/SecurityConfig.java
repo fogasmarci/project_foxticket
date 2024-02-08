@@ -40,12 +40,15 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.PATCH, "/api/users").authenticated()
             .requestMatchers(HttpMethod.PATCH, "/api/products/{productId}").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/news").permitAll()
+            .requestMatchers(HttpMethod.PATCH, "/api/email-verification/*").permitAll()
             .requestMatchers("/",
                 "/images/**",
                 "/css/**",
                 "/js/**",
                 "/register",
                 "/login",
+                "/news",
+                "/api/news",
                 "/api/users/**",
                 "/error").permitAll()
             .anyRequest().authenticated())
