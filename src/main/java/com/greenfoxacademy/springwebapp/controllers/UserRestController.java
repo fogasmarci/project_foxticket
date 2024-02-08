@@ -8,13 +8,13 @@ import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
 import com.greenfoxacademy.springwebapp.exceptions.login.LoginException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.registration.RegistrationException;
+import com.greenfoxacademy.springwebapp.exceptions.user.MaxUploadSizeException;
 import com.greenfoxacademy.springwebapp.exceptions.user.NotSupportedFileUploadException;
 import com.greenfoxacademy.springwebapp.exceptions.verificationemail.FailedToSendEmailException;
 import com.greenfoxacademy.springwebapp.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class UserRestController {
       return ResponseEntity.status(500).body(new ErrorMessageDTO(e.getMessage()));
     } catch (UsernameNotFoundException e) {
       return ResponseEntity.status(404).body(new ErrorMessageDTO(e.getMessage()));
-    } catch (MaxUploadSizeExceededException e) {
+    } catch (MaxUploadSizeException e) {
       return ResponseEntity.status(413).body(new ErrorMessageDTO(e.getMessage()));
     } catch (NotSupportedFileUploadException e) {
       return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
