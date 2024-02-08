@@ -1,9 +1,7 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
-import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.NameDTO;
-import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
-import com.greenfoxacademy.springwebapp.exceptions.taken.ProductTypeNameAlreadyExist;
+import com.greenfoxacademy.springwebapp.dtos.ProductTypeResponseDTO;
 import com.greenfoxacademy.springwebapp.services.ProductTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +19,7 @@ public class ProductTypeRestController {
   }
 
   @PostMapping("/api/product-types")
-  public ResponseEntity<?> addProductType(@RequestBody NameDTO nameDTO) {
-    try {
-      return ResponseEntity.status(200).body(productTypeService.addProductType(nameDTO));
-    } catch (FieldsException | ProductTypeNameAlreadyExist e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<ProductTypeResponseDTO> addProductType(@RequestBody NameDTO nameDTO) {
+    return ResponseEntity.status(200).body(productTypeService.addProductType(nameDTO));
   }
 }

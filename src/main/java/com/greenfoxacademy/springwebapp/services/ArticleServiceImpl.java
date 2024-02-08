@@ -3,10 +3,10 @@ package com.greenfoxacademy.springwebapp.services;
 import com.greenfoxacademy.springwebapp.dtos.AddArticleDTO;
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
 import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
-import com.greenfoxacademy.springwebapp.exceptions.article.ArticleNotExistsException;
-import com.greenfoxacademy.springwebapp.exceptions.article.ContentRequiredException;
-import com.greenfoxacademy.springwebapp.exceptions.article.TitleAlreadyExistsException;
-import com.greenfoxacademy.springwebapp.exceptions.article.TitleRequiredException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.ArticleContentRequiredException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.ArticleTitleRequiredException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.ArticleIdNotFoundException;
+import com.greenfoxacademy.springwebapp.exceptions.taken.ArticleTitleAlreadyExistsException;
 import com.greenfoxacademy.springwebapp.models.Article;
 import com.greenfoxacademy.springwebapp.repositories.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class ArticleServiceImpl implements ArticleService {
     validateAddArticleDTO(addArticleDTO);
 
     if (articleRepository.existsByTitle(addArticleDTO.title())) {
-      throw new TitleAlreadyExistsException();
+      throw new ArticleTitleAlreadyExistsException();
     }
 
     return articleRepository.save(mapDTOToArticle(addArticleDTO));
@@ -49,11 +49,11 @@ public class ArticleServiceImpl implements ArticleService {
     validateAddArticleDTO(addArticleDTO);
 
     Article articleToEdit = articleRepository.findById(articleId)
-        .orElseThrow(ArticleNotExistsException::new);
+        .orElseThrow(ArticleIdNotFoundException::new);
 
     Article existingArticle = articleRepository.findByTitle(addArticleDTO.title()).orElse(null);
     if (existingArticle != null && !existingArticle.getTitle().equals(articleToEdit.getTitle())) {
-      throw new TitleAlreadyExistsException();
+      throw new ArticleTitleAlreadyExistsException();
     }
 
     articleToEdit.setTitle(addArticleDTO.title());
@@ -65,7 +65,7 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public MessageDTO deleteArticle(Long articleId) {
     Article articleToDelete = articleRepository.findById(articleId)
-        .orElseThrow(ArticleNotExistsException::new);
+        .orElseThrow(ArticleIdNotFoundException::new);
 
     articleRepository.delete(articleToDelete);
     String okMessage = String.format("Article %d is deleted.", articleId);
@@ -79,10 +79,10 @@ public class ArticleServiceImpl implements ArticleService {
 
   private void validateAddArticleDTO(AddArticleDTO addArticleDTO) {
     if (addArticleDTO.title() == null) {
-      throw new TitleRequiredException();
+      throw new ArticleTitleRequiredException();
     }
     if (addArticleDTO.content() == null) {
-      throw new ContentRequiredException();
+      throw new ArticleContentRequiredException();
     }
   }
 }

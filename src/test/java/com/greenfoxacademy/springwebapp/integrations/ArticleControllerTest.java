@@ -143,7 +143,7 @@ public class ArticleControllerTest {
     mvc.perform(post("/api/news").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$.error").value("News title already exists"));
   }
 
@@ -208,7 +208,7 @@ public class ArticleControllerTest {
     mvc.perform(put("/api/news/1").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$.error").value("News title already exists"));
   }
 
@@ -221,8 +221,8 @@ public class ArticleControllerTest {
     mvc.perform(put("/api/news/999").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(addArticleDTO)))
-        .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Article not exists by this ID"));
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$.error").value("Article does not exist by this ID"));
   }
 
   @Test
@@ -246,8 +246,8 @@ public class ArticleControllerTest {
     String jwt = login(loginUserDTO);
 
     mvc.perform(delete("/api/news/999").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(400))
-        .andExpect(jsonPath("$.error").value("Article not exists by this ID"));
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$.error").value("Article does not exist by this ID"));
   }
 
   @Test
