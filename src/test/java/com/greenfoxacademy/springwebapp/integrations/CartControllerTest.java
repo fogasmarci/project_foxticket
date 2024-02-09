@@ -64,7 +64,7 @@ public class CartControllerTest {
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("Product doesn't exist."));
   }
 
@@ -127,7 +127,7 @@ public class CartControllerTest {
     mvc.perform(post("/api/cart").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productIdDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("Product doesn't exist."));
   }
 
@@ -205,7 +205,7 @@ public class CartControllerTest {
     String jwt = login(loginUserDTO);
 
     mvc.perform(delete("/api/cart/3").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("There is no item with the given id in the cart."));
   }
 
@@ -215,7 +215,7 @@ public class CartControllerTest {
     String jwt = login(loginUserDTO);
 
     mvc.perform(delete("/api/cart/111").header("Authorization", "Bearer " + jwt))
-        .andExpect(status().is(400))
+        .andExpect(status().is(404))
         .andExpect(jsonPath("$.error").value("Product doesn't exist."));
   }
 

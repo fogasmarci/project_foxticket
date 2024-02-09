@@ -2,8 +2,8 @@ package com.greenfoxacademy.springwebapp.units;
 
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderedItemDTO;
-import com.greenfoxacademy.springwebapp.exceptions.order.AlreadyActiveException;
-import com.greenfoxacademy.springwebapp.exceptions.order.NotMyOrderException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.NotMyOrderException;
+import com.greenfoxacademy.springwebapp.exceptions.taken.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.OrderRepository;
 import com.greenfoxacademy.springwebapp.services.OrderServiceImpl;

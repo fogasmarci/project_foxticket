@@ -72,7 +72,7 @@ public class ProductTypeRestControllerTest {
     mockMvc.perform(post("/api/product-types").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(nameDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$.error").value("Product type name already exists"));
   }
 
