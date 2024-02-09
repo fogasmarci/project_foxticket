@@ -3,7 +3,7 @@ package com.greenfoxacademy.springwebapp.services;
 import com.greenfoxacademy.springwebapp.dtos.NameDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductTypeResponseDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
-import com.greenfoxacademy.springwebapp.exceptions.producttype.ProductTypeNameAlreadyExist;
+import com.greenfoxacademy.springwebapp.exceptions.taken.ProductTypeNameAlreadyExist;
 import com.greenfoxacademy.springwebapp.models.ProductType;
 import com.greenfoxacademy.springwebapp.repositories.ProductTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;

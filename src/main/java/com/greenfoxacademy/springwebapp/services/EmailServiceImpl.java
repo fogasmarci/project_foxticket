@@ -1,8 +1,8 @@
 package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
-import com.greenfoxacademy.springwebapp.exceptions.user.InvalidVerificationTokenException;
-import com.greenfoxacademy.springwebapp.exceptions.verificationemail.FailedToSendEmailException;
+import com.greenfoxacademy.springwebapp.exceptions.fields.InvalidVerificationTokenException;
+import com.greenfoxacademy.springwebapp.exceptions.server.FailedToSendEmailException;
 import com.greenfoxacademy.springwebapp.models.User;
 import com.greenfoxacademy.springwebapp.models.VerificationEmail;
 import com.greenfoxacademy.springwebapp.models.VerificationToken;

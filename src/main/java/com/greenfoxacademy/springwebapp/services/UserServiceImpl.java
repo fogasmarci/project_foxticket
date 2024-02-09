@@ -2,11 +2,10 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.fields.*;
-import com.greenfoxacademy.springwebapp.exceptions.login.IncorrectCredentialsException;
-import com.greenfoxacademy.springwebapp.exceptions.registration.EmailAlreadyTakenException;
-import com.greenfoxacademy.springwebapp.exceptions.user.InvalidUserIdException;
-import com.greenfoxacademy.springwebapp.exceptions.user.MaxUploadSizeException;
-import com.greenfoxacademy.springwebapp.exceptions.user.NotSupportedFileUploadException;
+import com.greenfoxacademy.springwebapp.exceptions.files.MaxUploadSizeException;
+import com.greenfoxacademy.springwebapp.exceptions.notfound.InvalidUserIdException;
+import com.greenfoxacademy.springwebapp.exceptions.taken.EmailAlreadyTakenException;
+import com.greenfoxacademy.springwebapp.exceptions.unauthorized.IncorrectCredentialsException;
 import com.greenfoxacademy.springwebapp.models.*;
 import com.greenfoxacademy.springwebapp.repositories.RoleRepository;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;

@@ -2,8 +2,8 @@ package com.greenfoxacademy.springwebapp.controllers;
 
 import com.greenfoxacademy.springwebapp.dtos.AddArticleDTO;
 import com.greenfoxacademy.springwebapp.dtos.ArticleListDTO;
-import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.springwebapp.exceptions.article.ArticleException;
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
+import com.greenfoxacademy.springwebapp.models.Article;
 import com.greenfoxacademy.springwebapp.services.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,29 +24,17 @@ public class ArticleRestController {
   }
 
   @PostMapping("/api/news")
-  public ResponseEntity<?> addArticle(@RequestBody AddArticleDTO addArticleDTO) {
-    try {
-      return ResponseEntity.status(200).body(articleService.addArticle(addArticleDTO));
-    } catch (ArticleException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<Article> addArticle(@RequestBody AddArticleDTO addArticleDTO) {
+    return ResponseEntity.status(200).body(articleService.addArticle(addArticleDTO));
   }
 
   @PutMapping("/api/news/{articleId}")
-  public ResponseEntity<?> editArticle(@RequestBody AddArticleDTO addArticleDTO, @PathVariable Long articleId) {
-    try {
-      return ResponseEntity.status(200).body(articleService.editArticle(addArticleDTO, articleId));
-    } catch (ArticleException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<Article> editArticle(@RequestBody AddArticleDTO addArticleDTO, @PathVariable Long articleId) {
+    return ResponseEntity.status(200).body(articleService.editArticle(addArticleDTO, articleId));
   }
 
   @DeleteMapping("/api/news/{articleId}")
-  public ResponseEntity<?> deleteArticle(@PathVariable Long articleId) {
-    try {
-      return ResponseEntity.status(200).body(articleService.deleteArticle(articleId));
-    } catch (ArticleException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<MessageDTO> deleteArticle(@PathVariable Long articleId) {
+    return ResponseEntity.status(200).body(articleService.deleteArticle(articleId));
   }
 }

@@ -1,18 +1,12 @@
 package com.greenfoxacademy.springwebapp.controllers;
 
 import com.greenfoxacademy.springwebapp.dtos.CartListDTO;
-import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.springwebapp.dtos.MessageDTO;
 import com.greenfoxacademy.springwebapp.dtos.OrderListDTO;
 import com.greenfoxacademy.springwebapp.dtos.ProductIdDTO;
-import com.greenfoxacademy.springwebapp.exceptions.cart.CartNotFoundException;
-import com.greenfoxacademy.springwebapp.exceptions.cart.IdInCartNotFoundException;
-import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductException;
-import com.greenfoxacademy.springwebapp.exceptions.product.ProductIdInvalidException;
 import com.greenfoxacademy.springwebapp.services.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,14 +19,10 @@ public class CartController {
   }
 
   @PostMapping("/api/cart")
-  public ResponseEntity<?> addProductToCart(@RequestBody ProductIdDTO productIdDTO) {
-    try {
-      cartService.putProductsInCart(productIdDTO);
-      CartListDTO productsInUsersCart = cartService.createPutProductsInCartResponse();
-      return ResponseEntity.status(200).body(productsInUsersCart);
-    } catch (ProductException | FieldsException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<CartListDTO> addProductToCart(@RequestBody ProductIdDTO productIdDTO) {
+    cartService.putProductsInCart(productIdDTO);
+    CartListDTO productsInUsersCart = cartService.createPutProductsInCartResponse();
+    return ResponseEntity.status(200).body(productsInUsersCart);
   }
 
   @GetMapping("/api/cart")
@@ -42,30 +32,18 @@ public class CartController {
   }
 
   @PostMapping("/api/orders")
-  public ResponseEntity<?> buyProductsInCart() {
-    try {
-      OrderListDTO orderListDTO = cartService.buyProductsInCart();
-      return ResponseEntity.status(200).body(orderListDTO);
-    } catch (UsernameNotFoundException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<OrderListDTO> buyProductsInCart() {
+    OrderListDTO orderListDTO = cartService.buyProductsInCart();
+    return ResponseEntity.status(200).body(orderListDTO);
   }
 
   @DeleteMapping("/api/cart/{id}")
-  public ResponseEntity<?> removeItemFromCart(@PathVariable Long id) {
-    try {
-      return ResponseEntity.status(200).body(cartService.removeProductFromCart(id));
-    } catch (CartNotFoundException | ProductIdInvalidException | IdInCartNotFoundException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<MessageDTO> removeItemFromCart(@PathVariable Long id) {
+    return ResponseEntity.status(200).body(cartService.removeProductFromCart(id));
   }
 
   @DeleteMapping("/api/cart")
-  public ResponseEntity<?> removeAllItemsFromCart() {
-    try {
-      return ResponseEntity.status(200).body(cartService.removeAllProductsFromCart());
-    } catch (CartNotFoundException e) {
-      return ResponseEntity.status(400).body(new ErrorMessageDTO(e.getMessage()));
-    }
+  public ResponseEntity<MessageDTO> removeAllItemsFromCart() {
+    return ResponseEntity.status(200).body(cartService.removeAllProductsFromCart());
   }
 }

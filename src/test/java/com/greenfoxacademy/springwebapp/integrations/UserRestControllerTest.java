@@ -51,7 +51,7 @@ public class UserRestControllerTest {
     mockMvc.perform(post("/api/users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$.error").value("Email is already taken."));
   }
 
@@ -152,7 +152,7 @@ public class UserRestControllerTest {
     mockMvc.perform(post("/api/users/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(loginUserDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(401))
         .andExpect(jsonPath("$.error").value("Email or password is incorrect."));
   }
 
@@ -162,7 +162,7 @@ public class UserRestControllerTest {
     mockMvc.perform(post("/api/users/login")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(loginUserDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(401))
         .andExpect(jsonPath("$.error").value("Email or password is incorrect."));
   }
 
@@ -230,7 +230,7 @@ public class UserRestControllerTest {
     mockMvc.perform(patch("/api/users").header("Authorization", "Bearer " + jwt)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(requestDTO)))
-        .andExpect(status().is(400))
+        .andExpect(status().is(409))
         .andExpect(jsonPath("$.error").value("Email is already taken."));
   }
 
