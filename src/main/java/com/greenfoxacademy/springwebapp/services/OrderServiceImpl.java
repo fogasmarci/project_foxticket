@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.WriterException;
 import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.notfound.NotMyOrderException;
-import com.greenfoxacademy.springwebapp.exceptions.order.AlreadyActiveException;
+import com.greenfoxacademy.springwebapp.exceptions.taken.AlreadyActiveException;
 import com.greenfoxacademy.springwebapp.models.DurationConverter;
 import com.greenfoxacademy.springwebapp.models.OrderedItem;
 import com.greenfoxacademy.springwebapp.models.Product;

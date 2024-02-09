@@ -1,4 +1,4 @@
-package com.greenfoxacademy.springwebapp.exceptions.verificationemail;
+package com.greenfoxacademy.springwebapp.exceptions.server;
 
 public class FailedToSendEmailException extends RuntimeException {
 
