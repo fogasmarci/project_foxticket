@@ -2,6 +2,7 @@ package com.greenfoxacademy.springwebapp.services;
 
 import com.greenfoxacademy.springwebapp.dtos.*;
 import com.greenfoxacademy.springwebapp.exceptions.fields.*;
+import com.greenfoxacademy.springwebapp.exceptions.files.MaxUploadSizeException;
 import com.greenfoxacademy.springwebapp.exceptions.notfound.InvalidUserIdException;
 import com.greenfoxacademy.springwebapp.exceptions.taken.EmailAlreadyTakenException;
 import com.greenfoxacademy.springwebapp.exceptions.unauthorized.IncorrectCredentialsException;
@@ -10,6 +11,7 @@ import com.greenfoxacademy.springwebapp.repositories.RoleRepository;
 import com.greenfoxacademy.springwebapp.repositories.UserRepository;
 import com.greenfoxacademy.springwebapp.security.JwtBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,6 +31,8 @@ public class UserServiceImpl implements UserService {
   private static final int NAME_MIN_LENGTH = 3;
   private static final int PASSWORD_MIN_LENGTH = 8;
   private static final int MAX_LENGTH = 50;
+  private static final Set<String> SUPPORTED_FILE_UPLOAD_MIME_TYPES = Set.of(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE);
+  private static final int MAX_SIZE_UPLOAD_IN_BYTES = 1024 * 1024;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
@@ -123,6 +131,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public MessageDTO uploadPhoto(MultipartFile file) throws IOException {
+    validateUploadFile(file);
+
+    User user = getCurrentUser();
+    byte[] photoBytes = file.getBytes();
+    user.setPhoto(photoBytes);
+
+    userRepository.save(user);
+
+    return new MessageDTO("Picture is uploaded.");
+  }
+
+  @Override
   public User getUserById(Long userId) {
     return userRepository.findById(userId).orElseThrow(InvalidUserIdException::new);
   }
@@ -177,6 +198,16 @@ public class UserServiceImpl implements UserService {
     validateEmail(email);
     if (userRepository.existsByEmail(email)) {
       throw new EmailAlreadyTakenException();
+    }
+  }
+
+  private void validateUploadFile(MultipartFile file) {
+    if (file.getSize() > MAX_SIZE_UPLOAD_IN_BYTES) {
+      throw new MaxUploadSizeException();
+    }
+    String mimeType = file.getContentType();
+    if (!SUPPORTED_FILE_UPLOAD_MIME_TYPES.contains(mimeType)) {
+      throw new NotSupportedFileUploadException();
     }
   }
 

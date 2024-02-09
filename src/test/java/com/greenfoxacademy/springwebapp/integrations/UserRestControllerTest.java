@@ -17,14 +17,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.InputStream;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -311,6 +312,46 @@ public class UserRestControllerTest {
         .andExpect(jsonPath("$.id").value(1))
         .andExpect(jsonPath("$.name").value("TestUser"))
         .andExpect(jsonPath("$.email").value("new@new.com"));
+  }
+
+  @Test
+  public void uploadPhoto_WithGoodInputAndLoggedIn_ReturnsOk() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    final MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "random data".getBytes());
+
+    mockMvc.perform(multipart("/api/users/photo")
+            .file(file).header("Authorization", "Bearer " + jwt))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Picture is uploaded."));
+  }
+
+  @Test
+  public void uploadPhoto_WithUnsupportedMimeType_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    final MockMultipartFile file = new MockMultipartFile("file", "test.gif", MediaType.IMAGE_GIF_VALUE, "random data".getBytes());
+
+    mockMvc.perform(multipart("/api/users/photo")
+            .file(file).header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(400))
+        .andExpect(jsonPath("$.error").value("Uploaded images must adhere to the file formats .jpg, .jpeg, or .png."));
+  }
+
+  @Test
+  public void uploadPhoto_WithLargeFile_ReturnsCorrectError() throws Exception {
+    LoginUserDTO loginUserDTO = new LoginUserDTO("user@user.user", "12345678");
+    String jwt = login(loginUserDTO);
+
+    final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("1.2MB_LargeFile.jpg");
+    final MockMultipartFile file = new MockMultipartFile("file", "test.gif", MediaType.IMAGE_JPEG_VALUE, inputStream);
+
+    mockMvc.perform(multipart("/api/users/photo")
+            .file(file).header("Authorization", "Bearer " + jwt))
+        .andExpect(status().is(413))
+        .andExpect(jsonPath("$.error").value("Uploaded picture sized must be less than 1MB."));
   }
 
   private String login(LoginUserDTO loginUserDTO) throws Exception {

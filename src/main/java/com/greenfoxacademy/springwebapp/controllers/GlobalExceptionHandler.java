@@ -3,6 +3,7 @@ package com.greenfoxacademy.springwebapp.controllers;
 import com.google.zxing.WriterException;
 import com.greenfoxacademy.springwebapp.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.springwebapp.exceptions.fields.FieldsException;
+import com.greenfoxacademy.springwebapp.exceptions.files.MaxUploadSizeException;
 import com.greenfoxacademy.springwebapp.exceptions.notfound.ResourceNotFoundException;
 import com.greenfoxacademy.springwebapp.exceptions.server.FailedToSendEmailException;
 import com.greenfoxacademy.springwebapp.exceptions.taken.AlreadyTakenException;
@@ -43,6 +44,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(409).body(new ErrorMessageDTO(e.getMessage()));
   }
 
+  @ExceptionHandler(MaxUploadSizeException.class)
+  public ResponseEntity<ErrorMessageDTO> handleLargeFileUploadException(MaxUploadSizeException e) {
+    return ResponseEntity.status(413).body(new ErrorMessageDTO(e.getMessage()));
+  }
+
   @ExceptionHandler(WriterException.class)
   public ResponseEntity<ErrorMessageDTO> handleWriterException() {
     return ResponseEntity.status(500).body(new ErrorMessageDTO("QR code creation failed"));
@@ -58,5 +64,3 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(500).body(new ErrorMessageDTO(e.getMessage()));
   }
 }
-
-

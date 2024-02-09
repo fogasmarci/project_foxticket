@@ -51,7 +51,7 @@ async function searchRequest(searchArticlesRequest) {
         if (response.ok) {
             const articleListDTO = await response.json();
             updateTable(articleListDTO);
-            updateQuaryString(searchArticlesRequest);
+            updateQueryString(searchArticlesRequest);
         }
     } catch (error) {
         console.error(`${error}`);
@@ -71,7 +71,7 @@ function updateTable(articleListDTO) {
     });
 }
 
-function updateQuaryString(searchArticlesRequest) {
+function updateQueryString(searchArticlesRequest) {
     var currentUrl = window.location.href;
     var url = new URL(currentUrl);
     url.searchParams.set("searchKeyword", searchArticlesRequest.searchKeyword);
